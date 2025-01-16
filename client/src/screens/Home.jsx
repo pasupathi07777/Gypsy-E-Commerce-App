@@ -16,7 +16,7 @@ import {
   filterProductsByName,
   findProduct,
   productState,
-} from '../slices/productSlices/productsSlice';
+} from '../slices/productsSlice';
 
 
 const Home = ({navigation}) => {

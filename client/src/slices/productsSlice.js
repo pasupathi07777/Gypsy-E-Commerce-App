@@ -1,6 +1,6 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import {axiosInstance} from '../../utils/axios';
-import {outProducts} from '../../data/Products';
+import {axiosInstance} from '../utils/axios';
+import {outProducts} from '../data/Products';
 
 export const verifyOtp = createAsyncThunk(
   'otp/verifyOtp',

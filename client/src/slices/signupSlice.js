@@ -1,54 +1,69 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import { Alert } from 'react-native';
-import { axiosInstance } from '../../utils/axios';
-import { validateFields } from '../utils/validationFunction';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Alert} from 'react-native';
+import {validateFields} from '../utils/validationFunction';
+import {axiosInstance} from '../utils/axios';
+import {updateCurrentEmail} from './loginSlice';
 
 
 export const signupUser = createAsyncThunk(
   'auth/signup',
-  async (credentials, {rejectWithValue}) => {
+  async (credentials, {rejectWithValue, dispatch}) => {
     try {
       const error = validateFields(credentials);
       if (error) {
-        return rejectWithValue({message: error});
+        return rejectWithValue({error});
       }
-      const response = await axiosInstance.post(
-        `/auth/signup`,
-        credentials,
-      );
+      console.log('Sending credentials:', credentials);
+
+      const response = await axiosInstance.post('/auth/signup', credentials);
+      console.log('Response:', response.data);
+      dispatch(updateCurrentEmail(credentials.email));
+      if (response.data.token) {
+        await AsyncStorage.setItem('Token', response.data.token);
+        const token = await AsyncStorage.getItem('Token');
+        console.log(`Token: ${token}`);
+      }
       return response.data;
     } catch (err) {
-      return rejectWithValue(err.response.data.error.message ||  "something went wrong" );
+      console.error('Axios error:', err);
+
+      const error = err.response?.data ||
+        err.response || {message: 'Something went wrong'};
+      return rejectWithValue(error);
     }
   },
 );
 
 const initialState = {
-  loading: false,
+  signupLoading: false,
+  currentEmail: null,
 };
 
 export const signupSlice = createSlice({
-  name: 'signup',
+  name: 'signupSlice',
   initialState,
-  reducers: {
-
-  },
   extraReducers: builder => {
     builder
       .addCase(signupUser.pending, state => {
-        state.loading.signup = true;
+        state.signupLoading = true;
       })
       .addCase(signupUser.fulfilled, (state, action) => {
-        state.loading.signup = false;
-         Alert.alert('', 'Signup successful. You can now log in!');
+        state.signupLoading = false;
+        console.log('Otp Sent Successful:', action.payload);
+        Alert.alert('', 'Otp Sent Successful.');
       })
       .addCase(signupUser.rejected, (state, action) => {
-        state.loading.signup = false;
-         Alert.alert('', action.payload);
+        state.signupLoading = false;
+        console.error('Signup Rejected:', action.payload);
+
+        Alert.alert(
+          'Error',
+          action.payload?.error?.message || 'Something went wrong',
+        );
       });
   },
 });
 
-export const {} = signupSlice.actions;
 export const signupState = state => state.signupReducer;
 export default signupSlice.reducer;

@@ -7,7 +7,7 @@ const { EMAIL_USER, EMAIL_PASSWORD } = process.env;
 // signup
 
 export const signup = async (req, res) => {
-  console.log(req.body);
+  console.log(req.body,"body");
   const { username, email } = req.body;
 
   try {
@@ -24,6 +24,21 @@ export const signup = async (req, res) => {
       });
     }
 
+    // Check if email already exists and is verified
+    const existingUser1 = await User.findOne({
+      email: email,
+      otpVerified: false,
+    });
+
+    if (existingUser1) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          field: "email",
+          message: "Email already exists and is verified",
+        },
+      });
+    }
     // Check if email already exists and is verified
     const existingUser = await User.findOne({
       email: email,
@@ -109,7 +124,7 @@ export const login = async (req, res) => {
   console.log(req.body);
 
   try {
-    const user = await User.findOne({ email: email, otpVerified: true });
+    const user = await User.findOne({ email: email});
 
     if (!user) {
       return res.status(400).json({
@@ -191,6 +206,8 @@ export const login = async (req, res) => {
 // Combined OTP Verification for Signup and Login
 export const verifyOTP = async (req, res) => {
   const { email, otp } = req.body;
+  console.log(email, otp);
+  
 
   try {
     const user = await User.findOne({ email });

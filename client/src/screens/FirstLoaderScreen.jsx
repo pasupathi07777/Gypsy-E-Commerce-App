@@ -1,78 +1,146 @@
-
-import React, {useEffect} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
-  View,
-  ActivityIndicator,
   Text,
-  Dimensions,
+  View,
+  Image,
+  Animated,
+  Alert,
+  TouchableOpacity,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import {useDispatch} from 'react-redux';
-import {getUserAuth} from '../slices/authSlices/loginSlice';
+import NetInfo from '@react-native-community/netinfo';
+import { useDispatch } from 'react-redux';
+import { getUserAuth } from '../slices/loginSlice';
 
-const {width, height} = Dimensions.get('window');  
-const FirstLoaderScreen = ({navigation}) => {
+const FirstPageLoader = ({ navigation }) => {
   const dispatch = useDispatch();
+  const fadeAnim = new Animated.Value(0); // Initial opacity value for animation
+  const [isConnected, setIsConnected] = useState(true);
 
   useEffect(() => {
-    const getToken = async () => {
-      dispatch(getUserAuth())
-        .unwrap()
-        .then(() => {
-          navigation.navigate('home');
-        })
-        .catch(err => {
-          console.log(err);
-          navigation.navigate('login');
-        });
-    };
-    getToken();
-  }, []);
+    // Check network connectivity
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsConnected(state.isConnected);
+      if (state.isConnected) {
+        // Fetch users and navigate based on response
+        dispatch(getUserAuth())
+          .unwrap()
+          .then(() => {
+            navigation.replace('Home');
+          })
+          .catch(err => {
+            console.error('Error fetching users:', err);
+            navigation.replace('Login');
+          });
+      }
+    });
+
+    // Fade-in animation
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 2000,
+      useNativeDriver: true,
+    }).start();
+
+    return () => unsubscribe(); // Cleanup network listener
+  }, [dispatch, fadeAnim, navigation]);
+
+  const handleRetry = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        setIsConnected(true);
+      } else {
+        Alert.alert('Still offline', 'Please check your connection!');
+      }
+    });
+  };
+
+  if (!isConnected) {
+    // Show offline message
+    return (
+      <View style={styles.offlineContainer}>
+        <Image
+          source={require('../assets/img/no-network.jpg')} // Add a "no network" icon to assets
+          style={styles.offlineIcon}
+        />
+        <Text style={styles.offlineText}>No Internet Connection</Text>
+        <TouchableOpacity onPress={handleRetry} style={styles.retryButton}>
+          <Text style={styles.retryButtonText}>Retry</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
-    <LinearGradient colors={['#6200EE', '#FF6F61']} style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.logoText}>TeachWave</Text>
-        <ActivityIndicator size="large" color="#FFFFFF" style={styles.loader} />
-        <Text style={styles.loadingText}>
-          Empowering Education, One Wave at a Time...
-        </Text>
-      </View>
-    </LinearGradient>
+    <View style={styles.container}>
+      <Animated.View style={[styles.logoContainer, { opacity: fadeAnim }]}>
+        <Image
+          source={require('../assets/img/banner/bannerOne.png')} // Add a feather-related logo to assets
+          style={styles.logo}
+        />
+        <Text style={styles.appName}>Feathrly</Text>
+      </Animated.View>
+      <Text style={styles.tagline}>Soaring to new heights</Text>
+    </View>
   );
 };
 
-export default FirstLoaderScreen;
+export default FirstPageLoader;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#87CEEB', // Sky blue background
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  content: {
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    tintColor: '#fff',
+  },
+  appName: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 10,
+  },
+  tagline: {
+    fontSize: 18,
+    color: '#f8f8f8',
+    marginTop: 20,
+  },
+  offlineContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    backgroundColor: '#f8d7da',
   },
-  logoText: {
-    fontSize: Math.min(36, width * 0.1), // Responsive font size
+  offlineIcon: {
+    width: 120,
+    height: 120,
+    tintColor: '#721c24',
+  },
+  offlineText: {
+    fontSize: 18,
+    color: '#721c24',
+    marginVertical: 10,
     fontWeight: 'bold',
-    color: '#FFFFFF',
-    textShadowColor: 'rgba(0, 0, 0, 0.25)',
-    textShadowOffset: {width: 2, height: 2},
-    textShadowRadius: 5,
-    marginBottom: height * 0.03,
-    textAlign: 'center',
   },
-  loader: {
-    marginBottom: height * 0.02,
+  retryButton: {
+    backgroundColor: '#721c24',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginTop: 15,
   },
-  loadingText: {
-    fontSize: Math.min(16, width * 0.04),
-    color: '#FFFFFF',
-    textAlign: 'center',
-    fontStyle: 'italic',
-    marginHorizontal: width * 0.1,
+  retryButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

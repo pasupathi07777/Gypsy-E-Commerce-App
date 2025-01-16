@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post("/signup", signup);
 router.post("/login", login);
-router.post("/verifyOTP", verifyOTP);
+router.post("/verify-OTP", verifyOTP);
 router.post("/checkToken", protectRoute, checkAuth);
 
 export default router;

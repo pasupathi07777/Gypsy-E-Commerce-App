@@ -11,10 +11,17 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { otpState, verifyOtp } from '../slices/otpSlice';
+import { signupState } from '../slices/signupSlice';
+import { loginState } from '../slices/loginSlice';
 const {width, height} = Dimensions.get('window');
 
 const OtpVerification = ({navigation}) => {
-  const [otp, setOtp] = useState(['', '', '', '', '']);
+  const {otpLoading}=useSelector(otpState)
+  const {currentEmail}=useSelector(loginState)
+  const dispatch=useDispatch()
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const inputRefs = useRef([]);
@@ -35,28 +42,26 @@ const OtpVerification = ({navigation}) => {
 
   const handleVerify = () => {
     const otpCode = otp.join('');
-    if (otpCode.length !== 5) {
-      setError('Please enter a valid 5-digit OTP');
+    if (otpCode.length !== 6) {
+      setError('Please enter a valid 6-digit OTP');
       return;
     }
-    setError('');
-    setLoading(true);
+    console.log(otpCode);
+    dispatch(verifyOtp({otp:otpCode,email:currentEmail}))
+    .unwrap()
+    .then(() => {
+      navigation.navigate('Home');
+    })
+    .catch(err => {
+      console.log(err);
+    });
 
 
-    setTimeout(() => {
-      setLoading(false);
-      if (otpCode === '12345') {
-        Alert.alert('Success', 'OTP Verified!');
-        navigation.navigate('ResetPassword'); 
-      } else {
-        setError('Invalid OTP. Please try again.');
-      }
-    }, 1500);
   };
 
   const handleResend = () => {
     Alert.alert('OTP Resent', 'A new OTP has been sent to your email.');
-    setOtp(['', '', '', '', '']);
+    setOtp(['', '', '', '', '', '']);
     inputRefs.current[0]?.focus();
   };
 
@@ -65,9 +70,6 @@ const OtpVerification = ({navigation}) => {
       <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
         <ScrollView contentContainerStyle={styles.scrollView}>
           <Text style={styles.title}>Verify OTP</Text>
-          {/* <Text style={[styles.subtitle, error && {color: 'red'}]}>
-            {error || 'Enter the 5-digit OTP sent to your email'}
-          </Text> */}
 
           <View style={styles.otpContainer}>
             {otp.map((digit, index) => (
@@ -86,9 +88,9 @@ const OtpVerification = ({navigation}) => {
           <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleVerify}
-            disabled={loading}>
+            disabled={otpLoading}>
             <Text style={styles.buttonText}>
-              {loading ? 'Verifying...' : 'Verify '}
+              {otpLoading ? 'Verifying...' : 'Verify '}
             </Text>
           </TouchableOpacity>
 

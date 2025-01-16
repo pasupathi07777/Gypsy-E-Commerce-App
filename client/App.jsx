@@ -9,14 +9,16 @@ import Product from './src/screens/Product';
 import Login from './src/screens/Login';
 import VerifyOtp from './src/screens/OtpVerification';
 import Signup from './src/screens/Signup';
+import FirstPageLoader from './src/screens/FirstLoaderScreen';
 
 const Stack = createNativeStackNavigator();
 
 function RootStack() {
   return (
     <Stack.Navigator
-      initialRouteName="Signup"
+      initialRouteName="FirstPage"
       screenOptions={{headerShown: false}}>
+      <Stack.Screen name="FirstPage" component={FirstPageLoader} />
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Search" component={Search} />
       <Stack.Screen name="Cart" component={Cart} />

@@ -1,31 +1,20 @@
 import { configureStore } from '@reduxjs/toolkit'
-import  signupSlice  from '../slices/authSlices/signupSlice'
-import loginSlice from '../slices/authSlices/loginSlice';
-import verifyEmailSlice from '../slices/authSlices/verifyEmailSlice';
-import  otpSlice  from '../slices/authSlices/otpSlice';
-import  resetPasswordSlice  from '../slices/authSlices/resetPasswordSlice'; 
-import profileSlice from '../slices/profileSlices/profileSlice'; 
-import staffSlice from '../slices/profileSlices/staffSlice'; 
-import addPostSlice from '../slices/postSlices/addPostSlice'; 
+import  loginSlice  from '../slices/loginSlice'
+import  signupSlice  from '../slices/signupSlice'
+import  otpSlice  from '../slices/otpSlice'
+import  productSlice  from '../slices/productsSlice'
 
-
-
-import productSlice from '../slices/productSlices/productsSlice'; 
+ 
 
 
 
 export const store = configureStore({
   reducer: {
-    signupReducer: signupSlice,
     loginReducer: loginSlice,
-    verifyEmailReducer: verifyEmailSlice,
+    signupReducer: signupSlice,
     otpReducer: otpSlice,
-    resetPasswordReducer: resetPasswordSlice,
-    profileReducer: profileSlice,
-    // student teacher crud
-    staffReducer: staffSlice,
-    // add Post
-    addPostReducer: addPostSlice,
     productReducer:productSlice
+
+
   },
 });

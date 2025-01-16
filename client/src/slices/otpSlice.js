@@ -1,77 +1,73 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import axios from 'axios';
-import backendUrl from '../../api/backendUrl';
+import {Alert} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {validateFields} from '../utils/validationFunction';
+import {axiosInstance} from '../utils/axios';
+import {updateCurrentEmail, updateCurrentUser} from './loginSlice';
 
-const PORT = backendUrl();
 export const verifyOtp = createAsyncThunk(
-  'otp/verifyOtp',
-  async (data, thunkAPI) => {
-    const {otpCode, verfiyEmail} = data;
+  'auth/otp',
+  async (credentials, {rejectWithValue, dispatch}) => {
     try {
-      const response = await axios.post(`${PORT}/api/auth/verifyOTP`, {
-        otp: otpCode,
-        email: verfiyEmail,
-      });
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error?.response?.data || error.message || 'Something went wrong',
+      const error = validateFields(credentials);
+      if (error) {
+        return rejectWithValue({error});
+      }
+      console.log('Sending credentials:', credentials);
+
+      const response = await axiosInstance.post(
+        '/auth/verify-OTP',
+        credentials,
       );
+      console.log('Response:', response.data);
+      if (response.data.token) {
+        await AsyncStorage.setItem('Token', response.data.token);
+        const token = await AsyncStorage.getItem('Token');
+        console.log(`Stored Token: ${token}`);
+      }
+      dispatch(updateCurrentUser(response.data.user));
+      dispatch(updateCurrentEmail(null));
+      return response.data;
+    } catch (err) {
+      console.error('Axios error:', err);
+
+      const error = err.response?.data ||
+        err.response || {message: 'Something went wrong'};
+      return rejectWithValue(error);
     }
   },
 );
 
-// OTP Slice
+const initialState = {
+  otpLoading: false,
+  currentEmail: null,
+};
+
 export const otpSlice = createSlice({
   name: 'otp',
-  initialState: {
-    otp: ['', '', '', '', ''],
-    loading: false,
-    error: null,
-    success: false,
-    currentVerifiedEmail: '',
-    OtpErrors: '',
-    otpForm: {
-      errors: null,
-    },
-  },
-  reducers: {
-    updateOtp: (state, action) => {
-      const {index, value} = action.payload;
-      state.otp[index] = value;
-      state.otpForm.errors = null;
-      state.OtpErrors = null;
-    },
-    clearOtp: state => {
-      state.otp = ['', '', '', '', ''];
-      state.error = null;
-      state.success = false;
-    },
-    updateOtpErrors: (state, action) => {
-      state.otpForm.errors = action.payload;
-    },
-  },
+  initialState,
+  reducers: {},
   extraReducers: builder => {
     builder
       .addCase(verifyOtp.pending, state => {
-        state.loading = true;
-        state.error = null;
-        state.success = false;
+        state.otpLoading = true;
       })
       .addCase(verifyOtp.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
-        console.debug('OTP Verified:', action.payload);
-        state.otp = ['', '', '', '', ''];
+        state.otpLoading = false;
+        console.log('otp :', action.payload);
+        Alert.alert('', 'Otp Verify successful.');
       })
       .addCase(verifyOtp.rejected, (state, action) => {
-        state.loading = false;
-        state.OtpErrors = action.payload.error.error || 'Failed to verify OTP';
-        console.error('OTP verification error:', action.payload.error.error);
+        state.otpLoading = false;
+        console.error('Otp Rejected:', action.payload);
+        Alert.alert(
+          'Error',
+          action.payload?.error?.message || 'Something went wrong',
+        );
       });
   },
 });
 
-export const {updateOtp, clearOtp, updateOtpErrors} = otpSlice.actions;
-export const selectOtpState = state => state.otpReducer;
+export const {} = otpSlice.actions;
+export const otpState = state => state.otpReducer;
 export default otpSlice.reducer;

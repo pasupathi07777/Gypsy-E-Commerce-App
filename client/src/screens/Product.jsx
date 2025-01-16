@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { productState } from '../slices/productSlices/productsSlice';
+import { productState } from '../slices/productsSlice';
 import Header from '../components/Header';
 
 

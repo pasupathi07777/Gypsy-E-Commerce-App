@@ -1,9 +1,12 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import {validateFields} from '../../utils/validationFunction';
+import {validateFields} from '../utils/validationFunction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {getToken} from '../../utils/tokenFunction';
-import {axiosInstance} from '../../utils/axios';
+import {getToken} from '../utils/tokenFunction';
+import {axiosInstance} from '../utils/axios';
 import {Alert} from 'react-native';
+
+
+
 
 export const loginUser = createAsyncThunk(
   'auth/login',
@@ -19,7 +22,7 @@ export const loginUser = createAsyncThunk(
         const token = await AsyncStorage.getItem('Token');
         console.log(`Token: ${token}`);
       }
-      return response.data;
+      return credentials.email;
     } catch (err) {
       const error = err.response?.data ||
         err.response || {message: 'Something went wrong'};
@@ -113,6 +116,7 @@ export const deleteUserByTeacher = createAsyncThunk(
 
 const initialState = {
   loginLoading: false,
+  currentEmail:null,
   currentUser: {},
   loginStatus: false,
   allUser: [],
@@ -134,6 +138,9 @@ const loginSlice = createSlice({
     setEditUser: (state, action) => {
       state.editUser = action.payload;
     },
+    updateCurrentEmail: (state, action) => {
+      state.currentEmail = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
@@ -142,11 +149,9 @@ const loginSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loginLoading = false;
+        state.currentEmail=action.payload
         console.log(action.payload, 'logi');
-        state.currentUser = action.payload.user;
-        state.loginStatus = true;
         Alert.alert('', 'Login successful.');
-        console.log(state.currentUser);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loginLoading = false;
@@ -253,6 +258,6 @@ const loginSlice = createSlice({
   },
 });
 
-export const {updateCurrentUser, setEditUser} = loginSlice.actions;
+export const {updateCurrentUser,updateCurrentEmail, setEditUser} = loginSlice.actions;
 export const loginState = state => state.loginReducer;
 export default loginSlice.reducer;

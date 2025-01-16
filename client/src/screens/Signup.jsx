@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,8 +6,13 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { signupState, signupUser } from '../slices/signupSlice';
+import ButtonField from '../components/ButtonField';
 
-const Signup = ({navigation}) => {
+const Signup = ({ navigation }) => {
+  const dispatch = useDispatch()
+  const { signupLoading } = useSelector(signupState)
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -19,6 +24,23 @@ const Signup = ({navigation}) => {
       [field]: value,
     }));
   };
+
+
+  const onSubmit = async () => {
+    dispatch(signupUser(formData))
+      .unwrap()
+      .then(() => {
+        // Alert.alert('Success', 'Signup successful. You can now log in!');
+        navigation.navigate('Verify-Otp');
+      })
+      .catch(err => {
+        console.log(err?.error?.message || 'Something went wrong');
+        console.log(err);
+      });
+      
+
+
+  }
 
   return (
     <View style={styles.container}>
@@ -44,9 +66,10 @@ const Signup = ({navigation}) => {
       />
 
       {/* Signup Button */}
-      <TouchableOpacity style={styles.signupButton}>
+      {/* <TouchableOpacity style={styles.signupButton}>
         <Text style={styles.signupButtonText}>Verify Email</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+      <ButtonField loading={signupLoading} onPress={onSubmit} title={"Verify Email"} />
 
       {/* Already Have an Account? */}
       <View style={styles.footer}>
@@ -88,7 +111,7 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 1, // For Android shadow
   },
@@ -102,7 +125,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     shadowColor: '#000',
     shadowOpacity: 0.2,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 2,
   },
