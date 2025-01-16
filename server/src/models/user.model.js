@@ -1,78 +1,70 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import cron from "node-cron";
 
-const userSchema = new mongoose.Schema(
-  {
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
-      minlength: 6,
-    },
-    regNumber: {
-      type: String,
-      trim: true,
-    },
-    profilePic: {
-      type: String,
-      default: "",
-    },
-    phone: {
-      type: String,
-      match: [/^\d{10,15}$/, "Please enter a valid phone number"],
-    },
-    department: {
-      type: String,
-      trim: true,
-    },
-    bio: {
-      type: String,
-      trim: true,
-      default: "",
-    },
-    role: {
-      type: String,
-      trim: true,
-      enum: ["student", "staff"],
-    },
-    otp: {
-      type: String,
-      default: "",
-    },
-    otpExpiry: {
-      type: Date,
-      default: Date.now(),
-    },
-    updatePendingData: {
-      type: String,
-      default: "",
-    },
+
+// Define the Cart and Order Subschemas
+const cartItemSchema = new mongoose.Schema({
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+    required: true,
   },
-  { timestamps: true }
-);
-
-// Hash password before saving the user
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (err) {
-    next(err);
-  }
+  quantity: { type: Number, required: true },
+  timestamp: { type: Date, default: Date.now },
 });
+
+const orderItemSchema = new mongoose.Schema({
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+    required: true,
+  },
+  quantity: { type: Number, required: true },
+});
+
+// Define the User Schema
+const userSchema = new mongoose.Schema({
+  username: String,
+  email: { type: String, unique: true },
+  otp: String,
+  otpVerified: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+
+  // Cart - Array of cart items
+  cart: [cartItemSchema],
+
+  // Orders - Array of order items
+  orders: [orderItemSchema],
+});
+
+// Create a TTL index to automatically delete documents older than 10 minutes
+userSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 });
 
 const User = mongoose.model("User", userSchema);
 
-export default User;
+// Schedule a task to check for unverified users every minute
+cron.schedule("* * * * *", async () => {
+  try {
+    // Find users who haven't verified OTP within 10 minutes
+    const now = new Date();
+    const expirationTime = new Date(now.getTime() - 600000); // 600000 ms = 10 minutes
+
+    const unverifiedUsers = await User.find({
+      otpVerified: false,
+      createdAt: { $lt: expirationTime }, // Users who registered more than 10 minutes ago
+    });
+
+    if (unverifiedUsers.length > 0) {
+      // Delete unverified users
+      for (let user of unverifiedUsers) {
+        await User.deleteOne({ _id: user._id });
+        console.log(`Deleted user with email: ${user.email} - OTP expired`);
+      }
+    }
+  } catch (err) {
+    console.error("Error checking unverified users:", err);
+  }
+});
+
+// Export your model as usual
+export default User

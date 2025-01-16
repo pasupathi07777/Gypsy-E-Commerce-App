@@ -27,7 +27,7 @@ const HomeHeader = ({ navigation }) => {
 
       {/* Right Section: Additional Icons */}
       <View style={styles.rightContainer}>
-        {iconGroup.map((icon, index) => (
+        {/* {iconGroup.map((icon, index) => (
           <Pressable key={index} onPress={() => onClickIcon(icon.type)}>
             <Ionicons
               name={icon.name}
@@ -36,7 +36,7 @@ const HomeHeader = ({ navigation }) => {
               style={styles.icon}
             />
           </Pressable>
-        ))}
+        ))} */}
 
         {/* Cart Icon with Count */}
         <Pressable onPress={() => onClickIcon('Cart')} style={styles.cartContainer}>

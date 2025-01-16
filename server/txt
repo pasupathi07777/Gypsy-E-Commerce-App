@@ -1,0 +1,168 @@
+const express = require('express');
+const nodemailer = require('nodemailer');
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const app = express();
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/feathrly', { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Define User schema
+const userSchema = new mongoose.Schema({
+  username: String,
+  email: { type: String, unique: true },
+  otp: String,
+  otpVerified: { type: Boolean, default: false },
+});
+
+const User = mongoose.model('User', userSchema);
+
+// In-memory OTP storage (to be replaced with database)
+let otpStore = {}; // You can choose to remove this if you handle OTP directly in the DB
+
+app.use(express.json());
+
+// 1. Register User - Send OTP to Email
+app.post('/api/register', async (req, res) => {
+  const { username, email } = req.body;
+
+  try {
+    // Generate OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Check if email already exists in DB
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).send('Email already registered');
+    }
+
+    // Create new user with pending OTP
+    user = new User({ username, email, otp });
+    await user.save();
+
+    // Send OTP via email
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'your-email@gmail.com',
+        pass: 'your-email-password',
+      },
+    });
+
+    const mailOptions = {
+      from: 'your-email@gmail.com',
+      to: email,
+      subject: 'Your OTP Code',
+      text: `Your OTP is: ${otp}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(500).send('Error sending OTP');
+      }
+      res.send('OTP sent to your email');
+    });
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
+// 2. Verify OTP
+app.post('/api/verify-otp', async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).send('Invalid OTP');
+    }
+
+    // Mark OTP as verified
+    user.otpVerified = true;
+    await user.save();
+
+    res.send('OTP verified successfully');
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
+// 3. Login (Sign-in)
+app.post('/api/login', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    if (!user.otpVerified) {
+      return res.status(400).send('Please verify your OTP first');
+    }
+
+    res.send('Login successful');
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
+app.listen(5000, () => {
+  console.log('Server running on http://localhost:5000');
+});
+
+
+
+// -----------------
+
+
+const mongoose = require("mongoose");
+const User = require("./models/User"); // Import your User model
+const cron = require("node-cron"); // Node cron to schedule tasks
+
+// Your existing user schema definition (no changes needed)
+const userSchema = new mongoose.Schema({
+  username: String,
+  email: { type: String, unique: true },
+  otp: String,
+  otpVerified: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+});
+
+// Create a TTL index to automatically delete documents older than 10 minutes
+userSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 });
+
+const User = mongoose.model("User", userSchema);
+
+// Schedule a task to check for unverified users every minute
+cron.schedule("* * * * *", async () => {
+  try {
+    // Find users who haven't verified OTP within 10 minutes
+    const now = new Date();
+    const expirationTime = new Date(now.getTime() - 600000); // 600000 ms = 10 minutes
+
+    const unverifiedUsers = await User.find({
+      otpVerified: false,
+      createdAt: { $lt: expirationTime }, // Users who registered more than 10 minutes ago
+    });
+
+    if (unverifiedUsers.length > 0) {
+      // Delete unverified users
+      for (let user of unverifiedUsers) {
+        await User.deleteOne({ _id: user._id });
+        console.log(`Deleted user with email: ${user.email} - OTP expired`);
+      }
+    }
+  } catch (err) {
+    console.error("Error checking unverified users:", err);
+  }
+});
+
+// Export your model as usual
+module.exports = User;

@@ -10,6 +10,10 @@ import addPostSlice from '../slices/postSlices/addPostSlice';
 
 
 
+import productSlice from '../slices/productSlices/productsSlice'; 
+
+
+
 export const store = configureStore({
   reducer: {
     signupReducer: signupSlice,
@@ -17,14 +21,11 @@ export const store = configureStore({
     verifyEmailReducer: verifyEmailSlice,
     otpReducer: otpSlice,
     resetPasswordReducer: resetPasswordSlice,
-    profileReducer:profileSlice,
-    // student teacher crud 
-    staffReducer:staffSlice,
-    // add Post 
-    addPostReducer:addPostSlice
-
-
-
-
+    profileReducer: profileSlice,
+    // student teacher crud
+    staffReducer: staffSlice,
+    // add Post
+    addPostReducer: addPostSlice,
+    productReducer:productSlice
   },
 });
