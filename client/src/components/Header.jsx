@@ -19,7 +19,7 @@ const Header = ({navigation, topic}) => {
 
   return (
     <View style={styles.headerContainer}>
-      {/* Left Section: Back Button and Header Text */}
+
       <View style={styles.leftContainer}>
         <Pressable onPress={() => onClickIcon('back')}>
           <Ionicons name="arrow-back" color="#000" size={24} />
@@ -27,19 +27,7 @@ const Header = ({navigation, topic}) => {
         <Text style={styles.headerText}>{topic}</Text>
       </View>
 
-      {/* Right Section: Additional Icons */}
-      {/* <View style={styles.rightContainer}>
-        {iconGroup.map((icon, index) => (
-          <Pressable key={index} onPress={() => onClickIcon(icon.type)}>
-            <Ionicons
-              name={icon.name}
-              color="#000"
-              size={24}
-              style={styles.icon}
-            />
-          </Pressable>
-        ))}
-      </View> */}
+
     </View>
   );
 };

@@ -2,12 +2,19 @@ import { ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View
 import React from 'react';
  
 const { width, height } = Dimensions.get('window');
-const ButtonField = ({ title, onPress, loading }) => {
+const ButtonField = ({ title, onPress, loading,style }) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress} disabled={loading}>
+    <TouchableOpacity
+      style={[styles.button, style]}
+      onPress={onPress}
+      disabled={loading}>
       <View style={styles.content}>
         {loading ? (
-          <ActivityIndicator size="small" color="#FFFFFF" style={styles.loader} />
+          <ActivityIndicator
+            size="small"
+            color="#FFFFFF"
+            style={styles.loader}
+          />
         ) : (
           <Text style={styles.buttonText}>{title}</Text>
         )}
@@ -25,7 +32,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
+    // marginBottom: 15,
     width: '100%',
   },
   content: {

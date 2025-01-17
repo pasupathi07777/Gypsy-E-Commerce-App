@@ -135,8 +135,9 @@ const styles = StyleSheet.create({
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '80%',
+    width: '100%',
     marginBottom: height * 0.03,
+    gap:5
   },
   otpInput: {
     width: width * 0.12,

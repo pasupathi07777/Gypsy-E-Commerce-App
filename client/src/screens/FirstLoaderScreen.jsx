@@ -1,146 +1,83 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect} from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  Image,
+  ActivityIndicator,
   Animated,
-  Alert,
-  TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
-import NetInfo from '@react-native-community/netinfo';
-import { useDispatch } from 'react-redux';
-import { getUserAuth } from '../slices/loginSlice';
+import {useDispatch} from 'react-redux';
+import {getUserAuth} from '../slices/loginSlice';
 
-const FirstPageLoader = ({ navigation }) => {
+const FirstPageLoader = ({navigation}) => {
   const dispatch = useDispatch();
-  const fadeAnim = new Animated.Value(0); // Initial opacity value for animation
-  const [isConnected, setIsConnected] = useState(true);
+  const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
-    // Check network connectivity
-    const unsubscribe = NetInfo.addEventListener(state => {
-      setIsConnected(state.isConnected);
-      if (state.isConnected) {
-        // Fetch users and navigate based on response
-        dispatch(getUserAuth())
-          .unwrap()
-          .then(() => {
-            navigation.replace('Home');
-          })
-          .catch(err => {
-            console.error('Error fetching users:', err);
-            navigation.replace('Login');
-          });
-      }
-    });
-
-    // Fade-in animation
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 2000,
+      duration: 500,
       useNativeDriver: true,
     }).start();
 
-    return () => unsubscribe(); // Cleanup network listener
+    dispatch(getUserAuth())
+      .unwrap()
+      .then(() => {
+        navigation.navigate('Home');
+      })
+      .catch(() => {
+        navigation.navigate('Login');
+      });
   }, [dispatch, fadeAnim, navigation]);
 
-  const handleRetry = () => {
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        setIsConnected(true);
-      } else {
-        Alert.alert('Still offline', 'Please check your connection!');
-      }
-    });
-  };
-
-  if (!isConnected) {
-    // Show offline message
-    return (
-      <View style={styles.offlineContainer}>
-        <Image
-          source={require('../assets/img/no-network.jpg')} // Add a "no network" icon to assets
-          style={styles.offlineIcon}
-        />
-        <Text style={styles.offlineText}>No Internet Connection</Text>
-        <TouchableOpacity onPress={handleRetry} style={styles.retryButton}>
-          <Text style={styles.retryButtonText}>Retry</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   return (
-    <View style={styles.container}>
-      <Animated.View style={[styles.logoContainer, { opacity: fadeAnim }]}>
-        <Image
-          source={require('../assets/img/banner/bannerOne.png')} // Add a feather-related logo to assets
-          style={styles.logo}
-        />
-        <Text style={styles.appName}>Feathrly</Text>
-      </Animated.View>
-      <Text style={styles.tagline}>Soaring to new heights</Text>
-    </View>
+    <ImageBackground
+      source={require('../assets/loder-screen/food-delivery-loder-screen.webp')} // Add your image path here
+      style={styles.background}
+      resizeMode="cover">
+      <View style={styles.container}>
+        <Animated.View style={[styles.logoContainer, {opacity: fadeAnim}]}>
+          <Text style={styles.appName}>Feathrly</Text>
+          <Text style={styles.tagline}>Soaring to new heights</Text>
+        </Animated.View>
+        <ActivityIndicator size="large" color="#1E90FF" style={styles.loader} />
+      </View>
+    </ImageBackground>
   );
 };
 
 export default FirstPageLoader;
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#87CEEB', // Sky blue background
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Optional overlay
   },
   logoContainer: {
     alignItems: 'center',
     marginBottom: 20,
   },
-  logo: {
-    width: 100,
-    height: 100,
-    tintColor: '#fff',
-  },
   appName: {
-    fontSize: 32,
+    fontSize: 40,
     fontWeight: 'bold',
-    color: '#fff',
-    marginTop: 10,
+    color: '#1E90FF', // Bright blue color
+    textTransform: 'uppercase',
+    letterSpacing: 2,
   },
   tagline: {
     fontSize: 18,
-    color: '#f8f8f8',
+    color: '#4682B4', // Subtle darker blue for the tagline
+    marginTop: 10,
+  },
+  loader: {
     marginTop: 20,
-  },
-  offlineContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f8d7da',
-  },
-  offlineIcon: {
-    width: 120,
-    height: 120,
-    tintColor: '#721c24',
-  },
-  offlineText: {
-    fontSize: 18,
-    color: '#721c24',
-    marginVertical: 10,
-    fontWeight: 'bold',
-  },
-  retryButton: {
-    backgroundColor: '#721c24',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginTop: 15,
-  },
-  retryButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
   },
 });

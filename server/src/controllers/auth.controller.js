@@ -15,7 +15,6 @@ export const signup = async (req, res) => {
       username,
       email,
     });
-    console.log(validationErrors);
 
     if (validationErrors) {
       return res.status(400).json({
@@ -24,7 +23,6 @@ export const signup = async (req, res) => {
       });
     }
 
-    // Check if email already exists and is verified
     const existingUser1 = await User.findOne({
       email: email,
       otpVerified: false,
@@ -39,7 +37,7 @@ export const signup = async (req, res) => {
         },
       });
     }
-    // Check if email already exists and is verified
+
     const existingUser = await User.findOne({
       email: email,
       otpVerified: true,
@@ -55,19 +53,16 @@ export const signup = async (req, res) => {
       });
     }
 
-    // Create OTP and send email
-    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Create a new user without OTP verification yet
     const newUser = new User({
-      username,
+      username:username,
       email,
       otp,
     });
 
     await newUser.save();
 
-    // Send OTP email
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -83,7 +78,6 @@ export const signup = async (req, res) => {
       text: `Hello ${username},\n\nYour OTP for email verification is: ${otp}\n\nPlease use this OTP to verify your email.\n\nBest regards,\nYour App Team`,
     };
 
-    // Send email
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error("Error sending email:", error);
@@ -243,7 +237,7 @@ export const verifyOTP = async (req, res) => {
         success: true,
         message: "OTP verified successfully. You can now complete the signup.",
         user,
-        token:generateToken()
+        token: generateToken(user._id),
       });
     }
 
@@ -254,7 +248,7 @@ export const verifyOTP = async (req, res) => {
         success: true,
         message: "OTP verified successfully. You are now logged in.",
         user,
-        token: generateToken(),
+        token: generateToken(user._id),
       });
     }
 

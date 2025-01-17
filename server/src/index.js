@@ -3,9 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";  
 import connedtDb from "./lib/db.js";
 import authRoutes from "./routes/auth.route.js";   
-import profileRoute from "./routes/profileRoute.js";   
-import teacherStudentRoute from "./routes/teacher.studentRoute.js";   
+import cartRoute from "./routes/cart.route.js";   
 import { protectRoute } from "./middleware/auth.middleware.js";
+
 dotenv.config({ path: "../.env" });
 
 
@@ -15,6 +15,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cors({origin: true, credentials: true}));
 app.use("/api/auth",authRoutes);
+app.use("/api/cart",protectRoute, cartRoute);
 // app.use("/api/profile", profileRoute);
 // app.use("/api/stu-tec", teacherStudentRoute);
 
