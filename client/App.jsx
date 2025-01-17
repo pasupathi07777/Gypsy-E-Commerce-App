@@ -10,16 +10,35 @@ import Login from './src/screens/Login';
 import VerifyOtp from './src/screens/OtpVerification';
 import Signup from './src/screens/Signup';
 import FirstPageLoader from './src/screens/FirstLoaderScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Stack = createNativeStackNavigator();
+
+
+
+const Tab = createBottomTabNavigator();
+
+
+function RootTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        animation: 'fade',
+      }}
+    >
+      <Tab.Screen name="Home" component={Login} />
+      <Tab.Screen name="Profile" component={Signup} />
+    </Tab.Navigator>
+  );
+}
 
 function RootStack() {
   return (
     <Stack.Navigator
-      initialRouteName="FirstPage"
+      initialRouteName="Home"
       screenOptions={{headerShown: false}}>
       <Stack.Screen name="FirstPage" component={FirstPageLoader} />
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Home" component={RootTabs} />
       <Stack.Screen name="Search" component={Search} />
       <Stack.Screen name="Cart" component={Cart} />
       <Stack.Screen name="Profile" component={Profile} />
