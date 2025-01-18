@@ -11,31 +11,40 @@ import AuthLayout from "./Layout/AuthLayout";
 import Orders from "./Pages/Orders";
 import AllUsers from "./Pages/AllUsers";
 import Products from "./Pages/Products";
+import { getAllUsers } from "./Redux/Slices/user.Slice";
 
 const App = () => {
   const { loginStatus } = useSelector(authStates); // Get login status from Redux state
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const navigation = useNavigate();
 
   useEffect(() => {
     dispatch(getUserAuth())
-  }, [dispatch, navigate]);
+  }, [dispatch, navigation]);
+
+  useEffect(() => {
+    if (loginStatus) {
+      dispatch(getAllUsers())
+    }
+  }, [dispatch, loginStatus]);
+
+
 
   return (
     <div className="bg-[#F4F4F5]">
       <Routes>
         {loginStatus ? (
           <Route path="/" element={<DashLayout />}>
-            <Route index element={<Home />} />
-            <Route path="orders" element={<Orders />} />
-            <Route path="all-users" element={<AllUsers />} />
-            <Route path="all-products" element={<Products />} />
+            <Route index element={<Home navigation={navigation} />} />
+            <Route path="orders" element={<Orders navigation={navigation} />} />
+            <Route path="all-users" element={<AllUsers navigation={navigation} />} />
+            <Route path="all-products" element={<Products navigation={navigation} />} />
           </Route>
         ) : (
           <Route path="/" element={<AuthLayout />}>
             <Route index element={<Navigate to="/login" />} />
-            <Route path="login" element={<Login />} />
-            <Route path="verify-otp" element={<Otp />} />
+            <Route path="login" element={<Login navigation={navigation} />} />
+            <Route path="verify-otp" element={<Otp navigation={navigation} />} />
           </Route>
         )}
         <Route

@@ -27,7 +27,7 @@ const Otp = ({ navigation }) => {
     dispatch(verifyOtp({ otp: otpCode, email: currentEmail }))
       .unwrap()
       .then(() => {
-        navigation.navigate("Home");
+        navigation("/");
       })
       .catch((err) => {
 

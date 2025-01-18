@@ -12,7 +12,7 @@ const Login = ({ navigation }) => {
     dispatch(loginUser(email))
       .unwrap()
       .then(() => {
-        navigation("/verify-otp");
+        navigation("verify-otp");
       })
       .catch((err) => {
         console.error("Error logging in:", err);
@@ -20,8 +20,8 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 bg-white min-h-screen max-w-[400px] m-auto ">
-      <div className=" flex flex-col justify-center items-center ">
+    <div className="flex flex-col items-center justify-center p-6 bg-white min-h-screen w-full  m-auto ">
+      <div className=" flex flex-col justify-center items-center max-w-[400px] ">
         {/* Image */}
         <img
           className="h-64 w-full object-cover bg-red-500 mb-"

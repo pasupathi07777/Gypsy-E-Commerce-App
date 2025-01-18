@@ -162,7 +162,6 @@ export const authSlice = createSlice({
         state.loginLoading = false;
         console.log(action.payload, "logi");
         state.currentEmail = action.payload;
-        state.loginStatus = true;
         toast.success(action.payload.message || "Verify Otp");
       })
       .addCase(loginUser.rejected, (state, action) => {
