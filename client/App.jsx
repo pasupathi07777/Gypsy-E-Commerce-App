@@ -35,7 +35,7 @@ function RootTabs() {
 function RootStack() {
   return (
     <Stack.Navigator
-      initialRouteName="Home"
+      initialRouteName="FirstPage"
       screenOptions={{headerShown: false}}>
       <Stack.Screen name="FirstPage" component={FirstPageLoader} />
       <Stack.Screen name="Home" component={RootTabs} />
