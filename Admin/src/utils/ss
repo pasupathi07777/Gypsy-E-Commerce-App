@@ -1,0 +1,38 @@
+{
+  name: "Wireless Bluetooth Headphones",
+  description: "High-quality noise-canceling headphones with a 10-hour battery life.",
+  category: "Electronics",
+  brand: "SoundPro",
+  price: 1999,
+  discountPrice: 1499,
+  currency: "INR",
+  stock: 25,
+  images: ["image1.jpg", "image2.jpg", "image3.jpg"],
+  seller: {
+    name: "TechStore",
+    contact: "techstore@example.com"
+  },
+  shipping: {
+    options: ["Standard", "Express"],
+    deliveryTime: "3-5 business days",
+    returnPolicy: "30-day returns available"
+  },
+  warranty: "1 year manufacturer warranty",
+
+}
+
+
+const categories = [
+    "Electronics",
+    "Fashion",
+    "Groceries",
+    "Home & Kitchen",
+    "Beauty & Personal Care",
+    "Health & Wellness",
+    "Baby & Kids",
+    "Sports & Outdoors",
+    "Books",
+    "Footwear",
+    "Computers & Accessories"
+  ];
+  

@@ -12,11 +12,16 @@ import Orders from "./Pages/Orders";
 import AllUsers from "./Pages/AllUsers";
 import Products from "./Pages/Products";
 import { getAllUsers } from "./Redux/Slices/user.Slice";
+import ConfirmationPopup from "./Components/ConfirmationPopup";
 
 const App = () => {
   const { loginStatus } = useSelector(authStates); // Get login status from Redux state
   const dispatch = useDispatch();
   const navigation = useNavigate();
+
+
+
+
 
   useEffect(() => {
     dispatch(getUserAuth())
@@ -31,7 +36,8 @@ const App = () => {
 
 
   return (
-    <div className="bg-[#F4F4F5]">
+    <div className="bg-[#F4F4F5] whitespace-nowrap">
+      <ConfirmationPopup />
       <Routes>
         {loginStatus ? (
           <Route path="/" element={<DashLayout />}>

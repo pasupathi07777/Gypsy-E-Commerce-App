@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import cron from "node-cron";
 
-
 // Define the Cart and Order Subschemas
 const cartItemSchema = new mongoose.Schema({
   productId: {
@@ -13,7 +12,6 @@ const cartItemSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now },
 });
 
-
 const orderItemSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -23,7 +21,6 @@ const orderItemSchema = new mongoose.Schema({
   quantity: { type: Number, required: true },
 });
 
-
 // Define the User Schema
 const userSchema = new mongoose.Schema({
   username: String,
@@ -31,7 +28,11 @@ const userSchema = new mongoose.Schema({
   otp: String,
   otpVerified: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
-
+  role: {
+    type:String,
+    default:"user",
+    enum:["user","admin"]
+  },
   // Cart - Array of cart items
   cart: [cartItemSchema],
 
@@ -39,17 +40,13 @@ const userSchema = new mongoose.Schema({
   orders: [orderItemSchema],
 });
 
-// Create a TTL index to automatically delete documents older than 10 minutes
-// userSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 });
-
 const User = mongoose.model("User", userSchema);
 
 // Schedule a task to check for unverified users every minute
 cron.schedule("* * * * *", async () => {
   try {
-
     const now = new Date();
-    const expirationTime = new Date(now.getTime() - 600000); 
+    const expirationTime = new Date(now.getTime() - 600000);
 
     const unverifiedUsers = await User.find({
       otpVerified: false,
@@ -67,5 +64,4 @@ cron.schedule("* * * * *", async () => {
   }
 });
 
-
-export default User
+export default User;
