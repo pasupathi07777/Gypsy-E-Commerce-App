@@ -11,7 +11,8 @@ const AddProductPopup = ({
   handleChangeroupdown,
   handleRemoveImage,
   handleAddOrUpdateProduct,
-  categories
+  categories,
+  postProductLoading={postProductLoading}
 }) => {
   return (
     <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50">
@@ -20,8 +21,6 @@ const AddProductPopup = ({
           {editingProduct ? "Edit Product" : "Add New Product"}
         </h2>
         <div className="grid grid-cols-1 gap-4">
-
-
           <div className="">
             <CustomInput
               label="Product Name"
@@ -151,11 +150,24 @@ const AddProductPopup = ({
           </div>
 
           <div className="flex justify-end">
-            <button
+            {/* <button
               onClick={handleAddOrUpdateProduct}
               className="bg-blue-500 text-white p-2 rounded-md"
             >
-              {editingProduct ? "Update Product" : "Add Product"}
+              {editingProduct ? postProductLoading ? "posting...": "Update Product" : postProductLoading ? "updating": "Add Product"}
+            
+            </button> */}
+            <button
+              onClick={handleAddOrUpdateProduct}
+              className="mb-6 p-3 bg-green-500 text-white rounded-md"
+            >
+              {editingProduct
+                ? postProductLoading
+                  ? "Posting..."
+                  : "Update Product"
+                : postProductLoading
+                ? "Updating..."
+                : "Add Product"}
             </button>
           </div>
         </div>

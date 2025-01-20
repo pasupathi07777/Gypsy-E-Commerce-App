@@ -121,6 +121,8 @@
 import React from "react";
 
 const CustomTable = ({ data, columns, actions }) => {
+  console.log(data);
+  
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full table-auto">

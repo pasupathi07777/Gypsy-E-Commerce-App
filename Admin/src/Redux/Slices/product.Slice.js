@@ -2,6 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getToken } from "../../utils/tokenFunction";
 import { axiosInstance } from "../../utils/axios";
 import toast from "react-hot-toast";
+import { validateFields } from "../../utils/validationFunction";
+
 
 const initialState = {
   products: [],
@@ -9,6 +11,7 @@ const initialState = {
   postProductLoading: false,
   updateProductLoading: false,
 };
+
 
 export const getProduct = createAsyncThunk(
   "add/getproduct",
@@ -27,14 +30,19 @@ export const getProduct = createAsyncThunk(
   }
 );
 
+
 export const addProduct = createAsyncThunk(
   "add/addProduct",
   async (data, { rejectWithValue }) => {
     try {
+      console.log(data);
       const error = validateFields(data);
+      console.log(error);
+      
       if (error) {
         return rejectWithValue({ error });
       }
+      
       const token = await getToken();
       const response = await axiosInstance.post(`/product/add`, data, {
         params: { token },
@@ -61,7 +69,9 @@ export const productsSlice = createSlice({
       })
       .addCase(getProduct.fulfilled, (state, action) => {
         state.getProductLoading = false;
-        console.log(action.payload);
+        state.products = action.payload.products
+        console.log(state.products);
+
       })
       .addCase(getProduct.rejected, (state, action) => {
         state.getProductLoading = false;
@@ -69,17 +79,22 @@ export const productsSlice = createSlice({
         toast.error(action.payload?.error?.message || "Something went wrong");
       })
 
-      // gepost product
+      // get post product
       .addCase(addProduct.pending, (state) => {
         state.postProductLoading = true;
       })
       .addCase(addProduct.fulfilled, (state, action) => {
         state.postProductLoading = false;
+        state.products = [...state.products, action.payload.product];
         console.log(action.payload);
+                     toast.success("Add Product Successfullty");
       })
       .addCase(addProduct.rejected, (state, action) => {
         state.postProductLoading = false;
         console.log(action.payload);
+           toast.error(
+             action.payload?.error?.message || "Something went wrong"
+           );
       });
   },
 });
