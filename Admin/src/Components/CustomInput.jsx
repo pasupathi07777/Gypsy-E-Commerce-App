@@ -23,7 +23,7 @@ import { Input } from 'rsuite';
 
 const CustomInput = ({ label, value, onChange, placeholder, type, name, className }) => {
   return (
-    <div className="custom-input-container" style={{ marginBottom: 10 }}>
+    <div className="custom-input-container" style={{ marginBottom: 0 }}>
       {label && <label>{label}</label>}
       <Input
         type={type}
@@ -34,7 +34,6 @@ const CustomInput = ({ label, value, onChange, placeholder, type, name, classNam
         className={className}
         
       />
-      <input />
     </div>
   );
 };

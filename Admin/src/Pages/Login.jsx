@@ -5,7 +5,7 @@ import img from "../assets/delivery.png";
 
 const Login = ({ navigation }) => {
   const { loginLoading } = useSelector(authStates);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [email, setEmail] = useState("");
 
   const onSubmit = () => {

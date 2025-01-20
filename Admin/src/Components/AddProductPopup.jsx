@@ -1,7 +1,7 @@
-import React from 'react'
-import CustomInput from './CustomInput';
-import CustomTextArea from './CustomTextArea';
-import CustomDropdown from './CustomDropdown';
+import React from "react";
+import CustomInput from "./CustomInput";
+import CustomTextArea from "./CustomTextArea";
+import CustomDropdown from "./CustomDropdown";
 
 const AddProductPopup = ({
   editingProduct,
@@ -11,7 +11,7 @@ const AddProductPopup = ({
   handleChangeroupdown,
   handleRemoveImage,
   handleAddOrUpdateProduct,
-  categories,
+  categories
 }) => {
   return (
     <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50">
@@ -20,8 +20,9 @@ const AddProductPopup = ({
           {editingProduct ? "Edit Product" : "Add New Product"}
         </h2>
         <div className="grid grid-cols-1 gap-4">
-          {/* Product Form Fields */}
-          <div className="mb-4">
+
+
+          <div className="">
             <CustomInput
               label="Product Name"
               type="text"
@@ -32,7 +33,18 @@ const AddProductPopup = ({
             />
           </div>
 
-          <div className="mb-4">
+          <div className="">
+            <CustomInput
+              label="seller"
+              type="text"
+              name="seller"
+              value={newProduct.seller}
+              onChange={onChange}
+              className="mt-1 p-2 border rounded-md w-full"
+            />
+          </div>
+
+          <div className="">
             <CustomInput
               label="Price"
               type="number"
@@ -43,7 +55,7 @@ const AddProductPopup = ({
             />
           </div>
 
-          <div className="mb-4">
+          <div className="">
             <CustomInput
               label="Stock"
               type="number"
@@ -54,7 +66,7 @@ const AddProductPopup = ({
             />
           </div>
 
-          <div className="mb-4">
+          <div className="">
             <label className="block text-sm">Description</label>
             <CustomTextArea
               name="description"
@@ -64,14 +76,51 @@ const AddProductPopup = ({
             />
           </div>
 
-          <div className="w-full bg-gray-500">
+          {/* Category Dropdown */}
+          <div className="w-full">
             <CustomDropdown
               title="Select Category"
               items={categories}
               size="lg"
               name="category"
               value={newProduct.category}
-              onChange={handleChangeroupdown} // Pass handleChange to update the state
+              onChange={handleChangeroupdown}
+            />
+          </div>
+
+          {/* Return Policy Dropdown */}
+          <div className="w-full">
+            <CustomDropdown
+              title="Return Policy (Days)"
+              items={[10, 20, 30]}
+              // size="lg"
+              name="returnPolicy"
+              value={newProduct.returnPolicy}
+              onChange={handleChangeroupdown}
+            />
+          </div>
+
+          {/* Warranty Years Dropdown */}
+          <div className="w-full">
+            <CustomDropdown
+              title="Warranty (Years)"
+              items={[1, 2, 3]}
+              size="lg"
+              name="warranty"
+              value={newProduct.warranty}
+              onChange={handleChangeroupdown}
+            />
+          </div>
+
+          {/* Delivery Options Dropdown */}
+          <div className="w-full">
+            <CustomDropdown
+              title="Delivery Option"
+              items={["Cash On Delevery"]}
+              size="lg"
+              name="deliveryOption"
+              value={newProduct.deliveryOption}
+              onChange={handleChangeroupdown}
             />
           </div>
 
@@ -91,7 +140,7 @@ const AddProductPopup = ({
                     className="object-cover w-full h-full rounded-md"
                   />
                   <button
-                    onClick={handleRemoveImage}
+                    onClick={() => handleRemoveImage(index)}
                     className="absolute top-0 right-0 p-1 bg-red-600 text-white rounded-full"
                   >
                     X
@@ -115,4 +164,4 @@ const AddProductPopup = ({
   );
 };
 
-export default AddProductPopup
+export default AddProductPopup;
