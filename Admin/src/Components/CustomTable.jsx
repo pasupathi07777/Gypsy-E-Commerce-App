@@ -47,6 +47,8 @@
 // };
 
 // export default CustomTable;
+
+
 import React from "react";
 import { Table, Pagination } from "rsuite"; // Import rsuite components
 
@@ -59,13 +61,16 @@ const CustomTable = ({ data, columns, actions, limit, page, setPage, setLimit })
     setLimit(dataKey); // Set the new limit
   };
 
+
   return (
     <div>
-      <Table height={420} data={data}>
+      <Table height={window.innerHeight} data={data}>
         {columns.map((col, index) => (
           <Column key={index} width={col.width || 200}>
             <HeaderCell>{col.header}</HeaderCell>
-            <Cell>{(row) => (col.render ? col.render(row) : row[col.field])}</Cell>
+            <Cell>
+              {(row) => (col.render ? col.render(row) : row[col.field])}
+            </Cell>
           </Column>
         ))}
 
