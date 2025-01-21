@@ -2,6 +2,7 @@ import React from "react";
 import CustomInput from "./CustomInput";
 import CustomTextArea from "./CustomTextArea";
 import CustomDropdown from "./CustomDropdown";
+import CustomBtn from "./CustomBtn";
 
 const AddProductPopup = ({
   editingProduct,
@@ -12,7 +13,8 @@ const AddProductPopup = ({
   handleRemoveImage,
   handleAddOrUpdateProduct,
   categories,
-  postProductLoading={postProductLoading}
+  loading,
+  cancel,
 }) => {
   return (
     <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50">
@@ -91,7 +93,8 @@ const AddProductPopup = ({
           <div className="w-full">
             <CustomDropdown
               title="Return Policy (Days)"
-              items={[10, 20, 30]}
+              const
+              items={Array.from({ length: 30 }, (_, index) => index)}
               // size="lg"
               name="returnPolicy"
               value={newProduct.returnPolicy}
@@ -103,7 +106,7 @@ const AddProductPopup = ({
           <div className="w-full">
             <CustomDropdown
               title="Warranty (Years)"
-              items={[1, 2, 3]}
+              items={Array.from({ length: 5 }, (_, index) => index)}
               size="lg"
               name="warranty"
               value={newProduct.warranty}
@@ -149,26 +152,14 @@ const AddProductPopup = ({
             </div>
           </div>
 
-          <div className="flex justify-end">
-            {/* <button
+          <div className="flex  flex-col justify-end">
+            <CustomBtn
               onClick={handleAddOrUpdateProduct}
-              className="bg-blue-500 text-white p-2 rounded-md"
-            >
-              {editingProduct ? postProductLoading ? "posting...": "Update Product" : postProductLoading ? "updating": "Add Product"}
-            
-            </button> */}
-            <button
-              onClick={handleAddOrUpdateProduct}
-              className="mb-6 p-3 bg-green-500 text-white rounded-md"
-            >
-              {editingProduct
-                ? postProductLoading
-                  ? "Posting..."
-                  : "Update Product"
-                : postProductLoading
-                ? "Updating..."
-                : "Add Product"}
-            </button>
+              className="mb-6 p-3 bg-green-500 hover:bg-green-600 text-white rounded-md"
+              label={editingProduct ? "Update Product" : "Add Product"}
+              loading={loading}
+            />
+            <CustomBtn label={"Cancel"} onClick={cancel} />
           </div>
         </div>
       </div>

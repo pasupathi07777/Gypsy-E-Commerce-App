@@ -166,3 +166,68 @@ cron.schedule("* * * * *", async () => {
 
 // Export your model as usual
 module.exports = User;
+
+// ------------------------ add cart 
+
+
+
+
+
+import express from "express";
+import mongoose from "mongoose";
+
+// Initialize Express
+const app = express();
+app.use(express.json());
+
+// Connect to MongoDB
+mongoose
+  .connect("mongodb://localhost:27017/yourDatabaseName", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+// User Model (with previously defined schema)
+const User = mongoose.model("User");
+
+// Add Product to Cart Endpoint
+app.post("/user/:userId/cart", async (req, res) => {
+  const { userId } = req.params;
+  const { productId, quantity } = req.body;
+
+  try {
+    // Find the user
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if the product already exists in the cart
+    const existingCartItem = user.cart.find((item) =>
+      item.productId.equals(productId)
+    );
+
+    if (existingCartItem) {
+      // If product exists, update the quantity
+      existingCartItem.quantity += quantity;
+    } else {
+      // Add new product to the cart
+      user.cart.push({ productId, quantity });
+    }
+
+    // Save the updated user document
+    await user.save();
+
+    res.status(200).json({ message: "Product added to cart", cart: user.cart });
+  } catch (err) {
+    console.error("Error adding to cart:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Start the Server
+const PORT = 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -16,8 +16,8 @@ const AllUsers = () => {
   const { allUsers, getUsersLoading, updateUserLoading, deleteUserLoading } = useSelector(usersStates);
   const [editingUserId, setEditingUserId] = useState(null);
   const [editedRole, setEditedRole] = useState("");
-  const [selectedRange, setSelectedRange] = useState(null);  // Start with null for no date range
-  const [searchQuery, setSearchQuery] = useState("");  // State for search query
+  const [selectedRange, setSelectedRange] = useState(null);  
+  const [searchQuery, setSearchQuery] = useState("");  
   const [filteredUsers, setFilteredUsers] = useState(allUsers);
 
   // Handle role edit functionality

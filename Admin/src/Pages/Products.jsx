@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import CustomTable from "../Components/CustomTable";
@@ -6,19 +5,21 @@ import AddProductPopup from "../Components/AddProductPopup";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addProduct,
+  deleteProduct,
   getProduct,
   productStates,
+  updateProduct,
 } from "../Redux/Slices/product.Slice";
 import imageCompression from "browser-image-compression";
+import toast from "react-hot-toast";
+import { showPopup } from "../Redux/Slices/confirmationSlice";
 
 const Products = () => {
   const dispatch = useDispatch();
-  const { products, postProductLoading } = useSelector(productStates);
-  console.log(products);
-  
-
+  const { products, postProductLoading, updateProductLoading } =
+    useSelector(productStates);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [showPopup, setShowPopup] = useState(false);
+  const [showPopupProduct, setShowPopupProduct] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: "",
     price: "",
@@ -37,41 +38,41 @@ const Products = () => {
   const [page, setPage] = useState(1);
 
   const handleDelete = (id) => {
-    // setProducts(products.filter((product) => product.id !== id));
-    // alert(`Product with ID ${id} deleted`);
+    dispatch(
+      showPopup({
+        message: "Are you sure you want to delete this user?",
+        onConfirm: () => {
+          dispatch(deleteProduct(id));
+        },
+      })
+    );
   };
 
   const handleEdit = (id) => {
-    // const productToEdit = products.find((product) => product.id === id);
-    // setEditingProduct(productToEdit);
-    // setNewProduct(productToEdit);
-    // setShowPopup(true);
+    const productToEdit = products.find((product) => product._id === id);
+    setEditingProduct(productToEdit);
+    setNewProduct(productToEdit);
+    setShowPopupProduct(true);
   };
 
   const handleAddOrUpdateProduct = () => {
-    // const newId = editingProduct ? editingProduct.id : products.length + 1;
-    // const updatedProduct = { ...newProduct, id: newId };
-
     if (editingProduct) {
-      setProducts(
-        products.map((product) =>
-          product.id === editingProduct.id ? updatedProduct : product
-        )
-      );
+      dispatch(updateProduct(newProduct))
+        .unwrap()
+        .then(() => {
+          setShowPopupProduct(false);
+          setEditingProduct(null);
+        });
     } else {
-      // setProducts([...products, updatedProduct]);
       dispatch(addProduct(newProduct))
         .unwrap()
         .then(() => {
-          // setShowPopup(false);
-              setShowPopup(false);
+          setShowPopupProduct(false);
         })
         .catch((err) => {
           console.error("Error logging in:", err);
         });
     }
-
-    // setEditingProduct(null);
   };
 
   const handleChange = (value, event) => {
@@ -80,15 +81,15 @@ const Products = () => {
 
     setNewProduct({
       ...newProduct,
-      [name]: value, // Use the value from the Input component
+      [name]: value,
     });
   };
 
   const handleChangeroupdown = (name, value) => {
-    console.log(name, value); // Log the name and selected value
+    console.log(name, value);
     setNewProduct({
       ...newProduct,
-      [name]: value, // Update the state based on the selected value
+      [name]: value,
     });
   };
 
@@ -96,14 +97,12 @@ const Products = () => {
     if (newProduct.photos.length < 5) {
       const file = e.target.files[0];
       if (file) {
-        // Check if file size exceeds 10MB and compress it if necessary
         if (file.size > 10485760) {
-          // 10MB size limit
           try {
             const options = {
-              maxSizeMB: 5, // Maximum size in MB after compression
-              maxWidthOrHeight: 1024, // Resize image to fit this size
-              useWebWorker: true, // Optimize performance
+              maxSizeMB: 5,
+              maxWidthOrHeight: 1024,
+              useWebWorker: true,
             };
             const compressedFile = await imageCompression(file, options);
 
@@ -111,33 +110,50 @@ const Products = () => {
             reader.onloadend = () => {
               setNewProduct((prevProduct) => ({
                 ...prevProduct,
-                photos: [...prevProduct.photos, reader.result], // Add compressed image
+                photos: [...prevProduct.photos, reader.result],
               }));
             };
-            reader.readAsDataURL(compressedFile); // Read the compressed image as base64
+            reader.readAsDataURL(compressedFile);
           } catch (error) {
             alert("Image compression failed.");
             console.error("Error during compression: ", error);
           }
         } else {
-          // No compression needed, just read the file
           const reader = new FileReader();
           reader.onloadend = () => {
             setNewProduct((prevProduct) => ({
               ...prevProduct,
-              photos: [...prevProduct.photos, reader.result], // Add image directly
+              photos: [...prevProduct.photos, reader.result],
             }));
           };
           reader.readAsDataURL(file);
         }
       }
     } else {
-      alert("You can upload a maximum of 5 images.");
+      toast.error("You can upload a maximum of 5 images.");
     }
   };
 
+  // Reset function
+  const resetProduct = () => {
+    setNewProduct({
+      name: "",
+      price: "",
+      stock: "",
+      description: "",
+      photos: [],
+      category: "Electronics",
+      seller: "",
+      returnPolicy: 30,
+      deliveryTime: 5,
+      warranty: 1,
+      deliveryOption: "Cash on Delivery",
+    });
+  };
+
+
   const columns = [
-    { field: "id", header: "ID", width: 60 },
+    { field: "index", header: "No", width: 60 },
     { field: "name", header: "Name", width: 200 },
     { field: "price", header: "Price ($)", width: 100 },
     { field: "stock", header: "Stock", width: 80 },
@@ -154,13 +170,13 @@ const Products = () => {
   const actions = (row) => (
     <>
       <button
-        onClick={() => handleEdit(row.id)}
+        onClick={() => handleEdit(row._id)}
         className="text-blue-500 hover:text-blue-700 transition"
       >
         <FaEdit size={20} />
       </button>
       <button
-        onClick={() => handleDelete(row.id)}
+        onClick={() => handleDelete(row._id)}
         className="text-red-500 hover:text-red-700 transition ml-2"
       >
         <FaTrashAlt size={20} />
@@ -184,6 +200,13 @@ const Products = () => {
     "Computers & Accessories",
   ];
 
+  const handleRemoveImage = (index) => {
+    setNewProduct((prevProduct) => ({
+      ...prevProduct,
+      photos: prevProduct.photos.filter((_, i) => i !== index),
+    }));
+  };
+
   useEffect(() => {
     dispatch(getProduct());
   }, []);
@@ -194,7 +217,7 @@ const Products = () => {
         <h1 className="text-3xl font-bold mb-6">Products</h1>
         <button
           onClick={() => {
-            setShowPopup(true);
+            setShowPopupProduct(true);
             setEditingProduct(null);
           }}
           className="mb-6 p-3 bg-green-500 text-white rounded-md"
@@ -213,17 +236,22 @@ const Products = () => {
         setLimit={setLimit}
       />
 
-      {showPopup && (
+      {showPopupProduct && (
         <AddProductPopup
           editingProduct={editingProduct}
           newProduct={newProduct}
           onChange={(value, event) => handleChange(value, event)}
           handleAddImage={handleAddImage}
           handleChangeroupdown={handleChangeroupdown}
-          handleRemoveImage={() => handleRemoveImage(photo)}
+          handleRemoveImage={handleRemoveImage}
           handleAddOrUpdateProduct={handleAddOrUpdateProduct}
           categories={categories}
-          postProductLoading={postProductLoading}
+          loading={postProductLoading || updateProductLoading}
+          cancel={() => {
+            setShowPopupProduct(false);
+            setEditingProduct(null);
+            resetProduct()
+          }}
         />
       )}
     </div>

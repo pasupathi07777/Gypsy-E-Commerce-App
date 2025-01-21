@@ -198,7 +198,7 @@ export const authSlice = createSlice({
         state.authLoading = false;
         state.currentUser = action.payload.user;
         state.loginStatus = true;
-        console.log(state.currentUser, "state.currentUser");
+        // console.log(state.currentUser, "state.currentUser");
       })
       .addCase(getUserAuth.rejected, (state, action) => {
         state.authLoading = false;

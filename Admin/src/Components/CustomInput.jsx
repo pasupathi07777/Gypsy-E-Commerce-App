@@ -18,6 +18,8 @@
 // };
 
 // export default CustomInput;
+
+
 import React from 'react';
 import { Input } from 'rsuite';
 
@@ -26,6 +28,7 @@ const CustomInput = ({ label, value, onChange, placeholder, type, name, classNam
     <div className="custom-input-container" style={{ marginBottom: 0 }}>
       {label && <label>{label}</label>}
       <Input
+      min={0}
         type={type}
         value={value}
         onChange={onChange}

@@ -15,6 +15,11 @@ const Navbar = () => {
       icon: <MdOutlineProductionQuantityLimits size={20} />,
     },
     { name: "Orders", href: "/orders", icon: <MdLocalShipping size={20} /> },
+    {
+      name: "category",
+      href: "/all-category",
+      icon: <MdLocalShipping size={20} />,
+    },
   ];
 
   return (

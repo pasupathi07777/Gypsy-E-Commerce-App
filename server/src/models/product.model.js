@@ -20,10 +20,6 @@ const productSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    oldPrice: {
-      type: Number,
-      default: null,
-    },
     photos: {
       type: [String],
       default: [],

@@ -21,6 +21,7 @@ const orderItemSchema = new mongoose.Schema({
   quantity: { type: Number, required: true },
 });
 
+
 // Define the User Schema
 const userSchema = new mongoose.Schema({
   username: String,
@@ -33,14 +34,21 @@ const userSchema = new mongoose.Schema({
     default:"user",
     enum:["user","admin"]
   },
-  // Cart - Array of cart items
   cart: [cartItemSchema],
-
-  // Orders - Array of order items
   orders: [orderItemSchema],
+  myProducts:[]
 });
 
+
+
 const User = mongoose.model("User", userSchema);
+
+
+
+
+
+
+
 
 // Schedule a task to check for unverified users every minute
 cron.schedule("* * * * *", async () => {

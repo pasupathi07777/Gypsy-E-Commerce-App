@@ -13,6 +13,7 @@ import AllUsers from "./Pages/AllUsers";
 import Products from "./Pages/Products";
 import { getAllUsers } from "./Redux/Slices/user.Slice";
 import ConfirmationPopup from "./Components/ConfirmationPopup";
+import Category from "./Pages/Category";
 
 const App = () => {
   const { loginStatus } = useSelector(authStates); // Get login status from Redux state
@@ -45,6 +46,7 @@ const App = () => {
             <Route path="orders" element={<Orders navigation={navigation} />} />
             <Route path="all-users" element={<AllUsers navigation={navigation} />} />
             <Route path="all-products" element={<Products navigation={navigation} />} />
+            <Route path="all-category" element={<Category navigation={navigation} />} />
           </Route>
         ) : (
           <Route path="/" element={<AuthLayout />}>
