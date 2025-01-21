@@ -18,7 +18,7 @@ app.use(cors({origin: true, credentials: true}));
 app.use("/api/auth",authRoutes);
 app.use("/api/user",userRoute);
 app.use("/api/product", productRoute)
-app.use("/api/Category", categoryRoute);
+app.use("/api/category", categoryRoute);
 
 
 app.listen(5000,'0.0.0.0', () => {

@@ -39,6 +39,8 @@ import React from "react";
 
 // Custom Dropdown Component
 const CustomDropdown = ({ title, items, name, onChange, value }) => {
+  console.log(value);
+  
   return (
     <div>
       <label className="block text-sm mb-1">{title}</label>
@@ -62,3 +64,4 @@ const CustomDropdown = ({ title, items, name, onChange, value }) => {
 };
 
 export default CustomDropdown;
+
