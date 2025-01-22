@@ -1,7 +1,7 @@
 import React from "react";
 import { Loader } from "rsuite";
 
-const CustomLoader = ({ size = "sm", color = "#4A90E2" }) => {
+const CustomLoader = ({ size = "sm", color }) => {
   return (
     <div className="flex justify-center items-center w-full ">
       <Loader

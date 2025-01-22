@@ -9,7 +9,7 @@ const initialState = {
   getProductLoading: false,
   postProductLoading: false,
   updateProductLoading: false,
-  deleteProductLoading: false,
+  deleteProductLoading: false
 };
 
 export const getProduct = createAsyncThunk(
@@ -28,6 +28,7 @@ export const getProduct = createAsyncThunk(
     }
   }
 );
+
 
 export const addProduct = createAsyncThunk(
   "add/addProduct",
@@ -54,6 +55,8 @@ export const addProduct = createAsyncThunk(
   }
 );
 
+
+
 export const updateProduct = createAsyncThunk(
   "update/Product",
   async (data, { rejectWithValue }) => {
@@ -79,6 +82,8 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
+
+
 export const deleteProduct = createAsyncThunk(
   "delete/product",
   async (productId, { rejectWithValue }) => {
@@ -96,6 +101,8 @@ export const deleteProduct = createAsyncThunk(
     }
   }
 );
+
+
 
 export const productsSlice = createSlice({
   name: "product",

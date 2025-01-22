@@ -17,12 +17,12 @@ const AddProductPopup = ({
   cancel,
 }) => {
   return (
-    <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-full w-full md:w-96 overflow-auto h-[95%] ">
+    <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50 p-3">
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-full w-full md:w-[80%]  h-[80%] md:h-fit overflow-auto  ">
         <h2 className="text-2xl font-semibold mb-4">
           {editingProduct ? "Edit Product" : "Add New Product"}
         </h2>
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="">
             <CustomInput
               label="Product Name"
@@ -151,17 +151,16 @@ const AddProductPopup = ({
               ))}
             </div>
           </div>
-
-          <div className="flex  flex-col justify-end">
-            <CustomBtn
-              onClick={handleAddOrUpdateProduct}
-              className="mb-6 p-3 bg-green-500 hover:bg-green-600 text-white rounded-md"
-              label={editingProduct ? "Update Product" : "Add Product"}
-              loading={loading}
-            />
-            <CustomBtn label={"Cancel"} onClick={cancel} />
-          </div>
         </div>
+        <div className="flex justify-end gap-2  ">
+          <CustomBtn
+            onClick={handleAddOrUpdateProduct}
+            className="p-3 bg-green-500 hover:bg-green-600 text-white rounded-md"
+            label={editingProduct ? "Update Product" : "Add Product"}
+            loading={loading}
+          />
+          <CustomBtn label={"Cancel"} onClick={cancel} />
+        </div>  
       </div>
     </div>
   );

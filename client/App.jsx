@@ -11,23 +11,65 @@ import VerifyOtp from './src/screens/OtpVerification';
 import Signup from './src/screens/Signup';
 import FirstPageLoader from './src/screens/FirstLoaderScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Stack = createNativeStackNavigator();
-
-
-
 const Tab = createBottomTabNavigator();
 
-
 function RootTabs() {
+
+
+  
   return (
     <Tab.Navigator
       screenOptions={{
         animation: 'fade',
-      }}
-    >
-      <Tab.Screen name="Home" component={Login} />
-      <Tab.Screen name="Profile" component={Signup} />
+        headerShown: false,
+        tabBarStyle: {
+          height: 40, // Set the height of the tab bar
+        },
+      }}>
+      <Tab.Screen
+        name="Home"
+        component={Home}
+        options={{
+          tabBarLabel: () => null,
+          tabBarIcon: ({color, size}) => (
+            <MaterialIcons name={'home'} size={22} color={'#878787'} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Cart"
+        component={Cart}
+        options={{
+          tabBarLabel: () => null,
+          tabBarIcon: ({color, size}) => (
+            <MaterialIcons name={'shopping-cart'} size={22} color={'#878787'} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profiled"
+        component={Signup}
+        options={{
+          tabBarLabel: () => null,
+          tabBarIcon: ({color, size}) => (
+            <MaterialIcons name={'notifications'} size={22} color={'#878787'} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          tabBarLabel: () => null,
+          tabBarIcon: ({color, size}) => (
+            <FontAwesome name={'user'} size={22} color={'#878787'} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }

@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import {useDispatch} from 'react-redux';
 import {getUserAuth} from '../slices/loginSlice';
+import { getAllCategory } from '../slices/categoryslice';
+
 
 const FirstPageLoader = ({navigation}) => {
   const dispatch = useDispatch();
@@ -24,12 +26,16 @@ const FirstPageLoader = ({navigation}) => {
     dispatch(getUserAuth())
       .unwrap()
       .then(() => {
-        navigation.navigate('Home');
+
+            navigation.navigate('Home');
+
       })
       .catch(() => {
         navigation.navigate('Login');
       });
   }, [dispatch, fadeAnim, navigation]);
+
+
 
   return (
     <ImageBackground

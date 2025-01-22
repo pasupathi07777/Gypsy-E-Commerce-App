@@ -96,14 +96,14 @@ export const categorySlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // get all users
+      // get 
       .addCase(getAllCategory.pending, (state) => {
         state.getCategoryLoading = true;
       })
       .addCase(getAllCategory.fulfilled, (state, action) => {
         state.getCategoryLoading = false;
         state.categories = action.payload.categories;
-        console.log(action.payload);
+        console.log(action.payload.categories);
       })
       .addCase(getAllCategory.rejected, (state, action) => {
         state.getCategoryLoading = false;
@@ -125,7 +125,7 @@ export const categorySlice = createSlice({
        
       })
 
-      // uudate user Role
+      // updata
       .addCase(editCategory.pending, (state) => {
         state.updateCategoryLoading = true;
       })
@@ -144,7 +144,7 @@ export const categorySlice = createSlice({
         console.log(action.payload);
       })
 
-      // delete user
+      // delete 
       .addCase(deleteCategory.pending, (state) => {
         state.deleteCategoryLoading = true;
       })

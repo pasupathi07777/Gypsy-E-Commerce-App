@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import CustomTable from "../Components/CustomTable";
 import AddProductPopup from "../Components/AddProductPopup";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,12 +13,20 @@ import imageCompression from "browser-image-compression";
 import toast from "react-hot-toast";
 import { showPopup } from "../Redux/Slices/confirmationSlice";
 import { categoryStates } from "../Redux/Slices/category.Slice";
+import icons from "../assets/icons";
+import CustomIconButton from "../Components/CustomIconButton";
 
 const Products = () => {
   const dispatch = useDispatch();
-  const { products, postProductLoading, updateProductLoading } =
-    useSelector(productStates);
+  const {
+    products,
+    postProductLoading,
+    updateProductLoading,
+    deleteProductLoading,
+  } = useSelector(productStates);
      const { categories } = useSelector(categoryStates);
+     console.log(categories);
+     
   const [editingProduct, setEditingProduct] = useState(null);
   const [showPopupProduct, setShowPopupProduct] = useState(false);
   const [newProduct, setNewProduct] = useState({
@@ -171,36 +178,24 @@ const Products = () => {
 
   const actions = (row) => (
     <>
-      <button
+      <CustomIconButton
+        label={icons.edit}
         onClick={() => handleEdit(row._id)}
         className="text-blue-500 hover:text-blue-700 transition"
-      >
-        <FaEdit size={20} />
-      </button>
-      <button
+      />
+      <CustomIconButton
+        label={icons.delete}
         onClick={() => handleDelete(row._id)}
         className="text-red-500 hover:text-red-700 transition ml-2"
-      >
-        <FaTrashAlt size={20} />
-      </button>
+        loading={deleteProductLoading}
+        color={"#FF0000"}
+      />
     </>
   );
 
   const paginatedData = products.slice((page - 1) * limit, page * limit);
 
-  // const categories = [
-  //   "Electronics",
-  //   "Fashion",
-  //   "Groceries",
-  //   "Home & Kitchen",
-  //   "Beauty & Personal Care",
-  //   "Health & Wellness",
-  //   "Baby & Kids",
-  //   "Sports & Outdoors",
-  //   "Books",
-  //   "Footwear",
-  //   "Computers & Accessories",
-  // ];
+
 
   const handleRemoveImage = (index) => {
     setNewProduct((prevProduct) => ({
@@ -247,12 +242,12 @@ const Products = () => {
           handleChangeroupdown={handleChangeroupdown}
           handleRemoveImage={handleRemoveImage}
           handleAddOrUpdateProduct={handleAddOrUpdateProduct}
-          categories={categories}
+          categories={categories.map((cat) => cat.category)}
           loading={postProductLoading || updateProductLoading}
           cancel={() => {
             setShowPopupProduct(false);
             setEditingProduct(null);
-            resetProduct()
+            resetProduct();
           }}
         />
       )}

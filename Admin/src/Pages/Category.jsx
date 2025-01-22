@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../Components/CustomTable";
+import CustomBtn from "../Components/CustomBtn";
+import CustomInput from "../Components/CustomInput";
 import {
   addCategory,
   categoryStates,
@@ -8,9 +10,19 @@ import {
   deleteCategory,
 } from "../Redux/Slices/category.Slice";
 import { useDispatch, useSelector } from "react-redux";
+import { showPopup } from "../Redux/Slices/confirmationSlice";
+import icons from "../assets/icons";
+import CustomIconButton from "../Components/CustomIconButton";
+
 
 const Category = () => {
-  const { categories } = useSelector(categoryStates);
+  const {
+    categories,
+    getCategoryLoading,
+    postCategoryLoading,
+    updateCategoryLoading,
+    deleteCategoryLoading,
+  } = useSelector(categoryStates);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
   const [currentCategory, setCurrentCategory] = useState({ name: "" });
@@ -20,7 +32,6 @@ const Category = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (modalType === "add") {
       dispatch(addCategory(currentCategory));
     } else if (modalType === "edit" && selectedCategory) {
@@ -37,67 +48,69 @@ const Category = () => {
     setSelectedCategory(null);
   };
 
-  // Define columns for CustomTable
+  const onDelete = (id) => {
+    dispatch(
+      showPopup({
+        message: "Are you sure you want to delete this category?",
+        onConfirm: () => {
+          dispatch(deleteCategory(id));
+        },
+      })
+    );
+  };
+
   const columns = [
-    { header: "No", field: "index", width: 50 },
+    { header: "No", field: "index" },
     { header: "Category", field: "category" },
   ];
 
-  // Define actions for CustomTable
   const actions = (row) => (
     <>
-      <button
+      <CustomIconButton
+        label={icons.edit}
         onClick={() => {
           setModalType("edit");
           setSelectedCategory(row);
           setCurrentCategory({ name: row.category });
           setShowModal(true);
         }}
-        className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
-      >
-        Edit
-      </button>
-      <button
-        onClick={() => dispatch(deleteCategory(row._id))}
-        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-      >
-        Delete
-      </button>
+        className="text-blue-500 hover:text-blue-700 transition"
+      />
+      <CustomIconButton
+        label={icons.delete}
+        onClick={() => onDelete(row._id)}
+        className="text-red-500 hover:text-red-700 transition ml-2 bg-"
+        loading={deleteCategoryLoading}
+        color={"#FF0000"}
+      />
     </>
   );
 
-  useEffect(() => {
-    dispatch(getAllCategory());
-  }, [dispatch]);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold text-gray-800">
           Category Management
         </h1>
-        <div className="flex justify-center mb-4">
-          <button
-            onClick={() => {
-              setModalType("add");
-              setShowModal(true);
-              setCurrentCategory({ name: "" });
-            }}
-            className="px-4 py-2 bg-blue-600 text-white font-semibold rounded shadow hover:bg-blue-700 transition"
-          >
-            Add Category
-          </button>
-        </div>
+        <CustomBtn
+          label="Add Category"
+          onClick={() => {
+            setModalType("add");
+            setShowModal(true);
+            setCurrentCategory({ name: "" });
+          }}
+          className="bg-blue-600 hover:bg-blue-700"
+        />
       </div>
 
-      {/* CustomTable Component */}
       <CustomTable
         data={categories}
         columns={columns}
         actions={(row) => actions(row)}
+        loading={getCategoryLoading}
       />
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
@@ -105,39 +118,32 @@ const Category = () => {
               <h3 className="text-xl font-bold mb-4 text-gray-800">
                 {modalType === "add" ? "Add Category" : "Edit Category"}
               </h3>
-              <label className="block text-gray-700 font-semibold mb-2">
-                Category Name
-              </label>
-              <input
-                type="text"
+              <CustomInput
+                label="Category Name"
                 value={currentCategory.name}
-                onChange={(e) =>
+                onChange={(value) =>
                   setCurrentCategory({
                     ...currentCategory,
-                    name: e.target.value,
+                    name: value,
                   })
                 }
-                required
-                className="w-full px-3 py-2 border rounded mb-4"
                 placeholder="Enter category name"
               />
-              <div className="flex justify-end space-x-2">
-                <button
+              <div className="flex justify-end space-x-2 mt-4">
+                <CustomBtn
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                >
-                  {modalType === "add" ? "Add" : "Update"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowModal(false);
-                    setSelectedCategory(null);
-                  }}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
-                >
-                  Cancel
-                </button>
+                  label={modalType === "add" ? "Add" : "Update"}
+                  loading={
+                    modalType === "add"
+                      ? postCategoryLoading
+                      : updateCategoryLoading
+                  }
+                />
+                <CustomBtn
+                  label="Cancel"
+                  onClick={() => setShowModal(false)}
+                  className="bg-gray-300 hover:bg-gray-400"
+                />
               </div>
             </form>
           </div>

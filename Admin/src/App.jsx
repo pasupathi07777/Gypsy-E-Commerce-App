@@ -14,6 +14,7 @@ import Products from "./Pages/Products";
 import { getAllUsers } from "./Redux/Slices/user.Slice";
 import ConfirmationPopup from "./Components/ConfirmationPopup";
 import Category from "./Pages/Category";
+import { getAllCategory } from "./Redux/Slices/category.Slice";
 
 const App = () => {
   const { loginStatus } = useSelector(authStates); // Get login status from Redux state
@@ -26,6 +27,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(getUserAuth())
+        dispatch(getAllCategory());
   }, [dispatch, navigation]);
 
   useEffect(() => {
