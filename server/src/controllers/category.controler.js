@@ -1,9 +1,8 @@
 import product from "../models/product.model.js";
 import { validateFields } from "../utils/functions.js";
-import cloudinary from "../utils/cloudinary.js";
 import User from "../models/user.model.js";
 
-// add product
+// add product       
 export const addCategory = async (req, res) => {
   try {
     // Log the incoming request body
