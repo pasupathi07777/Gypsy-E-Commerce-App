@@ -8,9 +8,8 @@ const initialState = {
   postCategoryLoading: false,
   updateCategoryLoading: false,
   deleteCategoryLoading: false,
-  Categorys: [],
+  categories: [],
 };
-
 
 export const getAllCategory = createAsyncThunk(
   "get/Category",
@@ -29,14 +28,12 @@ export const getAllCategory = createAsyncThunk(
   }
 );
 
-
-
-export const postCategory = createAsyncThunk(
+export const addCategory = createAsyncThunk(
   "post/Category",
-  async (_, { rejectWithValue }) => {
+  async (category, { rejectWithValue }) => {
     try {
       const token = await getToken();
-      const response = await axiosInstance.post(`/Category/post`, {
+      const response = await axiosInstance.post(`/category/add`, category, {
         params: { token },
       });
       return response.data;
@@ -52,12 +49,12 @@ export const postCategory = createAsyncThunk(
 
 export const editCategory = createAsyncThunk(
   "edit/Category",
-  async ({ userId, role }, { rejectWithValue }) => {
+  async ({ userId, category }, { rejectWithValue }) => {
     try {
       const token = await getToken();
       const response = await axiosInstance.put(
-        `/Category/updata/${userId}`,
-        { role },
+        `/category/update/${userId}`,{category:category.name}
+        ,
         {
           params: { token },
         }
@@ -93,9 +90,6 @@ export const deleteCategory = createAsyncThunk(
   }
 );
 
-
-
-
 export const categorySlice = createSlice({
   name: "users",
   initialState,
@@ -108,7 +102,7 @@ export const categorySlice = createSlice({
       })
       .addCase(getAllCategory.fulfilled, (state, action) => {
         state.getCategoryLoading = false;
-        // state.ca = action.payload.users;
+        state.categories = action.payload.categories;
         console.log(action.payload);
       })
       .addCase(getAllCategory.rejected, (state, action) => {
@@ -117,17 +111,18 @@ export const categorySlice = createSlice({
       })
 
       // post
-      .addCase(postCategory.pending, (state) => {
+      .addCase(addCategory.pending, (state) => {
         state.postCategoryLoading = true;
       })
-      .addCase(postCategory.fulfilled, (state, action) => {
+      .addCase(addCategory.fulfilled, (state, action) => {
         state.postCategoryLoading = false;
-        // state.ca = action.payload.users;
+        state.categories = [...state.categories,action.payload.category];
         console.log(action.payload);
       })
-      .addCase(postCategory.rejected, (state, action) => {
+      .addCase(addCategory.rejected, (state, action) => {
         state.postCategoryLoading = false;
         console.log(action.payload);
+       
       })
 
       // uudate user Role
@@ -136,6 +131,12 @@ export const categorySlice = createSlice({
       })
       .addCase(editCategory.fulfilled, (state, action) => {
         state.updateCategoryLoading = false;
+        state.categories = state.categories.map((category) => {  
+          if (category._id === action.payload.category._id) {
+            return action.payload.category;
+          }
+          return category;
+        });
         toast.success("Role Updated Successfully");
       })
       .addCase(editCategory.rejected, (state, action) => {
@@ -149,9 +150,7 @@ export const categorySlice = createSlice({
       })
       .addCase(deleteCategory.fulfilled, (state, action) => {
         state.deleteCategoryLoading = false;
-        // state.allUsers = state.allUsers.filter(
-        //   (user) => user._id !== action.payload.userId
-        // );
+state.categories = state.categories.filter((category) => category._id !== action.payload.category._id); 
         toast.success("User deleted successfully");
       })
       .addCase(deleteCategory.rejected, (state, action) => {

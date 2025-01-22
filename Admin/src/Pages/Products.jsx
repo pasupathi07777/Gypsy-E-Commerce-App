@@ -13,11 +13,13 @@ import {
 import imageCompression from "browser-image-compression";
 import toast from "react-hot-toast";
 import { showPopup } from "../Redux/Slices/confirmationSlice";
+import { categoryStates } from "../Redux/Slices/category.Slice";
 
 const Products = () => {
   const dispatch = useDispatch();
   const { products, postProductLoading, updateProductLoading } =
     useSelector(productStates);
+     const { categories } = useSelector(categoryStates);
   const [editingProduct, setEditingProduct] = useState(null);
   const [showPopupProduct, setShowPopupProduct] = useState(false);
   const [newProduct, setNewProduct] = useState({
@@ -186,19 +188,19 @@ const Products = () => {
 
   const paginatedData = products.slice((page - 1) * limit, page * limit);
 
-  const categories = [
-    "Electronics",
-    "Fashion",
-    "Groceries",
-    "Home & Kitchen",
-    "Beauty & Personal Care",
-    "Health & Wellness",
-    "Baby & Kids",
-    "Sports & Outdoors",
-    "Books",
-    "Footwear",
-    "Computers & Accessories",
-  ];
+  // const categories = [
+  //   "Electronics",
+  //   "Fashion",
+  //   "Groceries",
+  //   "Home & Kitchen",
+  //   "Beauty & Personal Care",
+  //   "Health & Wellness",
+  //   "Baby & Kids",
+  //   "Sports & Outdoors",
+  //   "Books",
+  //   "Footwear",
+  //   "Computers & Accessories",
+  // ];
 
   const handleRemoveImage = (index) => {
     setNewProduct((prevProduct) => ({
