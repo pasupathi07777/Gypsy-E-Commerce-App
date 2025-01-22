@@ -255,6 +255,92 @@
 // };
 
 // export default CustomTable;
+
+
+
+
+
+// import React from "react";
+
+// const CustomTable = ({ data, columns, actions, loading }) => {
+//   return (
+//     <div className="overflow-x-auto">
+//       <table className="min-w-full table-auto">
+//         <thead>
+//           <tr className="bg-gray-200 text-left h-[50px]">
+//             {columns.map((col, index) => (
+//               <th key={index} className="px-4">
+//                 {col.header}
+//               </th>
+//             ))}
+//             {actions && <th className="px-4">Actions</th>}
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {loading ? (
+//             <tr>
+//               <td
+//                 colSpan={columns.length + (actions ? 1 : 0)}
+//                 className="text-center py-6 text-gray-500"
+//               >
+//                 <div className="flex justify-center items-center space-x-2">
+//                   <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+//                 </div>
+//               </td>
+//             </tr>
+//           ) : data.length === 0 ? (
+//             <tr>
+//               <td
+//                 colSpan={columns.length + (actions ? 1 : 0)}
+//                 className="text-center py-4 text-gray-500"
+//               >
+//                 No data available
+//               </td>
+//             </tr>
+//           ) : (
+//             data.map((row, rowIndex) => (
+//               <tr key={row._id} className="border-b h-[50px]">
+//                 {columns.map((col, index) => (
+//                   <td key={index} className="px-4 gap-2">
+//                     {col.field === "index" ? (
+//                       // Display the index (row number)
+//                       <span>{rowIndex + 1}</span>
+//                     ) : col.field === "photos"  ? (
+//                       <div className="flex space-x-2 min-w-40">
+//                         {row.photos.map((photo, idx) => (
+//                           <img
+//                             key={idx}
+//                             src={photo}
+//                             alt={`Product Image ${idx + 1}`}
+//                             className="w-[30px] h-[30px] object-cover"
+//                           />
+//                         ))}
+//                       </div>
+//                     ) : col.render ? (
+//                       col.render(row)
+//                     ) : (
+//                       row[col.field]
+//                     )}
+//                   </td>
+//                 ))}
+//                 {actions && (
+//                   <td className="px-4">
+//                     <div className="flex space-x-4">{actions(row)}</div>
+//                   </td>
+//                 )}
+//               </tr>
+//             ))
+//           )}
+//         </tbody>
+//       </table>
+//     </div>
+//   );
+// };
+
+// export default CustomTable;
+
+
+
 import React from "react";
 
 const CustomTable = ({ data, columns, actions, loading }) => {
@@ -311,6 +397,12 @@ const CustomTable = ({ data, columns, actions, loading }) => {
                           />
                         ))}
                       </div>
+                    ) : col.field === "image" ? (
+                      <img
+                        src={row.image}
+                        alt="Category Image"
+                        className="w-[30px] h-[30px] object-cover"
+                      />
                     ) : col.render ? (
                       col.render(row)
                     ) : (

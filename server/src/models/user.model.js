@@ -35,7 +35,8 @@ const userSchema = new mongoose.Schema({
     enum:["user","admin"]
   },
   cart: [cartItemSchema],
-  orders: [orderItemSchema],
+  // orders: [orderItemSchema],
+  orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }], // Store order references
   myProducts:[]
 });
 

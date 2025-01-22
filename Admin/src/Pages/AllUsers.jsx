@@ -84,6 +84,7 @@ const AllUsers = () => {
   if (getUsersLoading) return <p>Loading users...</p>;
 
   const columns = [
+    { field: "index", header: "No", width: 60 },
     {
       header: "Username",
       field: "username",

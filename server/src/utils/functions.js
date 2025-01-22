@@ -121,7 +121,7 @@ export function validateFields(inputData) {
 
       default:
         if (
-          typeof value === "string" &&
+          typeof value === "string" && field!=="image"  && 
           (value.length < 1 || value.length > 100)
         ) {
           return {

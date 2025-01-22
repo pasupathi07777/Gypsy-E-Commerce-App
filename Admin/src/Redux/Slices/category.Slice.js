@@ -28,12 +28,52 @@ export const getAllCategory = createAsyncThunk(
   }
 );
 
+// export const addCategory = createAsyncThunk(
+//   "post/Category",
+//   async (category, { rejectWithValue }) => {
+//     try {
+//       const token = await getToken();
+//       const response = await axiosInstance.post(`/category/add`, category, {
+//         params: { token },
+//       });
+//       return response.data;
+//     } catch (err) {
+//       const error = err.response?.data ||
+//         err.response || { message: "Something went wrong" };
+//       return rejectWithValue(error);
+//     }
+//   }
+// );
+
+// export const editCategory = createAsyncThunk(
+//   "edit/Category",
+//   async ({ userId, category }, { rejectWithValue }) => {
+//     try {
+//       const token = await getToken();
+//       const response = await axiosInstance.put(
+//         `/category/update/${userId}`,{category:category.name}
+//         ,
+//         {
+//           params: { token },
+//         }
+//       );
+//       return response.data;
+//     } catch (err) {
+//       const error = err.response?.data ||
+//         err.response || { message: "Something went wrong" };
+//       return rejectWithValue(error);
+//     }
+//   }
+// );
+
 export const addCategory = createAsyncThunk(
   "post/Category",
-  async (category, { rejectWithValue }) => {
+  async (formData, { rejectWithValue }) => {
+    console.log(formData);
+
     try {
       const token = await getToken();
-      const response = await axiosInstance.post(`/category/add`, category, {
+      const response = await axiosInstance.post(`/category/add`, formData, {
         params: { token },
       });
       return response.data;
@@ -45,16 +85,16 @@ export const addCategory = createAsyncThunk(
   }
 );
 
-
-
 export const editCategory = createAsyncThunk(
   "edit/Category",
   async ({ userId, category }, { rejectWithValue }) => {
+    console.log(category);
+
     try {
       const token = await getToken();
       const response = await axiosInstance.put(
-        `/category/update/${userId}`,{category:category.name}
-        ,
+        `/category/update/${userId}`,
+        category,
         {
           params: { token },
         }
@@ -67,8 +107,6 @@ export const editCategory = createAsyncThunk(
     }
   }
 );
-
-
 
 export const deleteCategory = createAsyncThunk(
   "delete/Category",
@@ -96,7 +134,7 @@ export const categorySlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // get 
+      // get
       .addCase(getAllCategory.pending, (state) => {
         state.getCategoryLoading = true;
       })
@@ -116,13 +154,13 @@ export const categorySlice = createSlice({
       })
       .addCase(addCategory.fulfilled, (state, action) => {
         state.postCategoryLoading = false;
-        state.categories = [...state.categories,action.payload.category];
+        state.categories = [...state.categories, action.payload.category];
         console.log(action.payload);
+        toast.success("Category Add Successfully");
       })
       .addCase(addCategory.rejected, (state, action) => {
         state.postCategoryLoading = false;
         console.log(action.payload);
-       
       })
 
       // updata
@@ -131,26 +169,28 @@ export const categorySlice = createSlice({
       })
       .addCase(editCategory.fulfilled, (state, action) => {
         state.updateCategoryLoading = false;
-        state.categories = state.categories.map((category) => {  
+        state.categories = state.categories.map((category) => {
           if (category._id === action.payload.category._id) {
             return action.payload.category;
           }
           return category;
         });
-        toast.success("Role Updated Successfully");
+        toast.success("Category Updated Successfully");
       })
       .addCase(editCategory.rejected, (state, action) => {
         state.updateCategoryLoading = false;
         console.log(action.payload);
       })
 
-      // delete 
+      // delete
       .addCase(deleteCategory.pending, (state) => {
         state.deleteCategoryLoading = true;
       })
       .addCase(deleteCategory.fulfilled, (state, action) => {
         state.deleteCategoryLoading = false;
-state.categories = state.categories.filter((category) => category._id !== action.payload.category._id); 
+        state.categories = state.categories.filter(
+          (category) => category._id !== action.payload.category._id
+        );
         toast.success("User deleted successfully");
       })
       .addCase(deleteCategory.rejected, (state, action) => {
