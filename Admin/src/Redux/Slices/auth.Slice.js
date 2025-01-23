@@ -167,7 +167,6 @@ export const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loginLoading = false;
         console.log(action.payload);
-
         toast.error(action.payload.error.message || "Something went wrong");
       })
 

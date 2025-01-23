@@ -5,6 +5,7 @@ import  otpSlice  from '../slices/otpSlice'
 import  productSlice  from '../slices/productsSlice'
 import categorySlice from '../slices/categorySlice';
 import productsSlice from '../slices/productsSlice';
+import cartSlices from '../slices/cartSlice';
 
  
 
@@ -18,5 +19,6 @@ export const store = configureStore({
     productReducer: productSlice,
     categoryReducer: categorySlice,
     productsReducer: productsSlice,
+    cartReducer:cartSlices
   },
 });

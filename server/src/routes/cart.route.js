@@ -1,15 +1,11 @@
 import express from "express";
-import {
-  checkAuth,
-  login,
-  signup,
-  verifyOTP,
-} from "../controllers/auth.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
+import { addToCart, getCart } from "../controllers/cart.Controler.js";
 
 const router = express.Router();
 
-router.post("/add", signup);
+router.get("/get", protectRoute, getCart);
+router.post("/add",protectRoute, addToCart);
 
 
 export default router;

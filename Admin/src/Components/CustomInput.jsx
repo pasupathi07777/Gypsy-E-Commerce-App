@@ -25,8 +25,8 @@ import { Input } from 'rsuite';
 
 const CustomInput = ({ label, value, onChange, placeholder, type, name, className }) => {
   return (
-    <div className="custom-input-container" style={{ marginBottom: 0 }}>
-      {label && <label>{label}</label>}
+    <div className="custom-input-container flex  flex-col gap-1" >
+      {label && <label className=''>{label}</label>}
       <Input
       min={0}
         type={type}

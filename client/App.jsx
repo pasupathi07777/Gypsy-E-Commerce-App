@@ -12,22 +12,24 @@ import Signup from './src/screens/Signup';
 import FirstPageLoader from './src/screens/FirstLoaderScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import CategoryProduct from './src/screens/CategoryProduct';
+import wishlist from './src/screens/wishlist';
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function RootTabs() {
 
-
-  
   return (
     <Tab.Navigator
       screenOptions={{
         animation: 'fade',
         headerShown: false,
         tabBarStyle: {
-          height: 40, // Set the height of the tab bar
+          height: 40,
         },
       }}>
       <Tab.Screen
@@ -36,7 +38,7 @@ function RootTabs() {
         options={{
           tabBarLabel: () => null,
           tabBarIcon: ({color, size}) => (
-            <MaterialIcons name={'home'} size={22} color={'#878787'} />
+            <MaterialIcons name={'home'} size={24} color={'#878787'} />
           ),
         }}
       />
@@ -51,12 +53,12 @@ function RootTabs() {
         }}
       />
       <Tab.Screen
-        name="Profiled"
-        component={Signup}
+        name="wishlist"
+        component={wishlist}
         options={{
           tabBarLabel: () => null,
           tabBarIcon: ({color, size}) => (
-            <MaterialIcons name={'notifications'} size={22} color={'#878787'} />
+            <AntDesign name={'heart'} size={20} color={'#878787'} />
           ),
         }}
       />
@@ -88,6 +90,7 @@ function RootStack() {
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Signup" component={Signup} />
       <Stack.Screen name="Verify-Otp" component={VerifyOtp} />
+      <Stack.Screen name="CategoryProduct" component={CategoryProduct} />
     </Stack.Navigator>
   );
 }

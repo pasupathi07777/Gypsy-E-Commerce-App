@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.route.js";
 import userRoute from "./routes/users.route.js";   
 import productRoute from "./routes/product.route.js";   
 import categoryRoute from "./routes/Category.route.js";   
+import cartRoute from "./routes/cart.route.js";   
 
 dotenv.config({ path: "../.env" });
 
@@ -19,6 +20,7 @@ app.use("/api/auth",authRoutes);
 app.use("/api/user",userRoute);
 app.use("/api/product", productRoute)
 app.use("/api/category", categoryRoute);
+app.use("/api/cart", cartRoute);
 
 
 app.listen(5000,'0.0.0.0', () => {

@@ -1,253 +1,152 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
-  TextInput,
   Image,
-  ScrollView,
-  Alert,
+  TouchableOpacity,
+  FlatList,
 } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {launchImageLibrary} from 'react-native-image-picker';
-import Header from '../components/Header';
 
 const Profile = ({navigation}) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [profilePhoto, setProfilePhoto] = useState(
-    'https://via.placeholder.com/150', // Default placeholder image
+  const profileOptions = [
+    {
+      id: '1',
+      name: 'My Orders',
+      icon: '\u{1F6D2}',
+      action: () => console.log('My Orders'),
+    },
+    {
+      id: '2',
+      name: 'Wishlist',
+      icon: '\u2764',
+      action: () => console.log('Wishlist'),
+    },
+    {
+      id: '3',
+      name: 'Delivery Address',
+      icon: '\u{1F4CD}',
+      action: () => console.log('Delivery Address'),
+    },
+    {
+      id: '4',
+      name: 'Payment Methods',
+      icon: '\u{1F4B3}',
+      action: () => console.log('Payment Methods'),
+    },
+    {
+      id: '5',
+      name: 'Offers',
+      icon: '\u{1F4B0}',
+      action: () => console.log('Offers'),
+    },
+    {
+      id: '6',
+      name: 'Notifications',
+      icon: '\u{1F514}',
+      action: () => console.log('Notifications'),
+    },
+    {id: '7', name: 'Help', icon: '\u2753', action: () => console.log('Help')},
+    {
+      id: '8',
+      name: 'About',
+      icon: '\u2139',
+      action: () => console.log('About'),
+    },
+  ];
+
+  const renderOption = ({item}) => (
+    <TouchableOpacity style={styles.optionContainer} onPress={item.action}>
+      <Text style={styles.icon}>{item.icon}</Text>
+      <Text style={styles.optionText}>{item.name}</Text>
+    </TouchableOpacity>
   );
-  const [profileData, setProfileData] = useState({
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    phone: '+1 234 567 890',
-    address: '1234 Street Name, City, Country',
-  });
-
-  const handleInputChange = (field, value) => {
-    setProfileData(prevState => ({...prevState, [field]: value}));
-  };
-
-  const toggleEditing = () => {
-    setIsEditing(!isEditing);
-  };
-
-  const handleEditPhoto = () => {
-    const options = {
-      mediaType: 'photo',
-      quality: 1,
-    };
-
-    launchImageLibrary(options, response => {
-      if (response.didCancel) {
-        console.log('User canceled image picker');
-      } else if (response.errorMessage) {
-        Alert.alert('Error', response.errorMessage);
-      } else if (response.assets && response.assets.length > 0) {
-        const selectedImage = response.assets[0].uri;
-        setProfilePhoto(selectedImage);
-      }
-    });
-  };
 
   return (
-    <ScrollView style={styles.container}>
-      <Header navigation={navigation} topic={"Profile"} />
-      {/* Profile Section */}
-      <View style={styles.profileHeader}>
-        <View style={styles.imageContainer}>
-          <Image source={{uri: profilePhoto}} style={styles.profileImage} />
-          <TouchableOpacity
-            style={styles.editPhotoButton}
-            onPress={handleEditPhoto}>
-            <AntDesign name="edit" size={14} color="#000" />
-          </TouchableOpacity>
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Image
+          source={{uri: 'https://example.com/profile.jpg'}} // Replace with a real image URL
+          style={styles.profileImage}
+        />
+        <View style={styles.userInfoContainer}>
+          <Text style={styles.userName}>Jane Doe</Text>
+          <Text style={styles.userEmail}>janedoe@gmail.com</Text>
         </View>
-        {/* <Text style={styles.profileName}>{profileData.name}</Text> */}
-        <Text style={styles.profileEmail}>{profileData.email}</Text>
       </View>
-
-      {/* Editable Profile Details */}
-      <View style={styles.detailsBox}>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Name:</Text>
-          {isEditing ? (
-            <TextInput
-              style={styles.input}
-              value={profileData.name}
-              onChangeText={value => handleInputChange('name', value)}
-            />
-          ) : (
-            <Text style={styles.detailValue}>{profileData.name}</Text>
-          )}
-        </View>
-
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Email:</Text>
-          {isEditing ? (
-            <TextInput
-              style={styles.input}
-              value={profileData.email}
-              onChangeText={value => handleInputChange('email', value)}
-            />
-          ) : (
-            <Text style={styles.detailValue}>{profileData.email}</Text>
-          )}
-        </View>
-
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Phone:</Text>
-          {isEditing ? (
-            <TextInput
-              style={styles.input}
-              value={profileData.phone}
-              onChangeText={value => handleInputChange('phone', value)}
-              keyboardType="phone-pad"
-            />
-          ) : (
-            <Text style={styles.detailValue}>{profileData.phone}</Text>
-          )}
-        </View>
-
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Address:</Text>
-          {isEditing ? (
-            <TextInput
-              style={styles.input}
-              value={profileData.address}
-              onChangeText={value => handleInputChange('address', value)}
-            />
-          ) : (
-            <Text style={styles.detailValue}>{profileData.address}</Text>
-          )}
-        </View>
-
-        {/* Edit Toggle Button */}
-        <TouchableOpacity style={styles.button} onPress={toggleEditing}>
-          <AntDesign
-            name={isEditing ? 'save' : 'edit'}
-            size={20}
-            color="#fff"
-          />
-          <Text style={styles.buttonText}>
-            {isEditing ? 'Save Changes' : 'Edit Profile'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Action Buttons */}
-      <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.button}>
-          <AntDesign name="shoppingcart" size={20} color="#fff" />
-          <Text style={styles.buttonText}>My Orders</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.button, styles.logoutButton]}>
-          <AntDesign name="logout" size={20} color="#fff" />
-          <Text style={styles.buttonText}>Logout</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      <FlatList
+        data={profileOptions}
+        renderItem={renderOption}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.optionsList}
+      />
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={() => console.log('Log Out')}>
+        <Text style={styles.logoutText}>Log Out</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
   },
-  profileHeader: {
+  headerContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#007bff',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  imageContainer: {
-    position: 'relative',
-    width: 120,
-    height: 120,
+    padding: 16,
+    backgroundColor: '#f9f9f9',
   },
   profileImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 60,
-    borderWidth: 2,
-    borderColor: '#fff',
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    marginRight: 16,
   },
-  editPhotoButton: {
-    position: 'absolute',
-    bottom: 5,
-    right: 5,
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    padding: 5,
-  },
-  profileName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginTop: 10,
-  },
-  profileEmail: {
-    fontSize: 16,
-    color: '#e0e0e0',
-    marginTop: 10,
-  },
-  detailsBox: {
-    margin: 20,
-    padding: 15,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: {width: 0, height: 2},
-    shadowRadius: 4,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  detailLabel: {
-    fontSize: 16,
-    color: '#555',
+  userInfoContainer: {
     flex: 1,
   },
-  detailValue: {
-    fontSize: 16,
-    color: '#333',
-    flex: 2,
+  userName: {
+    fontSize: 18,
+    fontWeight: '600',
   },
-  input: {
-    flex: 2,
-    padding: 5,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    fontSize: 16,
-    color: '#333',
+  userEmail: {
+    fontSize: 14,
+    color: '#888',
   },
-  actionButtons: {
-    margin: 20,
+  optionsList: {
+    marginTop: 16,
+    paddingHorizontal: 16,
   },
-  button: {
+  optionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#007bff',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
   },
-  buttonText: {
-    marginLeft: 10,
-    color: '#fff',
+  icon: {
+    fontSize: 18,
+    marginRight: 16,
+  },
+  optionText: {
     fontSize: 16,
-    fontWeight: 'bold',
   },
   logoutButton: {
-    backgroundColor: 'red',
+    marginTop: 32,
+    marginHorizontal: 16,
+    padding: 16,
+    backgroundColor: '#ff4d4d',
+    borderRadius: 4,
+    alignItems: 'center',
+  },
+  logoutText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });
 

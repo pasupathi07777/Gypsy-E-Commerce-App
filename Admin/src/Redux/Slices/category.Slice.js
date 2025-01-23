@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getToken } from "../../utils/tokenFunction";
 import { axiosInstance } from "../../utils/axios";
 import toast from "react-hot-toast";
+import { validateFields } from "../../utils/validationFunction";
 
 const initialState = {
   getCategoryLoading: false,
@@ -28,50 +29,16 @@ export const getAllCategory = createAsyncThunk(
   }
 );
 
-// export const addCategory = createAsyncThunk(
-//   "post/Category",
-//   async (category, { rejectWithValue }) => {
-//     try {
-//       const token = await getToken();
-//       const response = await axiosInstance.post(`/category/add`, category, {
-//         params: { token },
-//       });
-//       return response.data;
-//     } catch (err) {
-//       const error = err.response?.data ||
-//         err.response || { message: "Something went wrong" };
-//       return rejectWithValue(error);
-//     }
-//   }
-// );
-
-// export const editCategory = createAsyncThunk(
-//   "edit/Category",
-//   async ({ userId, category }, { rejectWithValue }) => {
-//     try {
-//       const token = await getToken();
-//       const response = await axiosInstance.put(
-//         `/category/update/${userId}`,{category:category.name}
-//         ,
-//         {
-//           params: { token },
-//         }
-//       );
-//       return response.data;
-//     } catch (err) {
-//       const error = err.response?.data ||
-//         err.response || { message: "Something went wrong" };
-//       return rejectWithValue(error);
-//     }
-//   }
-// );
-
 export const addCategory = createAsyncThunk(
   "post/Category",
   async (formData, { rejectWithValue }) => {
     console.log(formData);
 
     try {
+      const error = validateFields(formData);
+      if (error) {
+        return rejectWithValue({ error });
+      }
       const token = await getToken();
       const response = await axiosInstance.post(`/category/add`, formData, {
         params: { token },
@@ -88,6 +55,10 @@ export const addCategory = createAsyncThunk(
 export const editCategory = createAsyncThunk(
   "edit/Category",
   async ({ userId, category }, { rejectWithValue }) => {
+    const error = validateFields(category);
+    if (error) {
+      return rejectWithValue({ error });
+    }
     console.log(category);
 
     try {
@@ -161,6 +132,7 @@ export const categorySlice = createSlice({
       .addCase(addCategory.rejected, (state, action) => {
         state.postCategoryLoading = false;
         console.log(action.payload);
+        toast.error(action.payload.error.message || "Something went wrong")
       })
 
       // updata
@@ -180,6 +152,7 @@ export const categorySlice = createSlice({
       .addCase(editCategory.rejected, (state, action) => {
         state.updateCategoryLoading = false;
         console.log(action.payload);
+        toast.error(action.payload.error.message || "Something went wrong")
       })
 
       // delete

@@ -1,13 +1,60 @@
-import User from "../models/User";
-import Product from "../models/Product";
+import User from "../models/user.model.js";
+import Product from "../models/product.model.js";
+
+
+// Get cart details
+export const getCart = async (req, res) => {
+  try {
+    // Find the user
+    const user = await User.findById(req.user._id).populate({
+      path: 'cart.productId',
+      select: 'name price photos', // Include only the required fields
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: {
+          field: 'user',
+          message: 'User not found.',
+        },
+      });
+    }
+
+    // Return the cart with populated product details
+    res.status(200).json({
+      success: true,
+      message: 'Cart retrieved successfully.',
+      cart: user.cart.map(item => ({
+        productId: item.productId._id,
+        name: item.productId.name,
+        price: item.productId.price,
+        photo: item.productId.photos[0], // Assuming the first photo is used
+        quantity: item.quantity,
+        total: item.quantity * item.productId.price, // Calculate total price for each item
+      })),
+    });
+  } catch (error) {
+    console.error('Error retrieving cart:', error);
+    res.status(500).json({
+      success: false,
+      error: {
+        field: 'server',
+        message: 'Internal Server Error.',
+      },
+    });
+  }
+};
+
+
 
 
 // Add product to cart
 export const addToCart = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
-    
-    // Check if productId and quantity are provided
+
+    // Validate input
     if (!productId || !quantity || quantity <= 0) {
       return res.status(400).json({
         success: false,
@@ -18,7 +65,7 @@ export const addToCart = async (req, res) => {
       });
     }
 
-    // Check if product exists in the database
+    // Check if the product exists
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({
@@ -30,7 +77,7 @@ export const addToCart = async (req, res) => {
       });
     }
 
-    // Find the user and check if they already have the product in their cart
+    // Find the user
     const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({
@@ -48,20 +95,34 @@ export const addToCart = async (req, res) => {
     );
 
     if (existingProductIndex > -1) {
-      // If the product is already in the cart, update the quantity
+      // Update quantity if the product is already in the cart
       user.cart[existingProductIndex].quantity += quantity;
     } else {
-      // If the product is not in the cart, add it
+      // Add the new product to the cart
       user.cart.push({ productId, quantity });
     }
 
     // Save the updated user document
     await user.save();
 
+    // Populate the cart with product details
+    const populatedUser = await User.findById(req.user._id).populate({
+      path: "cart.productId",
+      select: "name price photos", // Select only required fields
+    });
+
+    // Return the cart with populated product details
     res.status(200).json({
       success: true,
       message: "Product added to cart successfully.",
-      cart: user.cart,
+      cart: populatedUser.cart.map((item) => ({
+        productId: item.productId._id,
+        name: item.productId.name,
+        price: item.productId.price,
+        photo: item.productId.photos[0], // Assuming the first photo is used
+        quantity: item.quantity,
+        total: item.quantity * item.productId.price, // Calculate total price for each item
+      })),
     });
   } catch (error) {
     console.error("Error adding product to cart:", error);
@@ -140,5 +201,3 @@ export const removeFromCart = async (req, res) => {
     });
   }
 };
-
-
