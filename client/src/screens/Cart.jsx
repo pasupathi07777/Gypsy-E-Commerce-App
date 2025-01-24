@@ -14,21 +14,21 @@ import {
   cartStates,
   incrementQuantity,
   decrementQuantity,
-  removeFromCart,
+  removeCart,
 } from '../slices/cartSlice';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+
+
 const Cart = ({navigation}) => {
-  const {cartItems} = useSelector(cartStates);
-  console.log(cartItems);
-  
+  const {cartItems, removeCartLoading} = useSelector(cartStates);
   const dispatch = useDispatch();
 
   const renderCartItem = ({item}) => (
     <View style={styles.cartItemContainer}>
       <Image source={{uri: item.photo}} style={styles.image} />
       <View style={styles.itemDetails}>
-        <Text style={styles.itemName}>{item.name.slice(0,10)}...</Text>
+        <Text style={styles.itemName}>{item.name.slice(0, 10)}...</Text>
         <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
       </View>
       <View style={styles.quantityContainer}>
@@ -44,10 +44,14 @@ const Cart = ({navigation}) => {
           <Text style={styles.quantityText}>+</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        onPress={() => dispatch(removeFromCart(item.productId))}>
+
+
+      <TouchableOpacity onPress={() => dispatch(removeCart(item.productId))}>
         <Icon name="delete" size={24} color="red" />
       </TouchableOpacity>
+
+
+
     </View>
   );
 
@@ -60,7 +64,7 @@ const Cart = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Header navigation={navigation} topic="Cart" />
-      <FlatList
+      <FlatList 
         data={cartItems}
         renderItem={renderCartItem}
         keyExtractor={item => item.productId}

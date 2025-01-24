@@ -10,19 +10,20 @@ import {
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {productStates} from '../slices/productsSlice';
-import {addCartItem, cartStates} from '../slices/cartSlice';
+import {addCartItem, cartStates, removeCart} from '../slices/cartSlice';
 import ButtonField from '../components/ButtonField';
 
 const Product = ({route}) => {
   const {id} = route.params;
-  const {products, cartItems} = useSelector(productStates);
-
+  const {products} = useSelector(productStates);
+  const {cartItems, removeCartLoading} = useSelector(cartStates)
   const [currentProduct, setCurrentProduct] = useState(null);
   const [mainImage, setMainImage] = useState(null);
   const dispatch = useDispatch();
   const {postCartLoading} = useSelector(cartStates);
 
-  
+
+
   useEffect(() => {
     const product = products.find(prod => prod._id === id);
     setCurrentProduct(product);
@@ -34,19 +35,18 @@ const Product = ({route}) => {
       <View style={styles.container}>
         <Text>Product not found</Text>
       </View>
-    );
+    )
   }
 
   return (
     <ScrollView style={styles.container}>
-      {/* Main Image */}
+
       <View style={styles.mainImageContainer}>
         {mainImage && (
-          <Image source={{uri: mainImage}} style={styles.mainProductImage} />
+          <Image source={{uri: mainImage}} style={styles.mainProductImage} /> 
         )}
       </View>
 
-      {/* Thumbnails */}
       <FlatList
         data={currentProduct.photos}
         horizontal
@@ -60,14 +60,15 @@ const Product = ({route}) => {
         contentContainerStyle={styles.thumbnailContainer}
       />
 
-      {/* Product Details */}
+
+
       <View style={styles.productDetails}>
         <Text style={styles.productName}>{currentProduct.name}</Text>
 
         <Text style={styles.productPrice}>₹{currentProduct.price}</Text>
         <Text style={styles.stockText}>In Stock: {currentProduct.stock}</Text>
 
-        {/* Labels for product details */}
+
         <View style={styles.detailContainer}>
           <Text style={styles.detailLabel}>Category: </Text>
           <Text style={styles.additionalText}>{currentProduct.category}</Text>
@@ -98,21 +99,28 @@ const Product = ({route}) => {
           {currentProduct.description}
         </Text>
 
-        {/* Add to Cart Button */}
+        <View style={styles.btnGroup}>
+          {cartItems.find(item => item.productId === currentProduct._id) ? (
+            <ButtonField
+              title={'Remove From Cart'}
+              loading={removeCartLoading}
+              style={styles.removeToCartButton}
+              onPress={() =>
+                dispatch(removeCart(currentProduct._id))
+              }></ButtonField>
+          ) : (
+            <ButtonField
+              title={'Add to Cart'}
+              loading={postCartLoading}
+              style={styles.addToCartButton}
+              onPress={() =>
+                dispatch(
+                  addCartItem({productId: currentProduct._id, quantity: 1}),
+                )
+              }></ButtonField>
+          )}
+        </View>
 
-        {/* <TouchableOpacity
-          style={styles.addToCartButton}
-          onPress={() => dispatch(addCartItem(currentProduct._id))}>
-          <Text style={styles.addToCartText}>Add to Cart</Text>
-        </TouchableOpacity> */}
-
-        <ButtonField
-          title={'Add to Cart'}
-          loading={postCartLoading}
-          style={styles.addToCartButton}
-          onPress={() =>
-            dispatch(addCartItem({productId:currentProduct._id,quantity:1}))
-          }></ButtonField>
       </View>
     </ScrollView>
   );
@@ -126,16 +134,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
   },
   mainImageContainer: {
-    height: 300, // Adjusted height for the main image
+    height: 300,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10, // Space between the main image and thumbnails
+    marginBottom: 10,
     paddingVertical: 20,
   },
   mainProductImage: {
-    width: '100%', // Ensures the image takes up the full width
-    height: '100%', // Ensures the image takes up the full height of its container
-    resizeMode: 'contain', // Maintains the aspect ratio
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
     borderRadius: 10,
   },
   thumbnailContainer: {
@@ -149,7 +157,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: '#ddd',
     resizeMode: 'contain',
-    marginRight: 10, // Space between thumbnails
+    marginRight: 10,
   },
   productDetails: {
     padding: 20,
@@ -192,7 +200,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     fontSize: 16,
-    width: '40%', // Makes label width fixed
+    width: '40%',
   },
   addToCartButton: {
     backgroundColor: '#FF5722',
@@ -201,10 +209,26 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
+  },
+  removeToCartButton: {
+    backgroundColor: '#000',
+    paddingVertical: 15,
+    borderRadius: 5,
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
   },
   addToCartText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  btnGroup: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10,
   },
 });

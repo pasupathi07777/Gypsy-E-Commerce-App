@@ -5,9 +5,9 @@ import {axiosInstance} from '../utils/axios';
 const initialState = {
   cartLoading: false,
   postCartLoading: false,
+  removeCartLoading: false,
   cartItems: [],
-};
-
+}
 
 export const getCartItems = createAsyncThunk(
   'cart/getCartItems',
@@ -16,17 +16,15 @@ export const getCartItems = createAsyncThunk(
       const token = await getToken();
       const response = await axiosInstance.get(`/cart/get`, {
         params: {token},
-      });
-      return response.data;
+      })
+      return response.data
     } catch (err) {
       const error = err.response?.data ||
         err.response || {message: 'Something went wrong'};
       return rejectWithValue(error);
     }
   },
-);
-
-
+)
 
 export const addCartItem = createAsyncThunk(
   'cart/postCartItem',
@@ -47,19 +45,38 @@ export const addCartItem = createAsyncThunk(
   },
 );
 
-
+export const removeCart = createAsyncThunk(
+  'cart/removeCartItem',
+  async (cartItemId, {rejectWithValue}) => {
+    console.log('removeCart', cartItemId);
+    try {
+      const token = await getToken();
+      const response = await axiosInstance.delete(
+        `/cart/remove/${cartItemId}`,
+        {
+          params: {token},
+        },
+      );
+      return cartItemId;
+    } catch (err) {
+      const error = err.response?.data ||
+        err.response || {message: 'Something went wrong'};
+      return rejectWithValue(error);
+    }
+  },
+);
 
 export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    updateCart: (state, action) => {
-      state.cartItems = action.payload.cartItems;
-    },
+    // updateCart: (state, action) => {
+    //   state.cartItems = action.payload.cartItems;
+    // },
   },
   extraReducers: builder => {
     builder
-
+      // get
       .addCase(getCartItems.pending, state => {
         state.cartLoading = true;
       })
@@ -67,28 +84,46 @@ export const cartSlice = createSlice({
         state.cartLoading = false;
         state.cartItems = action.payload.cart;
         console.log(action.payload);
+        console.log(state.cartItems);
       })
       .addCase(getCartItems.rejected, (state, action) => {
         state.cartLoading = false;
         console.log(action.payload);
       })
-
+      // add
       .addCase(addCartItem.pending, state => {
         state.postCartLoading = true;
       })
       .addCase(addCartItem.fulfilled, (state, action) => {
         state.postCartLoading = false;
-        state.cartItems = [...state.cartItems, action.payload.cart];
+        state.cartItems = action.payload.cart;
         console.log(action.payload);
         console.log(state.cartItems);
       })
       .addCase(addCartItem.rejected, (state, action) => {
         state.postCartLoading = false;
         console.log(action.payload);
+      })
+
+      // remove
+      .addCase(removeCart.pending, state => {
+        state.removeCartLoading = true;
+      })
+      .addCase(removeCart.fulfilled, (state, action) => {
+        state.removeCartLoading = false;
+        state.cartItems = state.cartItems.filter(
+          item => item.productId !== action.payload,
+        );
+        console.log(action.payload);
+      })
+      .addCase(removeCart.rejected, (state, action) => {
+        state.removeCartLoading = false;
+        console.log(action.payload);
       });
+
   },
 });
 
-export const {updateCart} = cartSlice.actions;
+export const {} = cartSlice.actions;
 export const cartStates = state => state.cartReducer;
 export default cartSlice.reducer;

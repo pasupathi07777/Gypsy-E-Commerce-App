@@ -140,7 +140,7 @@ export const addToCart = async (req, res) => {
 // Remove product from cart
 export const removeFromCart = async (req, res) => {
   try {
-    const { productId } = req.body;
+    const { productId } = req.params;
 
     // Check if productId is provided
     if (!productId) {

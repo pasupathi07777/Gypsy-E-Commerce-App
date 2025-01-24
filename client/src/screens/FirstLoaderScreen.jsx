@@ -26,9 +26,7 @@ const FirstPageLoader = ({navigation}) => {
     dispatch(getUserAuth())
       .unwrap()
       .then(() => {
-
-            navigation.navigate('Home');
-
+        navigation.navigate('Home');
       })
       .catch(() => {
         navigation.navigate('Login');

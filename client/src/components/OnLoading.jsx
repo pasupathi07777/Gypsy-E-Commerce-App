@@ -5,7 +5,6 @@ const OnLoading = ({size = 'large', color = '#0000ff'}) => {
   return (
     <View style={styles.container}>
       <ActivityIndicator size={size} color={color} />
-      {/* <Text style={styles.text}>Loading...</Text> */}
     </View>
   );
 };
