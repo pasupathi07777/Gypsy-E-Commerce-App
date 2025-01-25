@@ -12,17 +12,21 @@ import {useDispatch, useSelector} from 'react-redux';
 import {productStates} from '../slices/productsSlice';
 import {addCartItem, cartStates, removeCart} from '../slices/cartSlice';
 import ButtonField from '../components/ButtonField';
+import { postWishlist, removeWishlist, wishlistStates } from '../slices/wishlistSlice';
+
+
+
 
 const Product = ({route}) => {
   const {id} = route.params;
   const {products} = useSelector(productStates);
-  const {cartItems, removeCartLoading} = useSelector(cartStates)
+  const {cartItems, removeCartLoading} = useSelector(cartStates);
   const [currentProduct, setCurrentProduct] = useState(null);
   const [mainImage, setMainImage] = useState(null);
   const dispatch = useDispatch();
   const {postCartLoading} = useSelector(cartStates);
-
-
+  const {postWishlistLoading, deleteWishlistLoading, wishlist} =
+    useSelector(wishlistStates);
 
   useEffect(() => {
     const product = products.find(prod => prod._id === id);
@@ -35,15 +39,14 @@ const Product = ({route}) => {
       <View style={styles.container}>
         <Text>Product not found</Text>
       </View>
-    )
+    );
   }
 
   return (
     <ScrollView style={styles.container}>
-
       <View style={styles.mainImageContainer}>
         {mainImage && (
-          <Image source={{uri: mainImage}} style={styles.mainProductImage} /> 
+          <Image source={{uri: mainImage}} style={styles.mainProductImage} />
         )}
       </View>
 
@@ -60,14 +63,11 @@ const Product = ({route}) => {
         contentContainerStyle={styles.thumbnailContainer}
       />
 
-
-
       <View style={styles.productDetails}>
         <Text style={styles.productName}>{currentProduct.name}</Text>
 
         <Text style={styles.productPrice}>₹{currentProduct.price}</Text>
         <Text style={styles.stockText}>In Stock: {currentProduct.stock}</Text>
-
 
         <View style={styles.detailContainer}>
           <Text style={styles.detailLabel}>Category: </Text>
@@ -119,8 +119,24 @@ const Product = ({route}) => {
                 )
               }></ButtonField>
           )}
+          {wishlist.find(item => item.productId === currentProduct._id) ? (
+            <ButtonField
+              title={'Remove Wishlist'}
+              loading={removeCartLoading}
+              style={styles.removeToCartButton}
+              onPress={() =>
+                dispatch(removeWishlist(currentProduct._id))
+              }></ButtonField>
+          ) : (
+            <ButtonField
+              title={'Add Wishlist'}
+              loading={postCartLoading}
+              style={styles.addToCartButton}
+              onPress={() =>
+                dispatch(postWishlist({productId:currentProduct._id}))
+              }></ButtonField>
+          )}
         </View>
-
       </View>
     </ScrollView>
   );

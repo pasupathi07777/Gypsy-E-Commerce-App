@@ -6,6 +6,8 @@ import  productSlice  from '../slices/productsSlice'
 import categorySlice from '../slices/categorySlice';
 import productsSlice from '../slices/productsSlice';
 import cartSlices from '../slices/cartSlice';
+import wishlistSlice from '../slices/wishlistSlice';
+import profileSlice from '../slices/profileSlice';
 
  
 
@@ -19,6 +21,8 @@ export const store = configureStore({
     productReducer: productSlice,
     categoryReducer: categorySlice,
     productsReducer: productsSlice,
-    cartReducer:cartSlices
+    cartReducer: cartSlices,
+    wishlistReducer: wishlistSlice,
+    profileReducer: profileSlice,
   },
 });

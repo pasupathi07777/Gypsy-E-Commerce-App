@@ -7,6 +7,7 @@ import {getProduct, productStates} from '../slices/productsSlice';
 import CustomCarousel from '../components/CustomCarousel';
 import ProductList from '../components/Products';
 import { getCartItems } from '../slices/cartSlice';
+import { getwishlist } from '../slices/wishlistSlice';
 
 
 const Home = ({navigation}) => {
@@ -16,6 +17,7 @@ const Home = ({navigation}) => {
   useEffect(() => {
     dispatch(getProduct());
     dispatch(getCartItems());
+    dispatch(getwishlist());
   }, [dispatch]);
 
 

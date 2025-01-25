@@ -7,6 +7,8 @@ import userRoute from "./routes/users.route.js";
 import productRoute from "./routes/product.route.js";   
 import categoryRoute from "./routes/Category.route.js";   
 import cartRoute from "./routes/cart.route.js";   
+import wishlistRoute from "./routes/wishlist.route.js";   
+import profileRoutes from "./routes/profileRoute.js";   
 
 dotenv.config({ path: "../.env" });
 
@@ -21,6 +23,8 @@ app.use("/api/user",userRoute);
 app.use("/api/product", productRoute)
 app.use("/api/category", categoryRoute);
 app.use("/api/cart", cartRoute);
+app.use("/api/wishlist", wishlistRoute);
+app.use("/api/profile", profileRoutes);
 
 
 app.listen(5000,'0.0.0.0', () => {

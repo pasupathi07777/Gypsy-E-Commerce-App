@@ -1,13 +1,15 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {getToken} from '../utils/tokenFunction';
 import {axiosInstance} from '../utils/axios';
+import { scanFile, stat } from 'react-native-fs';
 
 const initialState = {
   cartLoading: false,
   postCartLoading: false,
   removeCartLoading: false,
+  updateCartQuantityLoading: false,
   cartItems: [],
-}
+};
 
 export const getCartItems = createAsyncThunk(
   'cart/getCartItems',
@@ -16,15 +18,15 @@ export const getCartItems = createAsyncThunk(
       const token = await getToken();
       const response = await axiosInstance.get(`/cart/get`, {
         params: {token},
-      })
-      return response.data
+      });
+      return response.data;
     } catch (err) {
       const error = err.response?.data ||
         err.response || {message: 'Something went wrong'};
       return rejectWithValue(error);
     }
   },
-)
+);
 
 export const addCartItem = createAsyncThunk(
   'cart/postCartItem',
@@ -66,13 +68,32 @@ export const removeCart = createAsyncThunk(
   },
 );
 
+
+export const updateCartQuantity = createAsyncThunk(
+  'cart/updateCartQuantity',
+  async (data, {rejectWithValue}) => {
+    console.log('removeCart', data);
+    try {
+      const token = await getToken();
+      const response = await axiosInstance.patch(`/cart/update`,data,{
+        params: {token},
+      });
+      return response.data;
+    } catch (err) {
+      const error = err.response?.data ||
+        err.response || {message: 'Something went wrong'};
+      return rejectWithValue(error);
+    }
+  },
+);
+
 export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    // updateCart: (state, action) => {
-    //   state.cartItems = action.payload.cartItems;
-    // },
+   updateCart:(state,action)=>{
+    state.cartItems=action.payload
+   }
   },
   extraReducers: builder => {
     builder
@@ -111,19 +132,31 @@ export const cartSlice = createSlice({
       })
       .addCase(removeCart.fulfilled, (state, action) => {
         state.removeCartLoading = false;
-        state.cartItems = state.cartItems.filter(
-          item => item.productId !== action.payload,
-        );
+        state.cartItems = state.cartItems.filter(item => item.productId !== action.payload);
         console.log(action.payload);
       })
       .addCase(removeCart.rejected, (state, action) => {
         state.removeCartLoading = false;
+        console.log(action.payload);
+      })
+
+      // update quantity
+      .addCase(updateCartQuantity.pending, state => {
+        state.updateCartQuantityLoading = true;
+      })
+      .addCase(updateCartQuantity.fulfilled, (state, action) => {
+        state.updateCartQuantityLoading = false;
+        state.cartItems = action.payload.cart;
+        console.log(action.payload);
+      })
+      .addCase(updateCartQuantity.rejected, (state, action) => {
+        state.updateCartQuantityLoading = false;
         console.log(action.payload);
       });
 
   },
 });
 
-export const {} = cartSlice.actions;
+export const {updateCart} = cartSlice.actions;
 export const cartStates = state => state.cartReducer;
 export default cartSlice.reducer;

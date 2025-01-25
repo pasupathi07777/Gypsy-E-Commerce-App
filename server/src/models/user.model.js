@@ -20,24 +20,33 @@ const orderItemSchema = new mongoose.Schema({
   },
   quantity: { type: Number, required: true },
 });
+const wishlistItemSchema = new mongoose.Schema({
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+    required: true,
+  }     
+});
 
 
 // Define the User Schema
 const userSchema = new mongoose.Schema({
   username: String,
+  profilePic:String,
   email: { type: String, unique: true },
   otp: String,
   otpVerified: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   role: {
-    type:String,
-    default:"user",
-    enum:["user","admin"]
+    type: String,
+    default: "user",
+    enum: ["user", "admin"],
   },
   cart: [cartItemSchema],
+  wishlist: [wishlistItemSchema],
   // orders: [orderItemSchema],
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }], // Store order references
-  myProducts:[]
+  myProducts: [],
 });
 
 

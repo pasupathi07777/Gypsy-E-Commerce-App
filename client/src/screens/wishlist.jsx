@@ -7,38 +7,42 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import {useSelector, useDispatch} from 'react-redux';
+import {addAllToCart, removeWishlist, wishlistStates} from '../slices/wishlistSlice';
+import ButtonField from '../components/ButtonField'; 
 
 const Wishlist = () => {
-  const products = [
-    {
-      id: '1',
-      name: 'Stylish Handbag',
-      price: 79.99,
-      image: 'https://example.com/handbag.jpg', // Replace with actual image URL
-    },
-    {
-      id: '2',
-      name: 'Modern Sneakers',
-      price: 129.99,
-      image: 'https://example.com/sneakers.jpg', // Replace with actual image URL
-    },
-    {
-      id: '3',
-      name: 'Elegant Watch',
-      price: 199.99,
-      image: 'https://example.com/watch.jpg', // Replace with actual image URL
-    },
-  ];
+  const dispatch = useDispatch();
+  const {wishlist} = useSelector(wishlistStates);
+
+
+  const handleAddAllToCart = () => {
+    dispatch(addAllToCart());
+    if (wishlist.length > 0) {
+      console.log('Adding all items to the cart:', wishlist);
+
+    } else {
+      console.log('No items in the wishlist to add.');
+    }
+  };
 
   const renderProduct = ({item}) => (
     <View style={styles.productContainer}>
-      <Image source={{uri: item.image}} style={styles.productImage} />
+      {/* Product Image */}
+      <Image source={{uri: item.photo}} style={styles.productImage} />
+
+      {/* Product Details */}
       <View style={styles.productDetails}>
-        <Text style={styles.productName}>{item.name}</Text>
-        <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
+        <Text style={styles.productName}>{item.name.slice(0, 15)}...</Text>
+        <Text style={styles.sellerName}>Seller: {item.category}</Text>
+        <Text style={styles.productPrice}>₹{item.price}</Text>
       </View>
-      <TouchableOpacity style={styles.addToCartButton}>
-        <Text style={styles.addToCartText}>Add to Cart</Text>
+
+      {/* Remove Icon */}
+      <TouchableOpacity
+        onPress={() => dispatch(removeWishlist(item.productId))}
+        style={styles.removeButton}>
+        <Text style={styles.removeText}>Remove</Text>
       </TouchableOpacity>
     </View>
   );
@@ -46,12 +50,25 @@ const Wishlist = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Wishlist</Text>
-      <FlatList
-        data={products}
-        renderItem={renderProduct}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.productList}
-      />
+      {wishlist.length > 0 ? (
+        <FlatList
+          data={wishlist}
+          renderItem={renderProduct}
+          keyExtractor={item => item.productId}
+          contentContainerStyle={styles.productList}
+        />
+      ) : (
+        <Text style={styles.emptyText}>Your wishlist is empty.</Text>
+      )}
+
+      {/* Add All to Cart Button */}
+      <View style={styles.footer}>
+        <TouchableOpacity
+          onPress={handleAddAllToCart}
+          style={styles.addToCartButton}>
+          <Text style={styles.addToCartText}>Add All to Cart</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -61,6 +78,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 16,
+    paddingBottom: 70, // Ensure space for the footer
   },
   header: {
     fontSize: 24,
@@ -93,19 +111,54 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
+  sellerName: {
+    fontSize: 14,
+    color: '#555',
+    marginVertical: 4,
+  },
   productPrice: {
     fontSize: 14,
     color: '#888',
   },
-  addToCartButton: {
-    backgroundColor: '#007bff',
+  removeButton: {
+    backgroundColor: '#ff4d4d',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 4,
   },
-  addToCartText: {
+  removeText: {
     color: '#fff',
     fontWeight: '500',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+    backgroundColor: '#fff',
+    // borderTopWidth: 1,
+    // borderColor: '#ddd',
+    alignItems: 'center',
+  },
+  addToCartButton: {
+    backgroundColor: '#007bff',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    width: '100%',
+  },
+  addToCartText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 

@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import {useDispatch} from 'react-redux';
 import {getUserAuth} from '../slices/loginSlice';
-import { getAllCategory } from '../slices/categoryslice';
 
 
 const FirstPageLoader = ({navigation}) => {
@@ -37,7 +36,7 @@ const FirstPageLoader = ({navigation}) => {
 
   return (
     <ImageBackground
-      source={require('../assets/loder-screen/food-delivery-loder-screen.webp')} // Add your image path here
+      source={require('../assets/loder-screen/food-delivery-loder-screen.webp')} 
       style={styles.background}
       resizeMode="cover">
       <View style={styles.container}>
@@ -63,7 +62,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Optional overlay
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
   },
   logoContainer: {
     alignItems: 'center',
@@ -72,13 +71,13 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 40,
     fontWeight: 'bold',
-    color: '#1E90FF', // Bright blue color
+    color: '#1E90FF', 
     textTransform: 'uppercase',
     letterSpacing: 2,
   },
   tagline: {
     fontSize: 18,
-    color: '#4682B4', // Subtle darker blue for the tagline
+    color: '#4682B4', 
     marginTop: 10,
   },
   loader: {

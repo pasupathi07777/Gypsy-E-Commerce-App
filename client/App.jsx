@@ -16,6 +16,9 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import CategoryProduct from './src/screens/CategoryProduct';
 import wishlist from './src/screens/wishlist';
+import MyOrders from './src/screens/MyOrders';
+import Notifications from './src/screens/Notifications';
+import About from './src/screens/About';
 
 
 const Stack = createNativeStackNavigator();
@@ -90,7 +93,9 @@ function RootStack() {
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Signup" component={Signup} />
       <Stack.Screen name="Verify-Otp" component={VerifyOtp} />
-      <Stack.Screen name="CategoryProduct" component={CategoryProduct} />
+      <Stack.Screen name="MyOrders" component={MyOrders} />
+      <Stack.Screen name="Notifications" component={Notifications} />
+      <Stack.Screen name="About" component={About} />
     </Stack.Navigator>
   );
 }

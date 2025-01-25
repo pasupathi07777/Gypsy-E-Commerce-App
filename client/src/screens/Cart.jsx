@@ -12,12 +12,10 @@ import Header from '../components/Header';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   cartStates,
-  incrementQuantity,
-  decrementQuantity,
   removeCart,
+  updateCartQuantity,
 } from '../slices/cartSlice';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
 
 
 const Cart = ({navigation}) => {
@@ -27,31 +25,43 @@ const Cart = ({navigation}) => {
   const renderCartItem = ({item}) => (
     <View style={styles.cartItemContainer}>
       <Image source={{uri: item.photo}} style={styles.image} />
+
       <View style={styles.itemDetails}>
         <Text style={styles.itemName}>{item.name.slice(0, 10)}...</Text>
         <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
       </View>
+
       <View style={styles.quantityContainer}>
         <TouchableOpacity
           style={styles.quantityButton}
-          onPress={() => dispatch(decrementQuantity(item.productId))}>
+          onPress={() =>
+            dispatch(
+              updateCartQuantity({
+                productId: item.productId,
+                action: 'decrement',
+              }),
+            )
+          }>
           <Text style={styles.quantityText}>-</Text>
         </TouchableOpacity>
         <Text style={styles.quantity}>{item.quantity}</Text>
         <TouchableOpacity
           style={styles.quantityButton}
-          onPress={() => dispatch(incrementQuantity(item.productId))}>
+          onPress={() =>
+            dispatch(
+              updateCartQuantity({
+                productId: item.productId,
+                action: 'increment',
+              }),
+            )
+          }>
           <Text style={styles.quantityText}>+</Text>
         </TouchableOpacity>
       </View>
 
-
       <TouchableOpacity onPress={() => dispatch(removeCart(item.productId))}>
         <Icon name="delete" size={24} color="red" />
       </TouchableOpacity>
-
-
-
     </View>
   );
 
