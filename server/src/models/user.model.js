@@ -1,7 +1,9 @@
+
+
 import mongoose from "mongoose";
 import cron from "node-cron";
 
-// Define the Cart and Order Subschemas
+// Define the Cart, Order, and Wishlist Subschemas
 const cartItemSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -20,19 +22,28 @@ const orderItemSchema = new mongoose.Schema({
   },
   quantity: { type: Number, required: true },
 });
+
 const wishlistItemSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
     required: true,
-  }     
+  },
 });
 
+// Define the Address Schema with state
+const addressSchema = new mongoose.Schema({
+  homeAddress: { type: String, required: true },
+  email: { type: String, required: true },
+  mobile: { type: String, required: true },
+  pincode: { type: String, required: true },
+  state: { type: String, required: true },  // New state field added
+});
 
 // Define the User Schema
 const userSchema = new mongoose.Schema({
   username: String,
-  profilePic:String,
+  profilePic: String,
   email: { type: String, unique: true },
   otp: String,
   otpVerified: { type: Boolean, default: false },
@@ -44,21 +55,14 @@ const userSchema = new mongoose.Schema({
   },
   cart: [cartItemSchema],
   wishlist: [wishlistItemSchema],
-  // orders: [orderItemSchema],
-  orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }], // Store order references
+  orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
   myProducts: [],
+
+  address: addressSchema,
 });
 
-
-
+// Create the User Model
 const User = mongoose.model("User", userSchema);
-
-
-
-
-
-
-
 
 // Schedule a task to check for unverified users every minute
 cron.schedule("* * * * *", async () => {

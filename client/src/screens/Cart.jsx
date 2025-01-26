@@ -81,10 +81,7 @@ const Cart = ({navigation}) => {
         contentContainerStyle={styles.cartList}
       />
       <View style={styles.summaryContainer}>
-        <TextInput placeholder="Enter Coupon Code" style={styles.couponInput} />
-        <TouchableOpacity style={styles.applyButton}>
-          <Text style={styles.applyButtonText}>Apply</Text>
-        </TouchableOpacity>
+
         <View style={styles.summaryDetails}>
           <Text style={styles.summaryText}>
             Total Items ({cartItems.length}):

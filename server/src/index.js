@@ -9,6 +9,7 @@ import categoryRoute from "./routes/Category.route.js";
 import cartRoute from "./routes/cart.route.js";   
 import wishlistRoute from "./routes/wishlist.route.js";   
 import profileRoutes from "./routes/profileRoute.js";   
+import addressRoutes from "./routes/address.Routes.js";   
 
 dotenv.config({ path: "../.env" });
 
@@ -25,6 +26,7 @@ app.use("/api/category", categoryRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/wishlist", wishlistRoute);
 app.use("/api/profile", profileRoutes);
+app.use("/api/address", addressRoutes);
 
 
 app.listen(5000,'0.0.0.0', () => {

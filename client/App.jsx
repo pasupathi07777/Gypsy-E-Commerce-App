@@ -19,6 +19,8 @@ import wishlist from './src/screens/wishlist';
 import MyOrders from './src/screens/MyOrders';
 import Notifications from './src/screens/Notifications';
 import About from './src/screens/About';
+import Address from './src/screens/Address';
+import AddAddress from './src/components/AddAddress';
 
 
 const Stack = createNativeStackNavigator();
@@ -89,6 +91,7 @@ function RootStack() {
       <Stack.Screen name="Search" component={Search} />
       <Stack.Screen name="Cart" component={Cart} />
       <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="CategoryProduct" component={CategoryProduct} />
       <Stack.Screen name="Product" component={Product} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Signup" component={Signup} />
@@ -96,6 +99,8 @@ function RootStack() {
       <Stack.Screen name="MyOrders" component={MyOrders} />
       <Stack.Screen name="Notifications" component={Notifications} />
       <Stack.Screen name="About" component={About} />
+      <Stack.Screen name="Address" component={Address} />
+      <Stack.Screen name="Add-Address" component={AddAddress} />
     </Stack.Navigator>
   );
 }

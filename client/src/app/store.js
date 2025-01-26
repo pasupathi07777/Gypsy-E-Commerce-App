@@ -8,6 +8,7 @@ import productsSlice from '../slices/productsSlice';
 import cartSlices from '../slices/cartSlice';
 import wishlistSlice from '../slices/wishlistSlice';
 import profileSlice from '../slices/profileSlice';
+import addressSlice from '../slices/addressSlice';
 
  
 
@@ -24,5 +25,6 @@ export const store = configureStore({
     cartReducer: cartSlices,
     wishlistReducer: wishlistSlice,
     profileReducer: profileSlice,
+    addressReducer: addressSlice,
   },
 });

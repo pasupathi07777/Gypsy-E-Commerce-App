@@ -8,6 +8,7 @@ import CustomCarousel from '../components/CustomCarousel';
 import ProductList from '../components/Products';
 import { getCartItems } from '../slices/cartSlice';
 import { getwishlist } from '../slices/wishlistSlice';
+import { getAddress } from '../slices/addressSlice';
 
 
 const Home = ({navigation}) => {
@@ -18,6 +19,7 @@ const Home = ({navigation}) => {
     dispatch(getProduct());
     dispatch(getCartItems());
     dispatch(getwishlist());
+        dispatch(getAddress());
   }, [dispatch]);
 
 
