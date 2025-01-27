@@ -1,187 +1,87 @@
-// import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-// import { axiosInstance } from '../utils/axios';
-// import { getToken } from '../utils/tokenFunction';
-
-
-// const initialState = {
-//   addressLoading: false,
-//   addressError: null,
-//   userAddress: {},
-
-// };
-
-
-// // Fetch user address
-// export const getAddress = createAsyncThunk(
-//   'address/getAddress',
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       const token = await getToken();
-//       const response = await axiosInstance.get(`/address/get`, {
-//         params: { token },
-//       });
-//       return response.data;
-//     } catch (err) {
-//       const error = err.response?.data || err.response || { message: 'Something went wrong' };
-//       return rejectWithValue(error);
-//     }
-//   }
-// );
-
-// // Add new address
-// export const addAddress = createAsyncThunk(
-//   'address/addAddress',
-//   async (address, { rejectWithValue }) => {
-//     try {
-//       console.log(address);
-      
-//       const token = await getToken();
-//       const response = await axiosInstance.post(`/address/add`, address, {
-//         params: { token },
-//       });
-//       return response.data;
-//     } catch (err) {
-//       const error = err.response?.data || err.response || { message: 'Something went wrong' };
-//       return rejectWithValue(error);
-//     }
-//   }
-// );
-
-// // Update an existing address
-// export const updateAddress = createAsyncThunk(
-//   'address/updateAddress',
-//   async (address, { rejectWithValue }) => {
-//     try {
-//       const token = await getToken();
-//       const response = await axiosInstance.patch(`/address/update`, address, {
-//         params: { token },
-//       });
-//       return response.data; // Assuming API returns updated address
-//     } catch (err) {
-//       const error = err.response?.data || err.response || { message: 'Something went wrong' };
-//       return rejectWithValue(error);
-//     }
-//   }
-// );
-
-// // Slice to handle address state
-// export const addressSlice = createSlice({
-//   name: 'address',
-//   initialState,
-//   reducers: {},
-//   extraReducers: builder => {
-//     builder
-//       .addCase(getAddress.pending, state => {
-//         state.addressLoading = true;
-//       })
-//       .addCase(getAddress.fulfilled, (state, action) => {
-//         state.addressLoading = false;
-//         state.userAddress = action.payload.address;
-//         console.log(action.payload);
-//          // Set user address in state
-//       })
-//       .addCase(getAddress.rejected, (state, action) => {
-//         state.addressLoading = false;
-//         state.addressError = action.payload; // Set error if the request fails
-//         console.log(action.payload);
-//       })
-
-//       // add
-//       .addCase(addAddress.pending, state => {
-//         state.addressLoading = true;
-//       })
-//       .addCase(addAddress.fulfilled, (state, action) => {
-//         state.addressLoading = false;
-//         console.log(action.payload);
-        
-//         state.userAddress = action.payload.address; // Update the address after adding
-//       })
-//       .addCase(addAddress.rejected, (state, action) => {
-//         state.addressLoading = false;
-//         console.log(action.payload);// Set error if the request fails
-//       })
-
-//       // update
-//       .addCase(updateAddress.pending, state => {
-//         state.addressLoading = true;
-//       })
-//       .addCase(updateAddress.fulfilled, (state, action) => {
-//         state.addressLoading = false;
-//         // Update the address in state when updated successfully
-//         state.userAddress = action.payload; // Assuming the API returns the updated address
-//       })
-//       .addCase(updateAddress.rejected, (state, action) => {
-//         state.addressLoading = false;
-//         state.addressError = action.payload; // Set error if the request fails
-//       });
-//   },
-// });
-
-// // Selector to get address state from Redux store
-// export const addressStates = state => state.addressReducer;
-
-// export default addressSlice.reducer;
-
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { axiosInstance } from '../utils/axios';
-import { getToken } from '../utils/tokenFunction';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import {axiosInstance} from '../utils/axios';
+import {getToken} from '../utils/tokenFunction';
 
 const initialState = {
   addressLoading: false,
+  deleteLoading: false,
   addressError: null,
   userAddress: null,
-  currentStatus:null
+  currentStatus: null,
 };
 
 // Fetch user address
 export const getAddress = createAsyncThunk(
   'address/getAddress',
-  async (_, { rejectWithValue }) => {
+  async (_, {rejectWithValue}) => {
     try {
       const token = await getToken();
       const response = await axiosInstance.get(`/address/get`, {
-        params: { token },
+        params: {token},
       });
       return response.data;
     } catch (err) {
-      const error = err.response?.data || err.response || { message: 'Something went wrong' };
+      const error = err.response?.data ||
+        err.response || {message: 'Something went wrong'};
       return rejectWithValue(error);
     }
-  }
+  },
 );
 
 // Add new address
 export const addAddress = createAsyncThunk(
   'address/addAddress',
-  async (address, { rejectWithValue }) => {
+  async (address, {rejectWithValue}) => {
     try {
       const token = await getToken();
       const response = await axiosInstance.post(`/address/add`, address, {
-        params: { token },
+        params: {token},
       });
       return response.data;
     } catch (err) {
-      const error = err.response?.data || err.response || { message: 'Something went wrong' };
+      const error = err.response?.data ||
+        err.response || {message: 'Something went wrong'};
       return rejectWithValue(error);
     }
-  }
+  },
 );
 
 // Update an existing address
 export const updateAddress = createAsyncThunk(
   'address/updateAddress',
-  async (address, { rejectWithValue }) => {
+  async (address, {rejectWithValue}) => {
     try {
       const token = await getToken();
-      const response = await axiosInstance.patch(`/address/update`, address, {
-        params: { token },
+      console.log(address, 'update Address');
+      const response = await axiosInstance.put(`/address/update`, address, {
+        params: {token},
       });
-      return response.data; // Assuming API returns updated address
+      return response.data;
     } catch (err) {
-      const error = err.response?.data || err.response || { message: 'Something went wrong' };
+      const error = err.response?.data ||
+        err.response || {message: 'Something went wrong'};
       return rejectWithValue(error);
     }
-  }
+  },
+);
+
+// delete an existing address
+export const deleteUserAddress = createAsyncThunk(
+  'address/deleteAddress',
+  async (_, {rejectWithValue}) => {
+    try {
+      const token = await getToken();
+      console.log(address, 'update Address');
+      const response = await axiosInstance.delete(`/address/delete`, {
+        params: {token},
+      });
+      return response.data;
+    } catch (err) {
+      const error = err.response?.data ||
+        err.response || {message: 'Something went wrong'};
+      return rejectWithValue(error);
+    }
+  },
 );
 
 // Slice to handle address state
@@ -189,10 +89,9 @@ export const addressSlice = createSlice({
   name: 'address',
   initialState,
   reducers: {
-    updateStatus:(state,action)=>{
-      state.currentStatus=action.payload
-
-    }
+    updateStatus: (state, action) => {
+      state.currentStatus = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
@@ -203,7 +102,6 @@ export const addressSlice = createSlice({
         state.addressLoading = false;
         state.userAddress = action.payload.address;
         console.log(state.userAddress);
-        
       })
       .addCase(getAddress.rejected, (state, action) => {
         state.addressLoading = false;
@@ -226,13 +124,27 @@ export const addressSlice = createSlice({
       .addCase(updateAddress.fulfilled, (state, action) => {
         state.addressLoading = false;
         state.userAddress = action.payload.address;
+        state.currentStatus = null;
       })
       .addCase(updateAddress.rejected, (state, action) => {
         state.addressLoading = false;
         state.addressError = action.payload;
+        console.log(action.payload);
+      })
+      .addCase(deleteAddress.pending, state => {
+        state.deleteLoading = true;
+      })
+      .addCase(deleteAddress.fulfilled, (state, action) => {
+        state.deleteLoading = false;
+        state.userAddress={}
+        console.log(action.payload);
+      })
+      .addCase(deleteAddress.rejected, (state, action) => {
+        state.deleteLoading = false;
+        console.log(action.payload);
       });
   },
 });
-export const {updateStatus}=addressSlice.actions
+export const {updateStatus} = addressSlice.actions;
 export const addressStates = state => state.addressReducer;
 export default addressSlice.reducer;

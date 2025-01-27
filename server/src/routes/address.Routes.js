@@ -5,8 +5,8 @@ const router = express.Router();
 
 // Routes for address management
 router.post("/add",protectRoute, addAddress);  // Add address
-router.put("/:userId/address/:addressId",protectRoute, updateAddress);  // Update address
-router.delete("/:userId/address/:addressId",protectRoute, deleteAddress);  // Delete address
+router.put("/update", protectRoute, updateAddress);  // Update address
+router.delete("/delete",protectRoute, deleteAddress);  // Delete address
 router.get("/get",protectRoute, getAllAddresses);  // Get all addresses
 
 export default router;

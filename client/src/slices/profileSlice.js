@@ -18,7 +18,6 @@ export const addProfilePhoto = createAsyncThunk(
       });
 
       const token = await getToken();
-
       const response = await axiosInstance.put(
         '/profile/update-photo',
         profilePic,

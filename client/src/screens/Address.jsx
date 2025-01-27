@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
-import { addressStates, updateStatus } from '../slices/addressSlice';
+import { addressStates, deleteUserAddress, updateStatus } from '../slices/addressSlice';
 
 const Address = ({ navigation }) => {
   const dispatch = useDispatch();
-  const { userAddress } = useSelector(addressStates); // Get the user's address from the Redux store
+  const { userAddress } = useSelector(addressStates); 
 
   const editAddress = () => {
 
@@ -16,12 +16,12 @@ const Address = ({ navigation }) => {
   };
 
   const deleteAddress = () => {
-    dispatch(deleteAddress(userAddress.id)).unwrap()
+    dispatch(deleteUserAddress())
+      .unwrap()
       .then(() => {
-        // Handle address deletion success
         Alert.alert('Success', 'Address deleted successfully.');
       })
-      .catch((error) => {
+      .catch(error => {
         Alert.alert('Error', 'Failed to delete address. Please try again.');
       });
   };
@@ -34,7 +34,6 @@ const Address = ({ navigation }) => {
       <Header topic={"Address"} navigation={navigation} />
       <ScrollView>
         {userAddress ? (
-          // If address exists, display the address details and action buttons
           <View style={styles.addressItem}>
             <View style={styles.addressDetails}>
               <Text style={styles.label}>🏠 Home Address:</Text>
@@ -48,6 +47,8 @@ const Address = ({ navigation }) => {
 
               <Text style={styles.label}>📍 Pincode:</Text>
               <Text style={styles.value}>{userAddress.pincode}</Text>
+              <Text style={styles.label}>📍 State:</Text>
+              <Text style={styles.value}>{userAddress.state}</Text>
             </View>
             <View style={styles.actions}>
               <TouchableOpacity onPress={editAddress} style={styles.actionButton}>

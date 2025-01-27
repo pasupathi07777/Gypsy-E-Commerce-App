@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    flex: 1,
   },
   removeToCartButton: {
     backgroundColor: '#000',
@@ -235,6 +236,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    flex: 1,
   },
   addToCartText: {
     color: '#fff',

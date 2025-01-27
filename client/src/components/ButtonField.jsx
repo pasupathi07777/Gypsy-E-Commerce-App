@@ -1,8 +1,15 @@
-import { ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
- 
-const { width, height } = Dimensions.get('window');
-const ButtonField = ({ title, onPress, loading,style }) => {
+
+const {width, height} = Dimensions.get('window');
+const ButtonField = ({title, onPress, loading, style}) => {
   return (
     <TouchableOpacity
       style={[styles.button, style]}
@@ -28,13 +35,10 @@ export default ButtonField;
 const styles = StyleSheet.create({
   button: {
     height: 50,
-    backgroundColor: '#007BFF', 
+    backgroundColor: '#007BFF',
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    // marginBottom: 15,
-    // width: '100%',
-    flex: 1,
   },
   content: {
     flexDirection: 'row',
@@ -43,7 +47,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    color: '#fff', 
+    color: '#fff',
     fontWeight: 'bold',
   },
   loader: {
