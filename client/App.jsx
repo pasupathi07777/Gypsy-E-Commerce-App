@@ -21,6 +21,7 @@ import Notifications from './src/screens/Notifications';
 import About from './src/screens/About';
 import Address from './src/screens/Address';
 import AddAddress from './src/components/AddAddress';
+import Order from './src/screens/Order';
 
 
 const Stack = createNativeStackNavigator();
@@ -101,6 +102,7 @@ function RootStack() {
       <Stack.Screen name="About" component={About} />
       <Stack.Screen name="Address" component={Address} />
       <Stack.Screen name="Add-Address" component={AddAddress} />
+      <Stack.Screen name="Order" component={Order} />
     </Stack.Navigator>
   );
 }
