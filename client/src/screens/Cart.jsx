@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   StyleSheet,
@@ -6,20 +7,15 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  TextInput,
 } from 'react-native';
 import Header from '../components/Header';
 import {useSelector, useDispatch} from 'react-redux';
-import {
-  cartStates,
-  removeCart,
-  updateCartQuantity,
-} from '../slices/cartSlice';
+import {cartStates, removeCart, updateCartQuantity} from '../slices/cartSlice';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-
 const Cart = ({navigation}) => {
-  const {cartItems, removeCartLoading} = useSelector(cartStates);
+  const {cartItems, removeCartLoading, totalCartPrice} =
+    useSelector(cartStates);
   const dispatch = useDispatch();
 
   const renderCartItem = ({item}) => (
@@ -73,25 +69,31 @@ const Cart = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Header navigation={navigation} topic="Cart" />
-      <FlatList 
-        data={cartItems}
-        renderItem={renderCartItem}
-        keyExtractor={item => item.productId}
-        contentContainerStyle={styles.cartList}
-      />
-      <View style={styles.summaryContainer}>
-
-        <View style={styles.summaryDetails}>
-          <Text style={styles.summaryText}>
-            Total Items ({cartItems.length}):
-          </Text>
-          <Text style={styles.summaryValue}>${calculateTotal()}</Text>
+      {cartItems.length > 0 ? (
+        <>
+          <FlatList
+            data={cartItems}
+            renderItem={renderCartItem}
+            keyExtractor={item => item.productId}
+            contentContainerStyle={styles.cartList}
+          />
+          <View style={styles.summaryContainer}>
+            <View style={styles.summaryDetails}>
+              <Text style={styles.summaryText}>
+                Total Items ({cartItems.length}):
+              </Text>
+              <Text style={styles.summaryValue}>${totalCartPrice}</Text>
+            </View>
+            <TouchableOpacity style={styles.checkoutButton}>
+              <Text style={styles.checkoutButtonText}>Check Out</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      ) : (
+        <View style={styles.emptyCartContainer}>
+          <Text style={styles.emptyCartText}>No cart items</Text>
         </View>
-        <TouchableOpacity style={styles.checkoutButton}>
-          <Text style={styles.checkoutButtonText}>Check Out</Text>
-        </TouchableOpacity>
-      </View>
+      )}
     </View>
   );
 };
@@ -101,8 +103,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
   cartList: {
-    padding: 16,
+    // padding: 16,
   },
   cartItemContainer: {
     flexDirection: 'row',
@@ -152,24 +159,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#eee',
   },
-  couponInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    padding: 8,
-    marginBottom: 8,
-  },
-  applyButton: {
-    backgroundColor: '#007bff',
-    padding: 8,
-    borderRadius: 4,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  applyButtonText: {
-    color: '#fff',
-    fontWeight: '500',
-  },
   summaryDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -194,6 +183,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  emptyCartContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyCartText: {
+    fontSize: 18,
+    color: '#555',
   },
 });
 

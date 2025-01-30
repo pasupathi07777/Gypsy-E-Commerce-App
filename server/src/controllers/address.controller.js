@@ -106,17 +106,18 @@ console.log(req.body);
 
 // Delete an address from the user's addresses list
 export const deleteAddress = async (req, res) => {
+  console.log("delete");
+  
   try {
     const { userId } = req.params;
 
     // Find the user and remove the address
-    const user = await User.findById(userId);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
-
     // Clear the address field
-    user.address = null; // Set the address field to null
+    user.address = null; 
     await user.save();
 
     res

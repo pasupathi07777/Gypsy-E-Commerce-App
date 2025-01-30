@@ -8,19 +8,20 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {addAllToCart, removeWishlist, wishlistStates} from '../slices/wishlistSlice';
-import ButtonField from '../components/ButtonField'; 
+import {
+  addAllToCart,
+  removeWishlist,
+  wishlistStates,
+} from '../slices/wishlistSlice';
 
 const Wishlist = () => {
   const dispatch = useDispatch();
   const {wishlist} = useSelector(wishlistStates);
 
-
   const handleAddAllToCart = () => {
     dispatch(addAllToCart());
     if (wishlist.length > 0) {
       console.log('Adding all items to the cart:', wishlist);
-
     } else {
       console.log('No items in the wishlist to add.');
     }
@@ -49,26 +50,29 @@ const Wishlist = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Wishlist</Text>
+      {/* Conditional Rendering for Wishlist Items */}
       {wishlist.length > 0 ? (
-        <FlatList
-          data={wishlist}
-          renderItem={renderProduct}
-          keyExtractor={item => item.productId}
-          contentContainerStyle={styles.productList}
-        />
+        <>
+          <FlatList
+            data={wishlist}
+            renderItem={renderProduct}
+            keyExtractor={item => item.productId}
+            contentContainerStyle={styles.productList}
+          />
+          {/* Add All to Cart Button */}
+          <View style={styles.footer}>
+            <TouchableOpacity
+              onPress={handleAddAllToCart}
+              style={styles.addToCartButton}>
+              <Text style={styles.addToCartText}>Add All to Cart</Text>
+            </TouchableOpacity>
+          </View>
+        </>
       ) : (
-        <Text style={styles.emptyText}>Your wishlist is empty.</Text>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Your wishlist is empty.</Text>
+        </View>
       )}
-
-      {/* Add All to Cart Button */}
-      <View style={styles.footer}>
-        <TouchableOpacity
-          onPress={handleAddAllToCart}
-          style={styles.addToCartButton}>
-          <Text style={styles.addToCartText}>Add All to Cart</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -79,11 +83,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 16,
     paddingBottom: 70, // Ensure space for the footer
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
   },
   productList: {
     paddingBottom: 16,
@@ -130,11 +129,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '500',
   },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   emptyText: {
-    fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
-    marginTop: 20,
+    fontSize: 18,
+    color: '#555',
   },
   footer: {
     position: 'absolute',
@@ -143,8 +145,6 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 16,
     backgroundColor: '#fff',
-    // borderTopWidth: 1,
-    // borderColor: '#ddd',
     alignItems: 'center',
   },
   addToCartButton: {

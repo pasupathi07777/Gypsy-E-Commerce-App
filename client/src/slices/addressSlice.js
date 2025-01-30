@@ -10,6 +10,7 @@ const initialState = {
   currentStatus: null,
 };
 
+
 // Fetch user address
 export const getAddress = createAsyncThunk(
   'address/getAddress',
@@ -28,6 +29,7 @@ export const getAddress = createAsyncThunk(
   },
 );
 
+
 // Add new address
 export const addAddress = createAsyncThunk(
   'address/addAddress',
@@ -45,6 +47,7 @@ export const addAddress = createAsyncThunk(
     }
   },
 );
+
 
 // Update an existing address
 export const updateAddress = createAsyncThunk(
@@ -65,24 +68,27 @@ export const updateAddress = createAsyncThunk(
   },
 );
 
+
 // delete an existing address
 export const deleteUserAddress = createAsyncThunk(
   'address/deleteAddress',
   async (_, {rejectWithValue}) => {
     try {
       const token = await getToken();
-      console.log(address, 'update Address');
       const response = await axiosInstance.delete(`/address/delete`, {
         params: {token},
       });
       return response.data;
     } catch (err) {
+      console.log(err);
+      
       const error = err.response?.data ||
         err.response || {message: 'Something went wrong'};
       return rejectWithValue(error);
     }
   },
 );
+
 
 // Slice to handle address state
 export const addressSlice = createSlice({
@@ -131,15 +137,15 @@ export const addressSlice = createSlice({
         state.addressError = action.payload;
         console.log(action.payload);
       })
-      .addCase(deleteAddress.pending, state => {
+      .addCase(deleteUserAddress.pending, state => {
         state.deleteLoading = true;
       })
-      .addCase(deleteAddress.fulfilled, (state, action) => {
+      .addCase(deleteUserAddress.fulfilled, (state, action) => {
         state.deleteLoading = false;
-        state.userAddress={}
+        state.userAddress = null;
         console.log(action.payload);
       })
-      .addCase(deleteAddress.rejected, (state, action) => {
+      .addCase(deleteUserAddress.rejected, (state, action) => {
         state.deleteLoading = false;
         console.log(action.payload);
       });

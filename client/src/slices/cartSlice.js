@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {getToken} from '../utils/tokenFunction';
 import {axiosInstance} from '../utils/axios';
-import { scanFile, stat } from 'react-native-fs';
+
 
 const initialState = {
   cartLoading: false,
@@ -9,6 +9,7 @@ const initialState = {
   removeCartLoading: false,
   updateCartQuantityLoading: false,
   cartItems: [],
+  totalCartPrice:""
 };
 
 export const getCartItems = createAsyncThunk(
@@ -59,7 +60,7 @@ export const removeCart = createAsyncThunk(
           params: {token},
         },
       );
-      return cartItemId;
+      return response.data;
     } catch (err) {
       const error = err.response?.data ||
         err.response || {message: 'Something went wrong'};
@@ -104,8 +105,9 @@ export const cartSlice = createSlice({
       .addCase(getCartItems.fulfilled, (state, action) => {
         state.cartLoading = false;
         state.cartItems = action.payload.cart;
+         state.totalCartPrice = action.payload.totalCartPrice;
         console.log(action.payload);
-        console.log(state.cartItems);
+
       })
       .addCase(getCartItems.rejected, (state, action) => {
         state.cartLoading = false;
@@ -118,6 +120,7 @@ export const cartSlice = createSlice({
       .addCase(addCartItem.fulfilled, (state, action) => {
         state.postCartLoading = false;
         state.cartItems = action.payload.cart;
+         state.totalCartPrice = action.payload.totalCartPrice;
         console.log(action.payload);
         console.log(state.cartItems);
       })
@@ -132,7 +135,11 @@ export const cartSlice = createSlice({
       })
       .addCase(removeCart.fulfilled, (state, action) => {
         state.removeCartLoading = false;
-        state.cartItems = state.cartItems.filter(item => item.productId !== action.payload);
+        // state.cartItems = state.cartItems.filter(
+        //   item => item.productId !== action.payload.cart.productId,
+        // );
+         state.totalCartPrice = action.payload.totalCartPrice;
+         state.cartItems = action.payload.cart;
         console.log(action.payload);
       })
       .addCase(removeCart.rejected, (state, action) => {
@@ -148,6 +155,7 @@ export const cartSlice = createSlice({
         state.updateCartQuantityLoading = false;
         state.cartItems = action.payload.cart;
         console.log(action.payload);
+        state.totalCartPrice = action.payload.totalCartPrice;
       })
       .addCase(updateCartQuantity.rejected, (state, action) => {
         state.updateCartQuantityLoading = false;
