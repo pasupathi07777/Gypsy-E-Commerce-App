@@ -6,8 +6,9 @@ import { validateFields } from "../utils/functions.js";
 // update profile photo
 export const updateProfilePhoto = async (req, res) => {
   const { profilePic } = req.body;
+  
   // const { userId } = req.params;
-  console.log(req.body, "updateProfilePhoto");
+
 
   try {
     const user = await User.find({ _id: req.user._id });
@@ -20,37 +21,30 @@ export const updateProfilePhoto = async (req, res) => {
         },
       });
     }
+ 
 
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        errors: {
-          field: "user",
-          error: "user does not exist",
-        },
-      });
-    }
-
-    if (!profilePic) {
-      return res.status(400).json({
-        success: false,
-        errors: {
-          field: "profilePic",
-          error: "Profile pic is required",
-        },
-      });
-    }
-
+    // if (!profilePic) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     errors: {
+    //       field: "profilePic",
+    //       error: "Profile pic is required pasupathi",
+    //     },
+    //   });
+    // }
+  console.log(req.body, "updateProfilePhoto");
     const uploadResponse = await cloudinary.uploader.upload(profilePic);
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       { profilePic: uploadResponse.secure_url },
       { new: true }
     );
+    console.log(updatedUser);
+    
 
     return res.status(201).json({
       success: true,
-      message: "Updated Successfully",
+      message: "profilePic Updated Successfully",
       user: updatedUser,
     });
   } catch (error) {

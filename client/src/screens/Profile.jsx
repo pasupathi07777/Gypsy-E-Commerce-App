@@ -8,33 +8,41 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
+import RNFS from 'react-native-fs';
 import {useDispatch, useSelector} from 'react-redux';
 import {loginState} from '../slices/loginSlice';
-import {addProfilePhoto} from '../slices/profileSlice'; // Redux action to upload profile photo
+import {addProfilePhoto} from '../slices/profileSlice'; 
 import {launchImageLibrary} from 'react-native-image-picker';
 
 const Profile = ({navigation}) => {
   const {currentUser} = useSelector(loginState);
   const dispatch = useDispatch();
   const [profilePhoto, setProfilePhoto] = useState(currentUser?.profileImage);
-  const [loading, setLoading] = useState(false); // State to manage loader
+  const [loading, setLoading] = useState(false); 
 
-  const handleImageSelection = () => {
-    launchImageLibrary({mediaType: 'photo', quality: 1}, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.log('ImagePicker Error: ', response.errorMessage);
-      } else {
-        const source = response.assets[0].uri;
-        setProfilePhoto(source);
-        setLoading(true); 
-        dispatch(addProfilePhoto({image: source})).finally(() =>
-          setLoading(false),
-        ); 
-      }
-    });
-  };
+ const handleImageSelection = () => {
+   launchImageLibrary({mediaType: 'photo', quality: 1}, async response => {
+     if (response.didCancel) {
+       console.log('User cancelled image picker');
+     } else if (response.errorCode) {
+       console.log('ImagePicker Error: ', response.errorMessage);
+     } else if (response.assets && response.assets.length > 0) {
+       const source = response.assets[0].uri; // Ensure this is defined
+       setProfilePhoto(source); // Update UI
+       setLoading(true);
+
+       try {
+         const selectedImage = await RNFS.readFile(source, 'base64');
+         dispatch(addProfilePhoto(`data:image/jpeg;base64,${selectedImage}`));
+       } catch (error) {
+         console.log('Error reading image file:', error);
+       } finally {
+         setLoading(false);
+       }
+     }
+   });
+ };
+
 
   const profileOptions = [
     {
@@ -54,18 +62,6 @@ const Profile = ({navigation}) => {
       name: 'Delivery Address',
       icon: '\u{1F4CD}',
       action: () => navigation.navigate('Address'),
-    },
-    {
-      id: '6',
-      name: 'Notifications',
-      icon: '\u{1F514}',
-      action: () => navigation.navigate('Notifications'),
-    },
-    {
-      id: '7',
-      name: 'Help',
-      icon: '\u2753',
-      action: () => console.log('Navigate to Help'),
     },
     {
       id: '8',
@@ -88,7 +84,7 @@ const Profile = ({navigation}) => {
         <TouchableOpacity onPress={handleImageSelection}>
           <View style={styles.profileIconContainer}>
             {loading ? (
-              <ActivityIndicator size="small" color="#fff" /> // Loader while uploading
+              <ActivityIndicator size="small" color="#fff" /> 
             ) : (
               <>
                 <Image
@@ -138,8 +134,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     backgroundColor: '#f9f9f9',
-    gap:10,
-    justifyContent:"center"
+    gap: 10,
+    justifyContent: 'center',
   },
   profileIconContainer: {
     position: 'relative', // To position the upload icon over the image
@@ -191,7 +187,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   logoutButton: {
-    marginTop: 32,
+    marginVertical: 20,
     marginHorizontal: 16,
     padding: 16,
     backgroundColor: '#ff4d4d',

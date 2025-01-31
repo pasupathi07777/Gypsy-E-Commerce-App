@@ -10,7 +10,7 @@ import Login from './src/screens/Login';
 import VerifyOtp from './src/screens/OtpVerification';
 import Signup from './src/screens/Signup';
 import FirstPageLoader from './src/screens/FirstLoaderScreen';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -28,7 +28,6 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function RootTabs() {
-
   return (
     <Tab.Navigator
       screenOptions={{

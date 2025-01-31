@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   StyleSheet,
@@ -8,18 +7,19 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import Header from '../components/Header';
+
 import {useSelector, useDispatch} from 'react-redux';
 import {cartStates, removeCart, updateCartQuantity} from '../slices/cartSlice';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Cart = ({navigation}) => {
-  const {cartItems, removeCartLoading, totalCartPrice} =
-    useSelector(cartStates);
+
+  const {cartItems,totalCartPrice} =useSelector(cartStates);
   const dispatch = useDispatch();
 
   const renderCartItem = ({item}) => (
     <View style={styles.cartItemContainer}>
+
       <Image source={{uri: item.photo}} style={styles.image} />
 
       <View style={styles.itemDetails}>
@@ -28,6 +28,7 @@ const Cart = ({navigation}) => {
       </View>
 
       <View style={styles.quantityContainer}>
+
         <TouchableOpacity
           style={styles.quantityButton}
           onPress={() =>
@@ -38,6 +39,7 @@ const Cart = ({navigation}) => {
               }),
             )
           }>
+
           <Text style={styles.quantityText}>-</Text>
         </TouchableOpacity>
         <Text style={styles.quantity}>{item.quantity}</Text>
@@ -55,17 +57,11 @@ const Cart = ({navigation}) => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={() => dispatch(removeCart(item.productId))}>
+      <TouchableOpacity style={styles.deleteBtn} onPress={() => dispatch(removeCart(item.productId))}>
         <Icon name="delete" size={24} color="red" />
       </TouchableOpacity>
     </View>
   );
-
-  const calculateTotal = () => {
-    return cartItems
-      .reduce((sum, item) => sum + item.price * item.quantity, 0)
-      .toFixed(2);
-  };
 
   return (
     <View style={styles.container}>
@@ -84,7 +80,9 @@ const Cart = ({navigation}) => {
               </Text>
               <Text style={styles.summaryValue}>${totalCartPrice}</Text>
             </View>
-            <TouchableOpacity style={styles.checkoutButton}>
+            <TouchableOpacity
+              style={styles.checkoutButton}
+              onPress={() => navigation.navigate('Order')}>
               <Text style={styles.checkoutButtonText}>Check Out</Text>
             </TouchableOpacity>
           </View>
@@ -109,12 +107,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   cartList: {
-    // padding: 16,
+    padding: 16,
   },
   cartItemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
+    justifyContent: 'space-between',
   },
   image: {
     width: 80,
@@ -124,7 +123,7 @@ const styles = StyleSheet.create({
   },
   itemDetails: {
     flex: 1,
-    marginLeft: 16,
+    // marginLeft: 16,
   },
   itemName: {
     fontSize: 16,
@@ -193,6 +192,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#555',
   },
+  deleteBtn:{
+    marginLeft:10
+  }
 });
 
 export default Cart;

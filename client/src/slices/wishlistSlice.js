@@ -142,15 +142,15 @@ export const wishlistSlice = createSlice({
 
       // delete wishlist
       .addCase(removeWishlist.pending, state => {
-        state.deleteWishlist = true;
+        state.deleteWishlistLoading = true;
       })
       .addCase(removeWishlist.fulfilled, (state, action) => {
-        state.deleteWishlist = false;
+        state.deleteWishlistLoading = false;
         console.log(action.payload);
         state.wishlist = action.payload.wishlist;
       })
       .addCase(removeWishlist.rejected, (state, action) => {
-        state.deleteWishlist = false;
+        state.deleteWishlistLoading = false;
         console.log(action.payload);
       })
 

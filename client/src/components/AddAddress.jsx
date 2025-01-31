@@ -100,7 +100,8 @@ const AddAddress = ({navigation}) => {
             pincode: '',
             state: '',
           });
-          navigation.navigate('Address');
+          // navigation.navigate('Address');
+              navigation.goBack();
         })
         .catch(() => {
           Alert.alert('Error', 'Failed to add address.');

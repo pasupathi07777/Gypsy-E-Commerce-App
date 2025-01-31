@@ -8,66 +8,43 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {
-  addAllToCart,
-  removeWishlist,
-  wishlistStates,
-} from '../slices/wishlistSlice';
+import {removeWishlist, wishlistStates} from '../slices/wishlistSlice';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 
 const Wishlist = () => {
   const dispatch = useDispatch();
   const {wishlist} = useSelector(wishlistStates);
 
-  const handleAddAllToCart = () => {
-    dispatch(addAllToCart());
-    if (wishlist.length > 0) {
-      console.log('Adding all items to the cart:', wishlist);
-    } else {
-      console.log('No items in the wishlist to add.');
-    }
-  };
-
   const renderProduct = ({item}) => (
     <View style={styles.productContainer}>
-      {/* Product Image */}
+
       <Image source={{uri: item.photo}} style={styles.productImage} />
 
-      {/* Product Details */}
       <View style={styles.productDetails}>
         <Text style={styles.productName}>{item.name.slice(0, 15)}...</Text>
         <Text style={styles.sellerName}>Seller: {item.category}</Text>
         <Text style={styles.productPrice}>₹{item.price}</Text>
       </View>
 
-      {/* Remove Icon */}
       <TouchableOpacity
-        onPress={() => dispatch(removeWishlist(item.productId))}
-        style={styles.removeButton}>
-        <Text style={styles.removeText}>Remove</Text>
+        style={styles.deleteBtn}
+        onPress={() => dispatch(removeWishlist(item.productId))}>
+        <Icon name="delete" size={24} color="red" />
       </TouchableOpacity>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      {/* Conditional Rendering for Wishlist Items */}
+
       {wishlist.length > 0 ? (
-        <>
-          <FlatList
-            data={wishlist}
-            renderItem={renderProduct}
-            keyExtractor={item => item.productId}
-            contentContainerStyle={styles.productList}
-          />
-          {/* Add All to Cart Button */}
-          <View style={styles.footer}>
-            <TouchableOpacity
-              onPress={handleAddAllToCart}
-              style={styles.addToCartButton}>
-              <Text style={styles.addToCartText}>Add All to Cart</Text>
-            </TouchableOpacity>
-          </View>
-        </>
+        <FlatList
+          data={wishlist}
+          renderItem={renderProduct}
+          keyExtractor={item => item.productId}
+          contentContainerStyle={styles.productList}
+        />
       ) : (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Your wishlist is empty.</Text>
@@ -82,7 +59,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 16,
-    paddingBottom: 70, // Ensure space for the footer
   },
   productList: {
     paddingBottom: 16,
@@ -96,6 +72,7 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 8,
     backgroundColor: '#f9f9f9',
+    justifyContent: 'space-between',
   },
   productImage: {
     width: 60,
@@ -119,15 +96,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#888',
   },
-  removeButton: {
-    backgroundColor: '#ff4d4d',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 4,
-  },
-  removeText: {
-    color: '#fff',
-    fontWeight: '500',
+  deleteBtn: {
+    padding: 6,
   },
   emptyContainer: {
     flex: 1,
@@ -137,28 +107,6 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     color: '#555',
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 16,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-  },
-  addToCartButton: {
-    backgroundColor: '#007bff',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    width: '100%',
-  },
-  addToCartText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-    textAlign: 'center',
   },
 });
 

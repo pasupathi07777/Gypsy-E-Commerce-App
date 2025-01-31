@@ -16,13 +16,15 @@ import ConfirmationPopup from "./Components/ConfirmationPopup";
 import Category from "./Pages/Category";
 import { getAllCategory } from "./Redux/Slices/category.Slice";
 
+
+
+
+
 const App = () => {
-  const { loginStatus } = useSelector(authStates); // Get login status from Redux state
+
+  const { loginStatus } = useSelector(authStates);
   const dispatch = useDispatch();
   const navigation = useNavigate();
-
-
-
 
 
   useEffect(() => {

@@ -13,11 +13,10 @@ import {productStates} from '../slices/productsSlice';
 import {addCartItem, cartStates, removeCart} from '../slices/cartSlice';
 import ButtonField from '../components/ButtonField';
 import { postWishlist, removeWishlist, wishlistStates } from '../slices/wishlistSlice';
+import Header from '../components/Header';
 
+const Product = ({navigation,route}) => {
 
-
-
-const Product = ({route}) => {
   const {id} = route.params;
   const {products} = useSelector(productStates);
   const {cartItems, removeCartLoading} = useSelector(cartStates);
@@ -25,14 +24,14 @@ const Product = ({route}) => {
   const [mainImage, setMainImage] = useState(null);
   const dispatch = useDispatch();
   const {postCartLoading} = useSelector(cartStates);
-  const {postWishlistLoading, deleteWishlistLoading, wishlist} =
-    useSelector(wishlistStates);
+  const {postWishlistLoading, deleteWishlistLoading, wishlist} = useSelector(wishlistStates);
 
   useEffect(() => {
     const product = products.find(prod => prod._id === id);
     setCurrentProduct(product);
     setMainImage(product?.photos?.[0] || null);
   }, [id, products]);
+
 
   if (!currentProduct) {
     return (
@@ -42,8 +41,11 @@ const Product = ({route}) => {
     );
   }
 
+
   return (
     <ScrollView style={styles.container}>
+      <Header navigation={navigation} />
+
       <View style={styles.mainImageContainer}>
         {mainImage && (
           <Image source={{uri: mainImage}} style={styles.mainProductImage} />
@@ -122,7 +124,7 @@ const Product = ({route}) => {
           {wishlist.find(item => item.productId === currentProduct._id) ? (
             <ButtonField
               title={'Remove Wishlist'}
-              loading={removeCartLoading}
+              loading={deleteWishlistLoading}
               style={styles.removeToCartButton}
               onPress={() =>
                 dispatch(removeWishlist(currentProduct._id))
@@ -130,10 +132,10 @@ const Product = ({route}) => {
           ) : (
             <ButtonField
               title={'Add Wishlist'}
-              loading={postCartLoading}
+              loading={postWishlistLoading}
               style={styles.addToCartButton}
               onPress={() =>
-                dispatch(postWishlist({productId:currentProduct._id}))
+                dispatch(postWishlist({productId: currentProduct._id}))
               }></ButtonField>
           )}
         </View>

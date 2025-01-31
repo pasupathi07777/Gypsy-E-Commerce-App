@@ -14,7 +14,7 @@ import addressRoutes from "./routes/address.Routes.js";
 dotenv.config({ path: "../.env" });
 
 
-const app = express(); 
+const app = express();
 
 
 app.use(express.json({ limit: "1000mb" }));
