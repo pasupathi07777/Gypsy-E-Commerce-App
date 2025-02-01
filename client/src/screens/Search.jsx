@@ -2,16 +2,16 @@ import {
   StyleSheet,
   Text,
   View,
-  TextInput,
   FlatList,
   Image,
-  Pressable,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useState} from 'react';
 import {useSelector} from 'react-redux';
 import {productStates} from '../slices/productsSlice';
 import {useNavigation} from '@react-navigation/native';
 import Header from '../components/Header';
+import InputFeild from '../components/InputFeild';
 
 const Search = () => {
   const {products} = useSelector(productStates);
@@ -24,37 +24,55 @@ const Search = () => {
       product.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  // Render product item
-  const renderProduct = ({item}) => (
-    <Pressable
-      style={styles.productContainer}
-      onPress={() => navigation.navigate('Product', {id: item._id})}>
-      <Image source={{uri: item.photos[0]}} style={styles.productImage} />
-      <Text style={styles.productName}>{item.name.slice(0, 15)}</Text>
-    </Pressable>
-  );
+  const navigateProduct = id => {
+    navigation.navigate('Product', {id});
+  };
 
   return (
     <View style={styles.container}>
       <Header navigation={navigation} topic={'Search'} />
-      <View style={{padding: 10, backgroundColor: '#f9f9f9',flex:1}}>
-
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search by name or category"
+      <View style={styles.searchWrapper}>
+        <InputFeild
           value={searchQuery}
           onChangeText={setSearchQuery}
+          style={styles.searchInput}
+          placeholder="Search by name or category"
         />
 
-        <FlatList
-          data={filteredProducts}
-          numColumns={2} // Display items in 2 columns
-          keyExtractor={item => item._id.toString()}
-          renderItem={renderProduct}
-          contentContainerStyle={styles.productList}
-          showsVerticalScrollIndicator={false}
-        />
-        
+        {/* No products found */}
+        {filteredProducts.length === 0 && searchQuery.length > 0 ? (
+          <View style={styles.noProductContainer}>
+            <Text style={styles.noProductText}>
+              No products found matching your search.
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredProducts}
+            numColumns={2}
+            keyExtractor={item => item._id.toString()}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                onPress={() => navigateProduct(item._id)}
+                style={styles.productContainer}>
+                <Image
+                  source={{uri: item.photos[0]}}
+                  style={styles.productImage}
+                />
+
+                <View style={styles.productInfo}>
+                  <Text style={styles.productName}>
+                    {item.name.slice(0, 15)}...
+                  </Text>
+                  <Text style={styles.productPrice}>₹{item.price}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            contentContainerStyle={styles.productList}
+            columnWrapperStyle={styles.columnWrapper}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
       </View>
     </View>
   );
@@ -65,6 +83,11 @@ export default Search;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f9f9f9',
+  },
+  searchWrapper: {
+    padding: 5,
+    flex: 1,
   },
   searchInput: {
     height: 40,
@@ -72,34 +95,58 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
-    marginBottom: 20,
     fontSize: 16,
     backgroundColor: '#fff',
+    marginHorizontal: 5,
+    marginTop:5
+  },
+  noProductContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  noProductText: {
+    fontSize: 18,
+    color: '#555',
+    textAlign: 'center',
   },
   productList: {
+    paddingBottom: 10,
+  },
+  columnWrapper: {
     justifyContent: 'space-between',
-
   },
   productContainer: {
-    width: '48%',
+    flex: 1,
     marginBottom: 10,
-    marginRight: '4%',
-    alignItems: 'center',
+    marginHorizontal: 5,
     backgroundColor: '#fff',
+    borderRadius: 8,
+    overflow: 'hidden',
     paddingVertical: 10,
-    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+
   },
   productImage: {
     width: '100%',
     height: 150,
     resizeMode: 'contain',
-    marginBottom: 5,
+  },
+  productInfo: {
+    padding: 10,
   },
   productName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  productPrice: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FEAB0D',
     textAlign: 'center',
-    paddingHorizontal: 5,
   },
 });

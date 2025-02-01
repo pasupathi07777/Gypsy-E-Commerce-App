@@ -7,50 +7,87 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {productStates} from '../slices/productsSlice';
+import {postWishlist, wishlistStates} from '../slices/wishlistSlice';
 import {useNavigation} from '@react-navigation/native';
 import Header from '../components/Header';
+import Icon from 'react-native-vector-icons/AntDesign'; 
 
 const CategoryProduct = ({route}) => {
   const {category} = route.params;
   const {products} = useSelector(productStates);
+  const {wishlist} = useSelector(wishlistStates);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  // Filter products by category
   const filteredProducts = products.filter(
     product => product.category === category,
   );
 
-  // Navigate to the Product screen with the product ID
   const navigateProduct = id => {
     navigation.navigate('Product', {id});
   };
 
+  // Function to handle heart press
+  const handleHeartPress = id => {
+    console.log(`Wishlist toggled for Product ID: ${id}`);
+    dispatch(postWishlist({productId:id}));
+  };
+
+  if (filteredProducts.length === 0) {
+    return (
+      <View style={styles.noProductContainer}>
+        <Header navigation={navigation} topic={category} />
+        <Text style={styles.noProductText}>
+          Currently, no products are available in this category.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-
-      <Header navigation={navigation} topic={category}/>
+      <Header navigation={navigation} topic={category} />
 
       <FlatList
         data={filteredProducts}
-        numColumns={2} // Display items in 2 columns
+        numColumns={2}
         keyExtractor={item => item._id.toString()}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() => navigateProduct(item._id)} // Navigate on product click
-            style={styles.productContainer}>
-            {/* Product Image */}
-            <Image source={{uri: item.photos[0]}} style={styles.productImage} />
+        renderItem={({item}) => {
+          const isWishlisted = wishlist.some(w => w.productId === item._id);
 
-            {/* Product Info */}
-            <View style={styles.productInfo}>
-              <Text style={styles.productName}>{item.name.slice(0,15)}...</Text>
-              <Text style={styles.productPrice}>₹{item.price}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
+          return (
+            <TouchableOpacity
+              onPress={() => navigateProduct(item._id)}
+              style={styles.productContainer}>
+              {/* Heart Icon (Touchable) */}
+              <TouchableOpacity
+                onPress={() => handleHeartPress(item._id)}
+                style={styles.heartIcon}>
+                <Icon
+                  name={isWishlisted ? 'heart' : 'heart'}
+                  size={22}
+                  color={isWishlisted ? 'red' : 'gray'}
+                />
+              </TouchableOpacity>
+
+              <Image
+                source={{uri: item.photos[0]}}
+                style={styles.productImage}
+              />
+
+              <View style={styles.productInfo}>
+                <Text style={styles.productName}>
+                  {item.name.slice(0, 15)}...
+                </Text>
+                <Text style={styles.productPrice}>₹{item.price}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        }}
         contentContainerStyle={styles.productList}
+        columnWrapperStyle={styles.columnWrapper}
       />
     </View>
   );
@@ -61,30 +98,48 @@ export default CategoryProduct;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignContent: 'center',
     backgroundColor: '#f9f9f9',
   },
-  categoryTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    color: '#333',
+  noProductContainer: {
+    flex: 1,
+    backgroundColor: '#f9f9f9',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+  },
+  noProductText: {
+    fontSize: 18,
+    color: '#555',
+    textAlign: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   productList: {
+    paddingHorizontal: 5,
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  columnWrapper: {
     justifyContent: 'space-between',
-    padding: 10,
   },
   productContainer: {
     flex: 1,
-    marginBottom: 15,
-    marginRight: 10,
+    marginBottom: 10,
+    marginHorizontal: 5,
     backgroundColor: '#fff',
     borderRadius: 8,
     overflow: 'hidden',
     paddingVertical: 10,
-    alignItems: 'center', 
+    alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
+  },
+  heartIcon: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 5,
+    borderRadius: 50,
+    zIndex: 10,
   },
   productImage: {
     width: '100%',

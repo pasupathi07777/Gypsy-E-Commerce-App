@@ -1,71 +1,96 @@
-import User from "../models/User";
-import Order from "../models/Order";
-import Product from "../models/Product";
+import User from "../models/user.model.js";
+import Order from "../models/order.model.js";
 
-// Place an order
+
+
 export const placeOrder = async (req, res) => {
+console.log("Cart Product Order");
   try {
-    const { cartItems, totalPrice } = req.body;
-
-    if (!cartItems || cartItems.length === 0) {
-      return res.status(400).json({
-        success: false,
-        error: {
-          field: "cart",
-          message: "Cart cannot be empty.",
-        },
-      });
-    }
-
-    // Check if the user has the required products in their cart
+    const { paymentMethod, deliveryType } = req.body;
+   
     const user = await User.findById(req.user._id).populate("cart.productId");
+
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: {
-          field: "user",
-          message: "User not found.",
-        },
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    if (!user.cart || user.cart.length === 0) {
+      return res.status(400).json({ success: false, message: "Cart is empty" });
+    }
+
+    let totalPrice = 0;
+    let orderItems = [];
+
+    for (const cartItem of user.cart) {
+      const product = cartItem.productId;
+      if (!product) continue; 
+
+
+      const itemPrice = cartItem.quantity * product.price;
+      totalPrice += itemPrice;
+
+      orderItems.push({
+        productId: product._id,
+        quantity: cartItem.quantity,
+        price: product.price,
+        img: product.img, 
+        name: product.name, 
       });
     }
 
-    // Create the global order document
+
     const newOrder = new Order({
-      userId: req.user._id,
-      items: cartItems,
+      userId: user._id,
+      items: orderItems,
       totalPrice: totalPrice,
-      orderStatus: "Pending", // Initial order status
+      orderStatus: "Pending",
+      paymentStatus: "Pending",
+      paymentMethod: req.body.paymentMethod || "Cash on Delivery",
+      deliveryType: req.body.deliveryType || "Standard", 
+      address: user.address,
     });
 
-    // Save the global order to the Order collection
+
     await newOrder.save();
 
-    // Add the order reference to the user's order array
     user.orders.push(newOrder._id);
-    await user.save();
 
-    // Clear the user's cart after order placement
+
     user.cart = [];
     await user.save();
+
+
+    const populatedOrder = await Order.findById(newOrder._id)
+      .populate("items.productId", "_id img name") 
+      .lean();
 
     res.status(200).json({
       success: true,
       message: "Order placed successfully.",
-      order: newOrder,
+      order: {
+        _id: populatedOrder._id,
+        items: populatedOrder.items.map((item) => ({
+          productId: item.productId._id,
+          name: item.productId.name,
+          img: item.productId.img,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        totalAmount: populatedOrder.totalPrice,
+        orderStatus: populatedOrder.orderStatus,
+        deliveryType: populatedOrder.deliveryType,
+        paymentStatus: populatedOrder.paymentStatus,
+      },
     });
   } catch (error) {
     console.error("Error placing order:", error);
-    res.status(500).json({
-      success: false,
-      error: {
-        field: "server",
-        message: "Internal Server Error.",
-      },
-    });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
-// Get orders by user
+
 export const getUserOrders = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate("orders");
@@ -129,8 +154,7 @@ export const getAllOrders = async (req, res) => {
 
 
 
-import GlobalOrder from "../models/GlobalOrder";
-import User from "../models/User";
+
 
 // Update or Cancel Order
 export const updateOrCancelOrder = async (req, res) => {

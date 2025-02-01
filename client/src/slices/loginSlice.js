@@ -132,15 +132,19 @@ const loginSlice = createSlice({
   name: 'login',
   initialState,
   reducers: {
+
     updateCurrentUser: (state, action) => {
       state.currentUser = {...state.currentUser, ...action.payload};
     },
+
     setEditUser: (state, action) => {
       state.editUser = action.payload;
     },
+
     updateCurrentEmail: (state, action) => {
       state.currentEmail = action.payload;
     },
+    
   },
   extraReducers: builder => {
     builder

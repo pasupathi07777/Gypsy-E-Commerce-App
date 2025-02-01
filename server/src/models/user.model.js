@@ -3,7 +3,8 @@
 import mongoose from "mongoose";
 import cron from "node-cron";
 
-// Define the Cart, Order, and Wishlist Subschemas
+
+
 const cartItemSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -14,14 +15,7 @@ const cartItemSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now },
 });
 
-const orderItemSchema = new mongoose.Schema({
-  productId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Product",
-    required: true,
-  },
-  quantity: { type: Number, required: true },
-});
+
 
 const wishlistItemSchema = new mongoose.Schema({
   productId: {
@@ -31,16 +25,18 @@ const wishlistItemSchema = new mongoose.Schema({
   },
 });
 
-// Define the Address Schema with state
+
+
 const addressSchema = new mongoose.Schema({
   homeAddress: { type: String, required: true },
   email: { type: String, required: true },
   mobile: { type: String, required: true },
   pincode: { type: String, required: true },
-  state: { type: String, required: true },  // New state field added
+  state: { type: String, required: true },  
 });
 
-// Define the User Schema
+
+
 const userSchema = new mongoose.Schema({
   username: String,
   profilePic: String,
@@ -61,10 +57,10 @@ const userSchema = new mongoose.Schema({
   address: addressSchema,
 });
 
-// Create the User Model
+
+
 const User = mongoose.model("User", userSchema);
 
-// Schedule a task to check for unverified users every minute
 cron.schedule("* * * * *", async () => {
   try {
     const now = new Date();

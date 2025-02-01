@@ -12,11 +12,15 @@ import {useDispatch, useSelector} from 'react-redux';
 import {productStates} from '../slices/productsSlice';
 import {addCartItem, cartStates, removeCart} from '../slices/cartSlice';
 import ButtonField from '../components/ButtonField';
-import { postWishlist, removeWishlist, wishlistStates } from '../slices/wishlistSlice';
+import {
+  postWishlist,
+  removeWishlist,
+  wishlistStates,
+} from '../slices/wishlistSlice';
 import Header from '../components/Header';
+import Icon from 'react-native-vector-icons/AntDesign';
 
-const Product = ({navigation,route}) => {
-
+const Product = ({navigation, route}) => {
   const {id} = route.params;
   const {products} = useSelector(productStates);
   const {cartItems, removeCartLoading} = useSelector(cartStates);
@@ -24,14 +28,14 @@ const Product = ({navigation,route}) => {
   const [mainImage, setMainImage] = useState(null);
   const dispatch = useDispatch();
   const {postCartLoading} = useSelector(cartStates);
-  const {postWishlistLoading, deleteWishlistLoading, wishlist} = useSelector(wishlistStates);
+  const {postWishlistLoading, deleteWishlistLoading, wishlist} =
+    useSelector(wishlistStates);
 
   useEffect(() => {
     const product = products.find(prod => prod._id === id);
     setCurrentProduct(product);
     setMainImage(product?.photos?.[0] || null);
   }, [id, products]);
-
 
   if (!currentProduct) {
     return (
@@ -41,15 +45,36 @@ const Product = ({navigation,route}) => {
     );
   }
 
+  const isWishlisted = wishlist.some(
+    item => item.productId === currentProduct._id,
+  );
+
+  const handleWishlistToggle = () => {
+    if (isWishlisted) {
+      dispatch(removeWishlist(currentProduct._id));
+    } else {
+      dispatch(postWishlist({productId: currentProduct._id}));
+    }
+  };
+
+  const handleBuyNow = productId => {
+    console.log('Buying product with ID:', productId);
+  };
 
   return (
     <ScrollView style={styles.container}>
       <Header navigation={navigation} />
 
+      {/* Product Image Section */}
       <View style={styles.mainImageContainer}>
         {mainImage && (
           <Image source={{uri: mainImage}} style={styles.mainProductImage} />
         )}
+        <TouchableOpacity
+          style={styles.heartIcon}
+          onPress={handleWishlistToggle}>
+          <Icon name="heart" size={24} color={isWishlisted ? 'red' : 'gray'} />
+        </TouchableOpacity>
       </View>
 
       <FlatList
@@ -65,9 +90,9 @@ const Product = ({navigation,route}) => {
         contentContainerStyle={styles.thumbnailContainer}
       />
 
+      {/* Product Details Section */}
       <View style={styles.productDetails}>
         <Text style={styles.productName}>{currentProduct.name}</Text>
-
         <Text style={styles.productPrice}>₹{currentProduct.price}</Text>
         <Text style={styles.stockText}>In Stock: {currentProduct.stock}</Text>
 
@@ -101,15 +126,15 @@ const Product = ({navigation,route}) => {
           {currentProduct.description}
         </Text>
 
+        {/* Cart and Wishlist Buttons */}
         <View style={styles.btnGroup}>
           {cartItems.find(item => item.productId === currentProduct._id) ? (
             <ButtonField
               title={'Remove From Cart'}
               loading={removeCartLoading}
               style={styles.removeToCartButton}
-              onPress={() =>
-                dispatch(removeCart(currentProduct._id))
-              }></ButtonField>
+              onPress={() => dispatch(removeCart(currentProduct._id))}
+            />
           ) : (
             <ButtonField
               title={'Add to Cart'}
@@ -119,25 +144,14 @@ const Product = ({navigation,route}) => {
                 dispatch(
                   addCartItem({productId: currentProduct._id, quantity: 1}),
                 )
-              }></ButtonField>
+              }
+            />
           )}
-          {wishlist.find(item => item.productId === currentProduct._id) ? (
-            <ButtonField
-              title={'Remove Wishlist'}
-              loading={deleteWishlistLoading}
-              style={styles.removeToCartButton}
-              onPress={() =>
-                dispatch(removeWishlist(currentProduct._id))
-              }></ButtonField>
-          ) : (
-            <ButtonField
-              title={'Add Wishlist'}
-              loading={postWishlistLoading}
-              style={styles.addToCartButton}
-              onPress={() =>
-                dispatch(postWishlist({productId: currentProduct._id}))
-              }></ButtonField>
-          )}
+          <ButtonField
+            title={'Buy Now'}
+            style={styles.buyNowButton}
+            onPress={() => handleBuyNow(currentProduct._id)}
+          />
         </View>
       </View>
     </ScrollView>
@@ -157,12 +171,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
     paddingVertical: 20,
+    position: 'relative',
   },
   mainProductImage: {
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
     borderRadius: 10,
+  },
+  heartIcon: {
+    position: 'absolute',
+    top: 0,
+    right: 5,
+    backgroundColor: 'transparent',
+    padding: 8,
+    zIndex: 10,
   },
   thumbnailContainer: {
     paddingVertical: 10,
@@ -171,10 +194,8 @@ const styles = StyleSheet.create({
   thumbnailImage: {
     width: 60,
     height: 60,
-    resizeMode: 'cover',
-    borderRadius: 5,
-    borderColor: '#ddd',
     resizeMode: 'contain',
+    borderRadius: 5,
     marginRight: 10,
   },
   productDetails: {
@@ -184,7 +205,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
   },
   productName: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
     color: '#333',
@@ -205,11 +226,6 @@ const styles = StyleSheet.create({
     color: '#4CAF50',
     marginBottom: 15,
   },
-  additionalText: {
-    fontSize: 16,
-    color: '#555',
-    marginBottom: 5,
-  },
   detailContainer: {
     flexDirection: 'row',
     marginBottom: 8,
@@ -224,29 +240,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF5722',
     paddingVertical: 15,
     borderRadius: 5,
-    marginTop: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
     flex: 1,
   },
   removeToCartButton: {
     backgroundColor: '#000',
     paddingVertical: 15,
     borderRadius: 5,
-    marginTop: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
     flex: 1,
   },
-  addToCartText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+  buyNowButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 15,
+    borderRadius: 5,
+    flex: 1,
   },
   btnGroup: {
-    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 10,

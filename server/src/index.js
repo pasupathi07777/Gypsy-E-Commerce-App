@@ -10,6 +10,7 @@ import cartRoute from "./routes/cart.route.js";
 import wishlistRoute from "./routes/wishlist.route.js";   
 import profileRoutes from "./routes/profileRoute.js";   
 import addressRoutes from "./routes/address.Routes.js";   
+import orderRoutes from "./routes/order.route.js";   
 
 dotenv.config({ path: "../.env" });
 
@@ -28,6 +29,7 @@ app.use("/api/cart", cartRoute);
 app.use("/api/wishlist", wishlistRoute);
 app.use("/api/profile", profileRoutes);
 app.use("/api/address", addressRoutes);
+app.use("/api/order", orderRoutes);
 
 
 app.listen(5000,'0.0.0.0', () => {

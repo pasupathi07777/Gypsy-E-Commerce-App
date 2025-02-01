@@ -5,12 +5,10 @@ import {useNavigation} from '@react-navigation/native';
 const ProductList = ({category, products}) => {
   const navigation = useNavigation();
 
-  // Navigate to the category screen
   const navigateCategory = () => {
     navigation.navigate('CategoryProduct', {category});
   };
 
-  // Navigate to the product screen
   const navigateProduct = id => {
     navigation.navigate('Product', {id});
   };
@@ -41,7 +39,7 @@ const ProductList = ({category, products}) => {
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   categoryContainer: {
@@ -58,10 +56,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textTransform: 'capitalize',
-    paddingHorizontal: 5,
+    padding: 5,
   },
   categoryHeadingBtn: {
-    color: '#FEAB0D',
+    color: '#f03922',  
     fontWeight: 'bold',
   },
   productsWrapper: {
@@ -99,7 +97,8 @@ const styles = StyleSheet.create({
   newPrice: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FEAB0D',
+    color: '#f03922',
+    // color: '#FEAB0D',
   },
 });
 

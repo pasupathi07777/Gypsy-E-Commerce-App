@@ -19,16 +19,14 @@ const Cart = ({navigation}) => {
 
   const renderCartItem = ({item}) => (
     <View style={styles.cartItemContainer}>
-
       <Image source={{uri: item.photo}} style={styles.image} />
 
       <View style={styles.itemDetails}>
         <Text style={styles.itemName}>{item.name.slice(0, 10)}...</Text>
-        <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+        <Text style={styles.itemPrice}>₹{item.price.toFixed(2)}</Text>
       </View>
 
       <View style={styles.quantityContainer}>
-
         <TouchableOpacity
           style={styles.quantityButton}
           onPress={() =>
@@ -36,10 +34,10 @@ const Cart = ({navigation}) => {
               updateCartQuantity({
                 productId: item.productId,
                 action: 'decrement',
+                quantity: item.quantity,
               }),
             )
           }>
-
           <Text style={styles.quantityText}>-</Text>
         </TouchableOpacity>
         <Text style={styles.quantity}>{item.quantity}</Text>
@@ -57,7 +55,9 @@ const Cart = ({navigation}) => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.deleteBtn} onPress={() => dispatch(removeCart(item.productId))}>
+      <TouchableOpacity
+        style={styles.deleteBtn}
+        onPress={() => dispatch(removeCart(item.productId))}>
         <Icon name="delete" size={24} color="red" />
       </TouchableOpacity>
     </View>
@@ -78,7 +78,7 @@ const Cart = ({navigation}) => {
               <Text style={styles.summaryText}>
                 Total Items ({cartItems.length}):
               </Text>
-              <Text style={styles.summaryValue}>${totalCartPrice}</Text>
+              <Text style={styles.summaryValue}>₹{totalCartPrice}</Text>
             </View>
             <TouchableOpacity
               style={styles.checkoutButton}

@@ -8,24 +8,35 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {addressStates} from '../slices/addressSlice';
 import {cartStates} from '../slices/cartSlice';
 import ButtonField from '../components/ButtonField';
+import { orderStates, placeCartProductOrder } from '../slices/orderSlice';
 
 const Order = ({navigation}) => {
   const {userAddress} = useSelector(addressStates);
   const {cartItems, totalCartPrice} = useSelector(cartStates);
+  const dispatch=useDispatch()
+  const {placeCartProductOrderLoading}=useSelector(orderStates)
 
   const handlePlaceOrder = () => {
-    if (!userAddress) {
-      Alert.alert(
-        'Missing Address',
-        'Please add a shipping address before placing an order.',
-      );
-      return;
-    }
-    Alert.alert('Order Placed', 'Your order has been successfully placed!');
+        if (!userAddress) {
+          Alert.alert(
+            'Missing Address',
+            'Please add a shipping address before placing an order.',
+          );
+          return;
+        }
+    dispatch(placeCartProductOrder())
+      .unwrap()
+      .then(() => {
+        navigation.navigate('MyOrders');
+        Alert.alert('Order Placed', 'Your order has been successfully placed!');
+      })
+
+
+    
   };
 
   return (
@@ -77,9 +88,16 @@ const Order = ({navigation}) => {
       />
 
       {/* Sticky Bottom Button */}
-      <TouchableOpacity style={styles.placeOrderBtn} onPress={handlePlaceOrder}>
+      {/* <TouchableOpacity style={styles.placeOrderBtn} onPress={handlePlaceOrder}>
         <Text style={styles.btnText}>Place Order</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+
+      <ButtonField
+        loading={placeCartProductOrderLoading}
+        title={'Place Order'}
+        style={styles.placeOrderBtn}
+        onPress={handlePlaceOrder}
+      />
     </View>
   );
 };

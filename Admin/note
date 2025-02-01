@@ -1,45 +1,47 @@
-const express = require('express');
-const router = express.Router();
+// const express = require('express');
+// const router = express.Router();
 
-router.get('/get-users', async (req, res) => {
-  try {
-    // Access query parameters
-    const filters = req.query; // This contains the `filters` object
-    console.log('Filters:', filters);
+// router.get('/get-users', async (req, res) => {
+//   try {
+//     // Access query parameters
+//     const filters = req.query; // This contains the `filters` object
+//     console.log('Filters:', filters);
 
-    // Example: Use the filters to query the database
-    const users = await User.find(filters);
+//     // Example: Use the filters to query the database
+//     const users = await User.find(filters);
 
-    res.status(200).json(users); // Send the response
-  } catch (err) {
-    console.error('Error fetching users:', err);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
+//     res.status(200).json(users); // Send the response
+//   } catch (err) {
+//     console.error('Error fetching users:', err);
+//     res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// });
 
-module.exports = router;
+// module.exports = router;
  
 
-router.get('/get-users', async (req, res) => {
-    try {
-      // Access the Authorization token
-      const token = req.headers.authorization; // `Bearer <token>`
-      console.log('Token:', token);
+// router.get('/get-users', async (req, res) => {
+//     try {
+//       // Access the Authorization token
+//       const token = req.headers.authorization; // `Bearer <token>`
+//       console.log('Token:', token);
   
-      // Validate the token (optional)
-      // Example: Decode or verify the token using a library like `jsonwebtoken`
-      if (!token) {
-        return res.status(401).json({ message: 'Unauthorized' });
-      }
+//       // Validate the token (optional)
+//       // Example: Decode or verify the token using a library like `jsonwebtoken`
+//       if (!token) {
+//         return res.status(401).json({ message: 'Unauthorized' });
+//       }
   
-      // Perform your logic here (e.g., fetch users based on filters or user role)
-      const filters = req.query;
-      const users = await User.find(filters);
+//       // Perform your logic here (e.g., fetch users based on filters or user role)
+//       const filters = req.query;
+//       const users = await User.find(filters);
   
-      res.status(200).json(users);
-    } catch (err) {
-      console.error('Error fetching users:', err);
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  });
+//       res.status(200).json(users);
+//     } catch (err) {
+//       console.error('Error fetching users:', err);
+//       res.status(500).json({ message: 'Internal Server Error' });
+//     }
+//   });
   
+
+

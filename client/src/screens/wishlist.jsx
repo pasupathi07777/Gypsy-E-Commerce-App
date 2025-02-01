@@ -8,17 +8,28 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {removeWishlist, wishlistStates} from '../slices/wishlistSlice';
+import {
+  addAllToCart,
+  removeWishlist,
+  wishlistStates,
+} from '../slices/wishlistSlice';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import ButtonField from '../components/ButtonField';
 
-
-const Wishlist = () => {
+const Wishlist = ({navigation}) => {
   const dispatch = useDispatch();
-  const {wishlist} = useSelector(wishlistStates);
+  const {wishlist, addAllToCartLoading} = useSelector(wishlistStates);
+
+  const handleAddAllToCart = () => {
+    dispatch(addAllToCart())
+      .unwrap()
+      .then(() => {
+        navigation.navigate('Cart');
+      });
+  };
 
   const renderProduct = ({item}) => (
     <View style={styles.productContainer}>
-
       <Image source={{uri: item.photo}} style={styles.productImage} />
 
       <View style={styles.productDetails}>
@@ -37,14 +48,24 @@ const Wishlist = () => {
 
   return (
     <View style={styles.container}>
-
       {wishlist.length > 0 ? (
-        <FlatList
-          data={wishlist}
-          renderItem={renderProduct}
-          keyExtractor={item => item.productId}
-          contentContainerStyle={styles.productList}
-        />
+        <>
+          <FlatList
+            data={wishlist}
+            renderItem={renderProduct}
+            keyExtractor={item => item.productId}
+            contentContainerStyle={styles.productList}
+          />
+
+          <View style={styles.bottomContainer}>
+            <ButtonField
+              loading={addAllToCartLoading}
+              title={'Add All to Cart'}
+              style={styles.addAllToCartButton}
+              onPress={handleAddAllToCart}
+            />
+          </View>
+        </>
       ) : (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Your wishlist is empty.</Text>
@@ -61,15 +82,13 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   productList: {
-    paddingBottom: 16,
+    paddingBottom: 80, 
   },
   productContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
     padding: 12,
-    borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 8,
     backgroundColor: '#f9f9f9',
     justifyContent: 'space-between',
@@ -107,6 +126,27 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     color: '#555',
+  },
+  bottomContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    padding: 16,
+    borderTopWidth: 1,
+    borderColor: '#ddd',
+  },
+  addAllToCartButton: {
+    backgroundColor: '#FF5722',
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  addAllToCartText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 

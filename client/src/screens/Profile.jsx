@@ -11,38 +11,39 @@ import {
 import RNFS from 'react-native-fs';
 import {useDispatch, useSelector} from 'react-redux';
 import {loginState} from '../slices/loginSlice';
-import {addProfilePhoto} from '../slices/profileSlice'; 
+import {addProfilePhoto, profileStates} from '../slices/profileSlice';
 import {launchImageLibrary} from 'react-native-image-picker';
+import Icon from 'react-native-vector-icons/MaterialIcons'; 
 
 const Profile = ({navigation}) => {
   const {currentUser} = useSelector(loginState);
+  const {updateProfileLoading} = useSelector(profileStates);
   const dispatch = useDispatch();
-  const [profilePhoto, setProfilePhoto] = useState(currentUser?.profileImage);
-  const [loading, setLoading] = useState(false); 
+  const [profilePhoto, setProfilePhoto] = useState(currentUser.profilePic);
 
- const handleImageSelection = () => {
-   launchImageLibrary({mediaType: 'photo', quality: 1}, async response => {
-     if (response.didCancel) {
-       console.log('User cancelled image picker');
-     } else if (response.errorCode) {
-       console.log('ImagePicker Error: ', response.errorMessage);
-     } else if (response.assets && response.assets.length > 0) {
-       const source = response.assets[0].uri; // Ensure this is defined
-       setProfilePhoto(source); // Update UI
-       setLoading(true);
+  const handleImageSelection = () => {
+    launchImageLibrary({mediaType: 'photo', quality: 1}, async response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+      } else if (response.assets && response.assets.length > 0) {
+        const source = response.assets[0].uri;
 
-       try {
-         const selectedImage = await RNFS.readFile(source, 'base64');
-         dispatch(addProfilePhoto(`data:image/jpeg;base64,${selectedImage}`));
-       } catch (error) {
-         console.log('Error reading image file:', error);
-       } finally {
-         setLoading(false);
-       }
-     }
-   });
- };
+        try {
+          const selectedImage = await RNFS.readFile(source, 'base64');
+          dispatch(addProfilePhoto(`data:image/jpeg;base64,${selectedImage}`))
+            .unwrap()
+            .then(() => {
+                setProfilePhoto(source);
 
+            })
+        } catch (error) {
+          console.log('Error reading image file:', error);
+        } 
+      }
+    });
+  };
 
   const profileOptions = [
     {
@@ -63,12 +64,12 @@ const Profile = ({navigation}) => {
       icon: '\u{1F4CD}',
       action: () => navigation.navigate('Address'),
     },
-    {
-      id: '8',
-      name: 'About',
-      icon: '\u2139',
-      action: () => navigation.navigate('About'),
-    },
+    // {
+    //   id: '8',
+    //   name: 'About',
+    //   icon: '\u2139',
+    //   action: () => navigation.navigate('About'),
+    // },
   ];
 
   const renderOption = ({item}) => (
@@ -83,18 +84,25 @@ const Profile = ({navigation}) => {
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={handleImageSelection}>
           <View style={styles.profileIconContainer}>
-            {loading ? (
-              <ActivityIndicator size="small" color="#fff" /> 
+            {updateProfileLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
             ) : (
               <>
-                <Image
-                  source={{
-                    uri:
-                      profilePhoto || 'https://example.com/default-profile.jpg',
-                  }}
-                  style={styles.profileImage}
-                />
-                <Text style={styles.uploadIcon}>+</Text>
+                {profilePhoto ? (
+                  <Image
+                    source={{uri: currentUser.profilePic}}
+                    style={styles.profileImage}
+                  />
+                ) : (
+                  <Icon name="person" size={40} color="#fff" />
+                )}
+                <View style={styles.iconOverlay}>
+                  {profilePhoto ? (
+                    <Icon name="edit" size={14} color="#fff" />
+                  ) : (
+                    <Icon name="add" size={14} color="#fff" />
+                  )}
+                </View>
               </>
             )}
           </View>
@@ -138,24 +146,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   profileIconContainer: {
-    position: 'relative', // To position the upload icon over the image
+    position: 'relative',
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#4CAF50', // Background color for the circle
+    backgroundColor: '#4CAF50',
     justifyContent: 'center',
     alignItems: 'center',
   },
   profileImage: {
     width: 64,
     height: 64,
+    resizeMode: 'cover',
     borderRadius: 32,
   },
-  uploadIcon: {
+  iconOverlay: {
     position: 'absolute',
-    fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    borderRadius: 12,
+    padding: 4,
   },
   userInfoContainer: {
     flex: 1,

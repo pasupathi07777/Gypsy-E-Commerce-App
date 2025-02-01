@@ -76,6 +76,11 @@ export const updateCartQuantity = createAsyncThunk(
     console.log('removeCart', data);
     try {
       const token = await getToken();
+           if (data.action === 'decrement' && data.quantity <= 1) {
+             return rejectWithValue({
+               message: 'Quantity cannot be less than 1',
+             });
+           }
       const response = await axiosInstance.patch(`/cart/update`,data,{
         params: {token},
       });

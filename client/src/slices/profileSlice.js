@@ -1,10 +1,11 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {axiosInstance} from '../utils/axios';
 import {getToken} from '../utils/tokenFunction';
+import {updateCurrentUser} from './loginSlice';
 
 export const addProfilePhoto = createAsyncThunk(
   'profile/updatePhoto',
-  async (profilePic, {rejectWithValue}) => {
+  async (profilePic, {rejectWithValue, dispatch, getState}) => {
     try {
       console.log(profilePic);
       const token = await getToken();
@@ -15,6 +16,7 @@ export const addProfilePhoto = createAsyncThunk(
           params: {token},
         },
       );
+      dispatch(updateCurrentUser(response.data.user));
       return response.data;
     } catch (err) {
       console.log(err);
@@ -27,6 +29,7 @@ export const addProfilePhoto = createAsyncThunk(
 
 const initialState = {
   currentUser: {},
+  updateProfileLoading: false,
 };
 
 export const profileSlice = createSlice({
@@ -36,12 +39,16 @@ export const profileSlice = createSlice({
   extraReducers: builder => {
     builder
 
-      .addCase(addProfilePhoto.pending, state => {})
+      .addCase(addProfilePhoto.pending, state => {
+        state.updateProfileLoading = true;
+      })
       .addCase(addProfilePhoto.fulfilled, (state, action) => {
         console.log(action.payload);
+        state.updateProfileLoading = false;
       })
       .addCase(addProfilePhoto.rejected, (state, action) => {
         console.log(action.payload);
+        state.updateProfileLoading = false;
       });
   },
 });
