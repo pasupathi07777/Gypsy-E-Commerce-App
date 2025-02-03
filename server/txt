@@ -4,10 +4,10 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const app = express();
 
-// Connect to MongoDB
+// Connect to MongoDB  
 mongoose.connect('mongodb://localhost:27017/feathrly', { useNewUrlParser: true, useUnifiedTopology: true });
 
-// Define User schema
+// Define User schema  
 const userSchema = new mongoose.Schema({
   username: String,
   email: { type: String, unique: true },

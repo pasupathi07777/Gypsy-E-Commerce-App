@@ -90,10 +90,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchInput: {
-    height: 40,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 5,
+
     paddingLeft: 10,
     fontSize: 16,
     backgroundColor: '#fff',
@@ -122,7 +119,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginHorizontal: 5,
     backgroundColor: '#fff',
-    borderRadius: 8,
+    // borderRadius: 8,
     overflow: 'hidden',
     paddingVertical: 10,
     alignItems: 'center',

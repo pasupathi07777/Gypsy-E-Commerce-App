@@ -29,14 +29,15 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginBottom: 15,
     width: '100%',  
+    overflow:"hidden"
   },
   input: {
     padding: 10,
     fontSize: 16,
-    backgroundColor: '#f8f8f8', // Light background
-    borderRadius: 5, // Rounded corners
-    color: '#333', // Dark text color,
+    backgroundColor: '#f8f8f8', 
+    // borderRadius: 5,
+    color: '#333',
     backgroundColor: '#f8f8f8',
-    height: 50,
+    height: 55,
   },
 });

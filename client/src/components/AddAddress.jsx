@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import Header from './Header';
-import InputFeild from './InputFeild'; // Importing the custom InputFeild component
+import InputFeild from './InputFeild'; 
 import {useDispatch, useSelector} from 'react-redux';
 import {addAddress, addressStates, updateAddress} from '../slices/addressSlice';
 import RNPickerSelect from 'react-native-picker-select';
@@ -17,7 +17,7 @@ const AddAddress = ({navigation}) => {
   const dispatch = useDispatch();
   const {currentStatus, userAddress} = useSelector(addressStates);
 
-  // List of states in India
+
   const states = [
     {label: 'Tamil Nadu', value: 'Tamil Nadu'},
     {label: 'Karnataka', value: 'Karnataka'},
@@ -35,7 +35,7 @@ const AddAddress = ({navigation}) => {
   });
 
   useEffect(() => {
-    // Pre-fill fields if editing
+
     if (currentStatus) {
       setAddress({
         homeAddress: userAddress?.homeAddress || '',
@@ -52,7 +52,7 @@ const AddAddress = ({navigation}) => {
   };
 
   const handleSubmit = () => {
-    // Validation
+
     if (
       !address.homeAddress ||
       !address.email ||
@@ -77,7 +77,7 @@ const AddAddress = ({navigation}) => {
     }
 
     if (currentStatus) {
-      // Update existing address
+
       dispatch(updateAddress(address))
         .unwrap()
         .then(() => {
@@ -88,7 +88,7 @@ const AddAddress = ({navigation}) => {
           Alert.alert('Error', 'Failed to update address.');
         });
     } else {
-      // Add new address
+
       dispatch(addAddress(address))
         .unwrap()
         .then(() => {
@@ -100,7 +100,7 @@ const AddAddress = ({navigation}) => {
             pincode: '',
             state: '',
           });
-          // navigation.navigate('Address');
+
               navigation.goBack();
         })
         .catch(() => {
@@ -147,12 +147,31 @@ const AddAddress = ({navigation}) => {
           style={{
             inputAndroid: styles.inputField,
             inputIOS: styles.inputField,
+            backgroundColor: '#ccc',
             iconContainer: {
               top: 10,
               right: 12,
             },
           }}
+          // useNativeAndroidPickerStyle={false}
         />
+
+        {/* <RNPickerSelect
+          onValueChange={value => handleInputChange('state', value)}
+          items={states}
+          placeholder={{label: 'Select State', value: null}}
+          value={address.state}
+          style={{
+            inputAndroid: styles.inputField,
+            inputIOS: styles.inputField,
+            iconContainer: {
+              top: 15,
+              right: 12,
+            },
+          }}
+          useNativeAndroidPickerStyle={false} // Ensures styling works on Android
+        /> */}
+
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>
             {currentStatus ? 'Update Address' : 'Save Address'}
@@ -168,6 +187,7 @@ export default AddAddress;
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   container: {
     flexGrow: 1,
@@ -194,6 +214,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingLeft: 10,
     marginBottom: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#f9f9f9',
+  },
+  inputField: {
+    width: '100%',
+    height: 50, // Increased height
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingLeft: 10,
+    marginBottom: 20,
+    backgroundColor: '#f9f9f9',
+    justifyContent: 'center',
+
   },
 });

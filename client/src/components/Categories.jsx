@@ -6,18 +6,21 @@ import {useNavigation} from '@react-navigation/native';
 
 const Categories = () => {
   const dispatch = useDispatch();
-  const navigation = useNavigation(); // Hook for navigation
+  const navigation = useNavigation(); 
   const {categories} = useSelector(categoryStates);
+
 
   useEffect(() => {
     dispatch(getCategory());
   }, [dispatch]);
 
+
   const handleCategoryPress = category => {
     navigation.navigate('CategoryProduct', {
       category
-    }); // Navigate to CategoryScreen with data
+    }); 
   };
+
 
   const renderCategory = ({item}) => (
     <Pressable
@@ -27,6 +30,7 @@ const Categories = () => {
       <Text style={styles.categoryText}>{item.category}</Text>
     </Pressable>
   );
+
 
   return (
     <View style={styles.container}>
@@ -41,11 +45,14 @@ const Categories = () => {
   );
 };
 
+
 export default Categories;
+
 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
+    paddingVertical:10,
   },
   categoryContainer: {
     alignItems: 'center',
@@ -54,7 +61,7 @@ const styles = StyleSheet.create({
   categoryImage: {
     width: 60,
     height: 60,
-    borderRadius: 30, // Makes the image circular
+    borderRadius: 30, 
     marginBottom: 5,
   },
   categoryText: {

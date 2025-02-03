@@ -14,6 +14,7 @@ import {useNavigation} from '@react-navigation/native';
 import Header from '../components/Header';
 import Icon from 'react-native-vector-icons/AntDesign'; 
 
+
 const CategoryProduct = ({route}) => {
   const {category} = route.params;
   const {products} = useSelector(productStates);
@@ -29,7 +30,7 @@ const CategoryProduct = ({route}) => {
     navigation.navigate('Product', {id});
   };
 
-  // Function to handle heart press
+
   const handleHeartPress = id => {
     console.log(`Wishlist toggled for Product ID: ${id}`);
     dispatch(postWishlist({productId:id}));
@@ -54,6 +55,7 @@ const CategoryProduct = ({route}) => {
         data={filteredProducts}
         numColumns={2}
         keyExtractor={item => item._id.toString()}
+        showsVerticalScrollIndicator={false}
         renderItem={({item}) => {
           const isWishlisted = wishlist.some(w => w.productId === item._id);
 
@@ -61,7 +63,7 @@ const CategoryProduct = ({route}) => {
             <TouchableOpacity
               onPress={() => navigateProduct(item._id)}
               style={styles.productContainer}>
-              {/* Heart Icon (Touchable) */}
+
               <TouchableOpacity
                 onPress={() => handleHeartPress(item._id)}
                 style={styles.heartIcon}>
@@ -103,8 +105,7 @@ const styles = StyleSheet.create({
   noProductContainer: {
     flex: 1,
     backgroundColor: '#f9f9f9',
-    // justifyContent: 'center',
-    // alignItems: 'center',
+
   },
   noProductText: {
     fontSize: 18,
@@ -126,7 +127,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginHorizontal: 5,
     backgroundColor: '#fff',
-    borderRadius: 8,
     overflow: 'hidden',
     paddingVertical: 10,
     alignItems: 'center',

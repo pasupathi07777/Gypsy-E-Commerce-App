@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
     padding: 12,
-    borderRadius: 8,
     backgroundColor: '#f9f9f9',
     justifyContent: 'space-between',
   },
@@ -140,7 +139,7 @@ const styles = StyleSheet.create({
   addAllToCartButton: {
     backgroundColor: '#FF5722',
     padding: 14,
-    borderRadius: 8,
+    // borderRadius: 8,
     alignItems: 'center',
   },
   addAllToCartText: {

@@ -1,103 +1,115 @@
-import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  Alert,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, Text, View, FlatList, Image, Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {addressStates} from '../slices/addressSlice';
 import {cartStates} from '../slices/cartSlice';
 import ButtonField from '../components/ButtonField';
-import { orderStates, placeCartProductOrder } from '../slices/orderSlice';
+import {orderStates, placeCartProductOrder} from '../slices/orderSlice';
+import RNPickerSelect from 'react-native-picker-select';
+
 
 const Order = ({navigation}) => {
   const {userAddress} = useSelector(addressStates);
   const {cartItems, totalCartPrice} = useSelector(cartStates);
-  const dispatch=useDispatch()
-  const {placeCartProductOrderLoading}=useSelector(orderStates)
+  console.log(cartItems);
+
+  const dispatch = useDispatch();
+  const {placeCartProductOrderLoading} = useSelector(orderStates);
+
+  const [deliveryType, setDeliveryType] = useState('cod');
 
   const handlePlaceOrder = () => {
-        if (!userAddress) {
-          Alert.alert(
-            'Missing Address',
-            'Please add a shipping address before placing an order.',
-          );
-          return;
-        }
+    if (!userAddress) {
+      Alert.alert(
+        'Missing Address',
+        'Please add a shipping address before placing an order.',
+      );
+      return;
+    }
+
     dispatch(placeCartProductOrder())
       .unwrap()
       .then(() => {
-        navigation.navigate('MyOrders');
-        Alert.alert('Order Placed', 'Your order has been successfully placed!');
-      })
-
-
-    
+        navigation.navigate('Order-Confirm');
+      });
   };
+
+  useEffect(() => {
+    if (cartItems.length < 1) {
+      navigation.navigate('Home');
+    }
+  }, [cartItems, navigation]); 
 
   return (
     <View style={styles.container}>
+
       <FlatList
         data={cartItems}
         keyExtractor={item => item.productId.toString()}
-        contentContainerStyle={styles.flatListContent} // ✅ Added Padding for FlatList
+        contentContainerStyle={styles.flatListContent}
         ListHeaderComponent={
+
           <View style={styles.orderContainer}>
-            {/* Address Section */}
-            {userAddress ? (
-              <View style={styles.addressSection}>
-                <Text style={styles.sectionTitle}>📍 Shipping Address</Text>
-                <Text style={styles.value}>🏠 {userAddress.homeAddress} </Text>
-                <Text style={styles.value}>📧 {userAddress.email} </Text>
-                <Text style={styles.value}>📞 {userAddress.mobile} </Text>
-                <Text style={styles.value}>
-                  📌 {userAddress.pincode}, {userAddress.state}
-                </Text>
+
+            <View style={styles.addressSection}>
+              <Text style={styles.sectionTitle}>📍 Shipping Address</Text>
+              <Text style={styles.value}>🏠 {userAddress.homeAddress} </Text>
+              <Text style={styles.value}>📧 {userAddress.email} </Text>
+              <Text style={styles.value}>📞 {userAddress.mobile} </Text>
+              <Text style={styles.value}>
+                📌 {userAddress.pincode}, {userAddress.state}
+              </Text>
+
+              <View style={styles.deliveryTypeContainer}>
+                <Text style={styles.sectionTitle}>🚚 Delivery Type</Text>
+                <RNPickerSelect
+                  onValueChange={value => setDeliveryType(value)}
+                  items={[{label: 'Cash on Delivery', value: 'cod'}]}
+                  placeholder={{label: 'Select Delivery Type', value: 'cod'}}
+                  value={deliveryType}
+                  style={{
+                    inputAndroid: styles.inputField,
+                    inputIOS: styles.inputField,
+                    iconContainer: {
+                      top: 10,
+                      right: 12,
+                    },
+                  }}
+                />
               </View>
-            ) : (
-              <ButtonField
-                onPress={() => navigation.navigate('Add-Address')}
-                title={'Add Address'}
-              />
-            )}
+              
+            </View>
+
+
             <Text style={styles.sectionTitle}>🛒 Order Summary</Text>
           </View>
         }
+
         renderItem={({item}) => (
           <View style={styles.cartItem}>
             <Image source={{uri: item.photo}} style={styles.itemImage} />
             <View style={styles.itemDetails}>
-              <Text style={styles.cartText}>
-                {item.name} (x{item.quantity})
-              </Text>
+              <Text style={styles.cartText}>{item.name}</Text>
+              <Text style={styles.cartPrice}>Q{item.quantity}</Text>
               <Text style={styles.cartPrice}>
                 ₹{item.price * item.quantity}
               </Text>
             </View>
           </View>
         )}
-        ListFooterComponent={
-          <View style={styles.footerContainer}>
-            <Text style={styles.totalPrice}>💰 Total: ₹{totalCartPrice}</Text>
-          </View>
-        }
       />
 
-      {/* Sticky Bottom Button */}
-      {/* <TouchableOpacity style={styles.placeOrderBtn} onPress={handlePlaceOrder}>
-        <Text style={styles.btnText}>Place Order</Text>
-      </TouchableOpacity> */}
 
-      <ButtonField
-        loading={placeCartProductOrderLoading}
-        title={'Place Order'}
-        style={styles.placeOrderBtn}
-        onPress={handlePlaceOrder}
-      />
+      <View style={styles.footerContainer}>
+        <Text style={styles.totalPrice}>Total: ₹{totalCartPrice}</Text>
+        <ButtonField
+          loading={placeCartProductOrderLoading}
+          title={'Place Order'}
+          style={styles.placeOrderBtn}
+          onPress={handlePlaceOrder}
+        />
+      </View>
+
     </View>
   );
 };
@@ -110,21 +122,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f8f8',
   },
   flatListContent: {
-    padding: 15, // ✅ Prevents content from overlapping Place Order button
-    paddingBottom:80
+    paddingBottom: 100, 
   },
   orderContainer: {
     backgroundColor: '#fff',
     padding: 15,
-    borderRadius: 10,
     marginBottom: 10,
-    elevation: 2,
   },
   addressSection: {
     marginBottom: 20,
     padding: 10,
     backgroundColor: '#eef6ff',
-    borderRadius: 8,
   },
   sectionTitle: {
     fontSize: 16,
@@ -141,6 +149,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
+    paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
@@ -163,27 +172,45 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000',
   },
-  footerContainer: {
-    padding: 15,
+  deliveryTypeContainer: {
+    marginTop: 10,
+  },
+  inputField: {
+    fontSize: 16,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
     backgroundColor: '#fff',
-    borderRadius: 10,
-    marginBottom: 10,
-    elevation: 2,
   },
-  totalPrice: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'right',
-    color: '#000',
-  },
-  placeOrderBtn: {
+  footerContainer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    // padding: 15,
+    borderTopWidth: 1,
+    borderColor: '#ddd',
+  },
+  totalPrice: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    paddingHorizontal: 10,
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+  },
+  placeOrderBtn: {
     backgroundColor: '#28a745',
     padding: 15,
     alignItems: 'center',
+    flex: 1,
   },
   btnText: {
     color: '#fff',

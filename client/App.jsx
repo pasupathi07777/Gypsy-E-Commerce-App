@@ -22,6 +22,7 @@ import About from './src/screens/About';
 import Address from './src/screens/Address';
 import AddAddress from './src/components/AddAddress';
 import Order from './src/screens/Order';
+import OrderConfirm from './src/screens/OrderConfirm';
 
 
 const Stack = createNativeStackNavigator();
@@ -35,6 +36,9 @@ function RootTabs() {
         headerShown: false,
         tabBarStyle: {
           height: 40,
+          alignItems:"center",
+          justifyContent:"center"
+        
         },
       }}>
       <Tab.Screen
@@ -102,6 +106,7 @@ function RootStack() {
       <Stack.Screen name="Address" component={Address} />
       <Stack.Screen name="Add-Address" component={AddAddress} />
       <Stack.Screen name="Order" component={Order} />
+      <Stack.Screen name="Order-Confirm" component={OrderConfirm} />
     </Stack.Navigator>
   );
 }

@@ -28,8 +28,7 @@ const Product = ({navigation, route}) => {
   const [mainImage, setMainImage] = useState(null);
   const dispatch = useDispatch();
   const {postCartLoading} = useSelector(cartStates);
-  const {postWishlistLoading, deleteWishlistLoading, wishlist} =
-    useSelector(wishlistStates);
+  const {postWishlistLoading, deleteWishlistLoading, wishlist} = useSelector(wishlistStates);
 
   useEffect(() => {
     const product = products.find(prod => prod._id === id);
@@ -62,99 +61,106 @@ const Product = ({navigation, route}) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <Header navigation={navigation} />
 
-      {/* Product Image Section */}
-      <View style={styles.mainImageContainer}>
-        {mainImage && (
-          <Image source={{uri: mainImage}} style={styles.mainProductImage} />
-        )}
-        <TouchableOpacity
-          style={styles.heartIcon}
-          onPress={handleWishlistToggle}>
-          <Icon name="heart" size={24} color={isWishlisted ? 'red' : 'gray'} />
-        </TouchableOpacity>
-      </View>
-
-      <FlatList
-        data={currentProduct.photos}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => (
-          <TouchableOpacity onPress={() => setMainImage(item)}>
-            <Image source={{uri: item}} style={styles.thumbnailImage} />
-          </TouchableOpacity>
-        )}
-        contentContainerStyle={styles.thumbnailContainer}
-      />
-
-      {/* Product Details Section */}
-      <View style={styles.productDetails}>
-        <Text style={styles.productName}>{currentProduct.name}</Text>
-        <Text style={styles.productPrice}>₹{currentProduct.price}</Text>
-        <Text style={styles.stockText}>In Stock: {currentProduct.stock}</Text>
-
-        <View style={styles.detailContainer}>
-          <Text style={styles.detailLabel}>Category: </Text>
-          <Text style={styles.additionalText}>{currentProduct.category}</Text>
-        </View>
-        <View style={styles.detailContainer}>
-          <Text style={styles.detailLabel}>Seller: </Text>
-          <Text style={styles.additionalText}>{currentProduct.seller}</Text>
-        </View>
-        <View style={styles.detailContainer}>
-          <Text style={styles.detailLabel}>Warranty: </Text>
-          <Text style={styles.additionalText}>
-            {currentProduct.warranty} year(s)
-          </Text>
-        </View>
-        <View style={styles.detailContainer}>
-          <Text style={styles.detailLabel}>Delivery Time: </Text>
-          <Text style={styles.additionalText}>
-            {currentProduct.deliveryTime} days
-          </Text>
-        </View>
-        <View style={styles.detailContainer}>
-          <Text style={styles.detailLabel}>Return Policy: </Text>
-          <Text style={styles.additionalText}>
-            {currentProduct.returnPolicy} days
-          </Text>
-        </View>
-        <Text style={styles.productDescription}>
-          {currentProduct.description}
-        </Text>
-
-        {/* Cart and Wishlist Buttons */}
-        <View style={styles.btnGroup}>
-          {cartItems.find(item => item.productId === currentProduct._id) ? (
-            <ButtonField
-              title={'Remove From Cart'}
-              loading={removeCartLoading}
-              style={styles.removeToCartButton}
-              onPress={() => dispatch(removeCart(currentProduct._id))}
-            />
-          ) : (
-            <ButtonField
-              title={'Add to Cart'}
-              loading={postCartLoading}
-              style={styles.addToCartButton}
-              onPress={() =>
-                dispatch(
-                  addCartItem({productId: currentProduct._id, quantity: 1}),
-                )
-              }
-            />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Product Image Section */}
+        <View style={styles.mainImageContainer}>
+          {mainImage && (
+            <Image source={{uri: mainImage}} style={styles.mainProductImage} />
           )}
-          <ButtonField
-            title={'Buy Now'}
-            style={styles.buyNowButton}
-            onPress={() => handleBuyNow(currentProduct._id)}
-          />
+          <TouchableOpacity
+            style={styles.heartIcon}
+            onPress={handleWishlistToggle}>
+            <Icon
+              name="heart"
+              size={24}
+              color={isWishlisted ? 'red' : 'gray'}
+            />
+          </TouchableOpacity>
         </View>
+
+        <FlatList
+          data={currentProduct.photos}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => (
+            <TouchableOpacity onPress={() => setMainImage(item)}>
+              <Image source={{uri: item}} style={styles.thumbnailImage} />
+            </TouchableOpacity>
+          )}
+          contentContainerStyle={styles.thumbnailContainer}
+        />
+
+        {/* Product Details Section */}
+        <View style={styles.productDetails}>
+          <Text style={styles.productName}>{currentProduct.name}</Text>
+          <Text style={styles.productPrice}>₹{currentProduct.price}</Text>
+          <Text style={styles.stockText}>In Stock: {currentProduct.stock}</Text>
+
+          <View style={styles.detailContainer}>
+            <Text style={styles.detailLabel}>Category: </Text>
+            <Text style={styles.additionalText}>{currentProduct.category}</Text>
+          </View>
+          <View style={styles.detailContainer}>
+            <Text style={styles.detailLabel}>Seller: </Text>
+            <Text style={styles.additionalText}>{currentProduct.seller}</Text>
+          </View>
+          <View style={styles.detailContainer}>
+            <Text style={styles.detailLabel}>Warranty: </Text>
+            <Text style={styles.additionalText}>
+              {currentProduct.warranty} year(s)
+            </Text>
+          </View>
+          <View style={styles.detailContainer}>
+            <Text style={styles.detailLabel}>Delivery Time: </Text>
+            <Text style={styles.additionalText}>
+              {currentProduct.deliveryTime} days
+            </Text>
+          </View>
+          <View style={styles.detailContainer}>
+            <Text style={styles.detailLabel}>Return Policy: </Text>
+            <Text style={styles.additionalText}>
+              {currentProduct.returnPolicy} days
+            </Text>
+          </View>
+          <Text style={styles.productDescription}>
+            {currentProduct.description}
+          </Text>
+
+          {/* Cart and Wishlist Buttons */}
+        </View>
+      </ScrollView>
+      <View style={styles.btnGroup}>
+        {cartItems.find(item => item.productId === currentProduct._id) ? (
+          <ButtonField
+            title={'Remove From Cart'}
+            loading={removeCartLoading}
+            style={styles.removeToCartButton}
+            onPress={() => dispatch(removeCart(currentProduct._id))}
+          />
+        ) : (
+          <ButtonField
+            title={'Add to Cart'}
+            loading={postCartLoading}
+            style={styles.addToCartButton}
+            onPress={() =>
+              dispatch(
+                addCartItem({productId: currentProduct._id, quantity: 1}),
+              )
+            }
+          />
+        )}
+        <ButtonField
+          title={'Buy Now'}
+          style={styles.buyNowButton}
+          onPress={() => handleBuyNow(currentProduct._id)}
+        />
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -239,24 +245,22 @@ const styles = StyleSheet.create({
   addToCartButton: {
     backgroundColor: '#FF5722',
     paddingVertical: 15,
-    borderRadius: 5,
     flex: 1,
   },
   removeToCartButton: {
     backgroundColor: '#000',
     paddingVertical: 15,
-    borderRadius: 5,
+
     flex: 1,
   },
   buyNowButton: {
     backgroundColor: '#4CAF50',
     paddingVertical: 15,
-    borderRadius: 5,
+
     flex: 1,
   },
   btnGroup: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 10,
   },
 });

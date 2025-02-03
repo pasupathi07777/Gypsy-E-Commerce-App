@@ -202,7 +202,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     padding: 16,
     backgroundColor: '#ff4d4d',
-    borderRadius: 4,
     alignItems: 'center',
   },
   logoutText: {

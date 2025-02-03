@@ -6,14 +6,16 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 import {useSelector, useDispatch} from 'react-redux';
 import {cartStates, removeCart, updateCartQuantity} from '../slices/cartSlice';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { addressStates } from '../slices/addressSlice';
 
 const Cart = ({navigation}) => {
-
+  const {userAddress} = useSelector(addressStates);
   const {cartItems,totalCartPrice} =useSelector(cartStates);
   const dispatch = useDispatch();
 
@@ -63,6 +65,16 @@ const Cart = ({navigation}) => {
     </View>
   );
 
+  const onCheckOut=()=>{
+    if(!userAddress){
+      Alert.alert("",'Add Address');
+      navigation.navigate('Add-Address');
+    }else{
+      navigation.navigate('Order');
+    }
+
+  }
+
   return (
     <View style={styles.container}>
       {cartItems.length > 0 ? (
@@ -82,7 +94,7 @@ const Cart = ({navigation}) => {
             </View>
             <TouchableOpacity
               style={styles.checkoutButton}
-              onPress={() => navigation.navigate('Order')}>
+              onPress={onCheckOut}>
               <Text style={styles.checkoutButtonText}>Check Out</Text>
             </TouchableOpacity>
           </View>
@@ -123,7 +135,6 @@ const styles = StyleSheet.create({
   },
   itemDetails: {
     flex: 1,
-    // marginLeft: 16,
   },
   itemName: {
     fontSize: 16,
@@ -142,9 +153,7 @@ const styles = StyleSheet.create({
     height: 32,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
+    backgroundColor: '#f9f9f9',
   },
   quantityText: {
     fontSize: 18,
@@ -174,7 +183,7 @@ const styles = StyleSheet.create({
   checkoutButton: {
     backgroundColor: '#28a745',
     padding: 16,
-    borderRadius: 4,
+    // borderRadius: 4,
     alignItems: 'center',
     marginTop: 16,
   },
@@ -192,9 +201,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#555',
   },
-  deleteBtn:{
-    marginLeft:10
-  }
+  deleteBtn: {
+    marginLeft: 10,
+  },
 });
 
 export default Cart;

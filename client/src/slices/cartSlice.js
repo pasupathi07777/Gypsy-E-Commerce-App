@@ -99,6 +99,8 @@ export const cartSlice = createSlice({
   reducers: {
    updateCart:(state,action)=>{
     state.cartItems=action.payload
+    console.log(state.cartItems);
+    
    }
   },
   extraReducers: builder => {
@@ -140,9 +142,6 @@ export const cartSlice = createSlice({
       })
       .addCase(removeCart.fulfilled, (state, action) => {
         state.removeCartLoading = false;
-        // state.cartItems = state.cartItems.filter(
-        //   item => item.productId !== action.payload.cart.productId,
-        // );
          state.totalCartPrice = action.payload.totalCartPrice;
          state.cartItems = action.payload.cart;
         console.log(action.payload);
