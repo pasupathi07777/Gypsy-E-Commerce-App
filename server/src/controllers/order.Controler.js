@@ -1,11 +1,11 @@
 import User from "../models/user.model.js";
 import Order from "../models/order.model.js";
+import Product from "../models/product.model.js";
 
 
 export const placeOrder = async (req, res) => {
   console.log("Cart Product Order");
   try {
-
     const { paymentMethod, deliveryType } = req.body;
     const user = await User.findById(req.user._id).populate("cart.productId");
 
@@ -19,90 +19,57 @@ export const placeOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: "Cart is empty" });
     }
 
-    let totalPrice = 0;
-    let orderItems = [];
+    let orders = [];
 
     for (const cartItem of user.cart) {
       const product = cartItem.productId;
       if (!product) continue;
 
-      const itemPrice = cartItem.quantity * product.price;
-      totalPrice += itemPrice;
-
-      orderItems.push({
-        productId: product._id,
-        quantity: cartItem.quantity,
-        price: product.price,
-        img: product.img,
-        name: product.name,
+      // Create a separate order for each product
+      const newOrder = new Order({
+        userId: user._id,
+        items: {
+          productId: product._id,
+          quantity: cartItem.quantity,
+          price: product.price,
+        },
+        totalPrice: cartItem.quantity * product.price,
+        orderStatus: "Pending",
+        paymentStatus: "Pending",
+        paymentMethod: paymentMethod || "Cash on Delivery",
+        deliveryType: deliveryType || "Standard",
+        address: user.address,
       });
+
+      await newOrder.save();
+      user.orders.push(newOrder._id);
+      orders.push(newOrder);
     }
 
-    const newOrder = new Order({
-      userId: user._id,
-      items: orderItems,
-      totalPrice: totalPrice,
-      orderStatus: "Pending",
-      paymentStatus: "Pending",
-      paymentMethod: req.body.paymentMethod || "Cash on Delivery",
-      deliveryType: req.body.deliveryType || "Standard",
-      address: user.address,
-    });
-
-    await newOrder.save();
-
-    user.orders.push(newOrder._id);
+    // Empty the cart after order placement
     user.cart = [];
     await user.save();
 
-    const populatedOrder = await Order.findById(newOrder._id)
-      .populate("items.productId", "_id img name")
-      .lean();
-
     res.status(200).json({
       success: true,
-      message: "Order placed successfully.",
-      order: {
-        _id: populatedOrder._id,
-        items: populatedOrder.items.map((item) => ({
-          productId: item.productId._id,
-          name: item.productId.name,
-          img: item.productId.img,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-        totalAmount: populatedOrder.totalPrice,
-        orderStatus: populatedOrder.orderStatus,
-        deliveryType: populatedOrder.deliveryType,
-        paymentStatus: populatedOrder.paymentStatus,
-      },
+      message: "Orders placed successfully.",
+      orders,
     });
   } catch (error) {
-    console.error("Error placing order:", error);
+    console.error("Error placing orders:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
 
-
 export const getUserOrders = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).populate({
-      path: "orders",
-      populate: {
-        path: "items.productId",
-        select: "_id img name",
-      },
-    });
+    const userOrders = await Order.find({ userId: req.user._id })
+      .populate("items.productId", "_id photos name")
+      .sort({ createdAt: -1 }) // Sort by latest orders
+      .lean();
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found.",
-      });
-    }
-
-    if (!user.orders || user.orders.length === 0) {
+    if (!userOrders || userOrders.length === 0) {
       return res.status(200).json({
         success: true,
         message: "No orders found.",
@@ -110,19 +77,19 @@ export const getUserOrders = async (req, res) => {
       });
     }
 
-    const formattedOrders = user.orders.map((order) => ({
+    const formattedOrders = userOrders.map((order) => ({
       _id: order._id,
-      items: order.items.map((item) => ({
-        productId: item.productId._id,
-        name: item.productId.name,
-        img: item.productId.img,
-        quantity: item.quantity,
-        price: item.price,
-      })),
+      productId: order.items.productId?._id || null,
+      name: order.items.productId?.name || "Product not found",
+      photos: order.items.productId?.photos || "",
+      quantity: order.items.quantity,
+      price: order.items.price,
       totalAmount: order.totalPrice,
       orderStatus: order.orderStatus,
-      deliveryType: order.deliveryType,
       paymentStatus: order.paymentStatus,
+      paymentMethod: order.paymentMethod,
+      deliveryType: order.deliveryType || "Standard",
+      address: order.address,
       createdAt: order.createdAt,
     }));
 
@@ -139,6 +106,7 @@ export const getUserOrders = async (req, res) => {
     });
   }
 };
+
 
 
 // Get all orders (admin view)
@@ -172,98 +140,188 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
-// Update or Cancel Order
-export const updateOrCancelOrder = async (req, res) => {
+
+
+
+export const cancelUserOrder = async (req, res) => {
   try {
-    const {
-      orderId,
-      userId,
-      action,
-      orderStatus,
-      paymentStatus,
-      trackingNumber,
-      quantity,
-      productId,
-    } = req.body;
+    const { orderId } = req.params;
+    const userId = req.user._id;
+console.log(orderId, userId);
 
+    const order = await Order.findOne({ _id: orderId, userId });
 
-    if (!["update", "cancel"].includes(action)) {
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found or does not belong to the user.",
+      });
+    }
+
+    // Ensure that the order is "Pending" for cancellation
+    if (order.orderStatus !== "Pending") {
       return res.status(400).json({
         success: false,
-        error: "Invalid action. Must be 'update' or 'cancel'.",
+        message: "Only pending orders can be canceled.",
       });
     }
 
+    // Restore stock for each product in the order
+    // for (const item of order.items) {
+    //   await Product.findByIdAndUpdate(item.productId, {
+    //     $inc: { stock: item.quantity },
+    //   });
+    // }
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: "User not found",
-      });
-    }
+    // Update order status to "Canceled"
+    order.orderStatus = "Cancelled";
+    await order.save();
 
+    // // Remove the order from user's orders array
+    // await User.findByIdAndUpdate(userId, {
+    //   $pull: { orders: orderId },
+    // });
 
-    const globalOrder = await GlobalOrder.findById(orderId);
-    if (!globalOrder) {
-      return res.status(404).json({
-        success: false,
-        error: "Global Order not found",
-      });
-    }
-
-    if (action === "update") {
-      if (orderStatus) globalOrder.orderStatus = orderStatus;
-      if (paymentStatus) globalOrder.paymentStatus = paymentStatus;
-      if (trackingNumber) globalOrder.trackingNumber = trackingNumber;
-
-      if (quantity && productId) {
-        const itemToUpdate = globalOrder.items.find(
-          (item) => item.productId.toString() === productId
-        );
-        if (itemToUpdate) {
-          itemToUpdate.quantity = quantity;
-        }
-      }
-
-      await globalOrder.save();
-
-      const orderIndex = user.orders.indexOf(orderId);
-      if (orderIndex !== -1) {
-        user.orders[orderIndex] = globalOrder._id;
-        await user.save();
-      }
-
-      return res.status(200).json({
-        success: true,
-        message: "Order updated successfully",
-        updatedOrder: globalOrder,
-      });
-    }
-
-    if (action === "cancel") {
-      globalOrder.orderStatus = "canceled";
-      globalOrder.paymentStatus = "canceled";
-
-      await globalOrder.save();
-
-      const orderIndex = user.orders.indexOf(orderId);
-      if (orderIndex !== -1) {
-        user.orders[orderIndex] = globalOrder._id;
-        await user.save();
-      }
-
-      return res.status(200).json({
-        success: true,
-        message: "Order canceled successfully",
-        canceledOrder: globalOrder,
-      });
-    }
-  } catch (err) {
-    console.error("Error updating or canceling order:", err);
+    res.status(200).json({
+      success: true,
+      cancelProduct: order,
+      message: "Order canceled successfully.",
+    });
+  } catch (error) {
+    console.error("Error canceling order:", error);
     res.status(500).json({
       success: false,
-      error: "Internal Server Error",
+      message: "Internal Server Error",
     });
+  }
+};
+
+
+
+
+// export const placeDirectOrder = async (req, res) => {
+//   try {
+
+//     const { productId, quantity, paymentMethod, deliveryType } = req.body;
+//     console.log(productId, quantity);
+
+//     const user = await User.findById(req.user._id);
+//     if (!user) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "User not found" });
+//     }
+
+
+//     const product = await Product.findById(productId);
+//     if (!product) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Product not found" });
+//     }
+
+
+//     const totalPrice = quantity * product.price;
+//     const newOrder = new Order({
+//       userId: user._id,
+//       items: {
+//         productId: product._id,
+//         quantity: quantity || 1,
+//         price: product.price,
+//       },
+//       totalPrice,
+//       orderStatus: "Pending",
+//       paymentStatus: "Pending",
+//       paymentMethod: paymentMethod || "Cash on Delivery",
+//       deliveryType: deliveryType || "Standard",
+//       address: user.address,
+//     });
+
+//     await newOrder.save();
+
+//     user.orders.push(newOrder._id);
+//     await user.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Order placed successfully.",
+//       order: newOrder,
+//     });
+//   } catch (error) {
+//     console.error("Error placing direct order:", error);
+//     res.status(500).json({ success: false, message: "Internal Server Error" });
+//   }
+// };
+export const placeDirectOrder = async (req, res) => {
+  try {
+    const { productId, quantity, paymentMethod, deliveryType } = req.body;
+
+    console.log(
+      "Placing Direct Order for Product:",
+      productId,
+      "Quantity:",
+      quantity
+    );
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }
+
+    const orderQuantity = quantity > 0 ? quantity : 1; // Ensure at least 1 quantity
+    const totalPrice = orderQuantity * product.price;
+
+    // Create new order
+    const newOrder = new Order({
+      userId: user._id,
+      items: {
+        productId: product._id,
+        quantity: orderQuantity,
+        price: product.price,
+      },
+      totalPrice,
+      orderStatus: "Pending",
+      paymentStatus: "Pending",
+      paymentMethod: paymentMethod || "Cash on Delivery",
+      deliveryType: deliveryType || "Standard",
+      address: user.address,
+    });
+
+    await newOrder.save();
+    user.orders.push(newOrder._id);
+    await user.save();
+
+    // Send order details to the client
+    res.status(200).json({
+      success: true,
+      message: "Order placed successfully.",
+      order: {
+        _id: newOrder._id,
+        productId: product._id,
+        name: product.name,
+        photos: product.photos,
+        quantity: orderQuantity,
+        price: product.price,
+        totalPrice,
+        orderStatus: newOrder.orderStatus,
+        paymentStatus: newOrder.paymentStatus,
+        paymentMethod: newOrder.paymentMethod,
+        deliveryType: newOrder.deliveryType,
+        address: newOrder.address,
+        createdAt: newOrder.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error("Error placing direct order:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };

@@ -4,6 +4,8 @@ import User from "../models/user.model.js";
 export const protectRoute = async (req, res, next) => {
   try {
     const token = req.body.token || req.query.token;
+    console.log(token);
+    
     if (!token) {
       return res
         .status(401)
