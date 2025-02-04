@@ -108,7 +108,7 @@ export const addressSlice = createSlice({
       .addCase(getAddress.fulfilled, (state, action) => {
         state.addressLoading = false;
         state.userAddress = action.payload.address;
-        console.log(state.userAddress);
+        // console.log(state.userAddress);
       })
       .addCase(getAddress.rejected, (state, action) => {
         state.addressLoading = false;

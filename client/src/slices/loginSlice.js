@@ -169,7 +169,6 @@ const loginSlice = createSlice({
         state.loginLoading = false;
         state.currentUser = action.payload.user;
         state.loginStatus = true;
-        console.log(state.currentUser, 'state.currentUser');
       })
       .addCase(getUserAuth.rejected, (state, action) => {
         state.loginLoading = false;

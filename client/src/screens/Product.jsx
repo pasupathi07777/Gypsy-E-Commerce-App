@@ -19,6 +19,7 @@ import {
 } from '../slices/wishlistSlice';
 import Header from '../components/Header';
 import Icon from 'react-native-vector-icons/AntDesign';
+import { setDirectOrder } from '../slices/orderSlice';
 
 const Product = ({navigation, route}) => {
   const {id} = route.params;
@@ -57,6 +58,8 @@ const Product = ({navigation, route}) => {
   };
 
   const handleBuyNow = productId => {
+    dispatch(setDirectOrder(productId));
+    navigation.navigate("Order")
     console.log('Buying product with ID:', productId);
   };
 
@@ -157,7 +160,7 @@ const Product = ({navigation, route}) => {
         <ButtonField
           title={'Buy Now'}
           style={styles.buyNowButton}
-          onPress={() => handleBuyNow(currentProduct._id)}
+          onPress={() => handleBuyNow(currentProduct)}
         />
       </View>
     </View>

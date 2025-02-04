@@ -9,6 +9,7 @@ import ProductList from '../components/Products';
 import { getCartItems } from '../slices/cartSlice';
 import { getwishlist } from '../slices/wishlistSlice';
 import { getAddress } from '../slices/addressSlice';
+import { getOurOrder } from '../slices/orderSlice';
 
 
 const Home = ({navigation}) => {
@@ -20,6 +21,7 @@ const Home = ({navigation}) => {
     dispatch(getCartItems());
     dispatch(getwishlist());
         dispatch(getAddress());
+          dispatch(getOurOrder());
   }, [dispatch]);
 
 

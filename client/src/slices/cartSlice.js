@@ -113,7 +113,7 @@ export const cartSlice = createSlice({
         state.cartLoading = false;
         state.cartItems = action.payload.cart;
          state.totalCartPrice = action.payload.totalCartPrice;
-        console.log(action.payload);
+        // console.log(action.payload);
 
       })
       .addCase(getCartItems.rejected, (state, action) => {

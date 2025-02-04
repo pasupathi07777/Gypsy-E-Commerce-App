@@ -7,26 +7,36 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  Pressable,
 } from 'react-native';
 
 import {useSelector, useDispatch} from 'react-redux';
 import {cartStates, removeCart, updateCartQuantity} from '../slices/cartSlice';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { addressStates } from '../slices/addressSlice';
+import {addressStates} from '../slices/addressSlice';
 
 const Cart = ({navigation}) => {
   const {userAddress} = useSelector(addressStates);
-  const {cartItems,totalCartPrice} =useSelector(cartStates);
+  const {cartItems, totalCartPrice} = useSelector(cartStates);
   const dispatch = useDispatch();
+
+  const productOnclick = id => {
+    console.log(id);
+    navigation.navigate('Product', {id});
+  };
 
   const renderCartItem = ({item}) => (
     <View style={styles.cartItemContainer}>
-      <Image source={{uri: item.photo}} style={styles.image} />
+      <Pressable
+        style={styles.productDetail}
+        onPress={() => productOnclick(item.productId)}>
+        <Image source={{uri: item.photo}} style={styles.image} />
 
-      <View style={styles.itemDetails}>
-        <Text style={styles.itemName}>{item.name.slice(0, 10)}...</Text>
-        <Text style={styles.itemPrice}>₹{item.price.toFixed(2)}</Text>
-      </View>
+        <View style={styles.itemDetails}>
+          <Text style={styles.itemName}>{item.name.slice(0, 10)}...</Text>
+          <Text style={styles.itemPrice}>₹{item.price.toFixed(2)}</Text>
+        </View>
+      </Pressable>
 
       <View style={styles.quantityContainer}>
         <TouchableOpacity
@@ -65,15 +75,14 @@ const Cart = ({navigation}) => {
     </View>
   );
 
-  const onCheckOut=()=>{
-    if(!userAddress){
-      Alert.alert("",'Add Address');
+  const onCheckOut = () => {
+    if (!userAddress) {
+      Alert.alert('', 'Add Address');
       navigation.navigate('Add-Address');
-    }else{
+    } else {
       navigation.navigate('Order');
     }
-
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -135,6 +144,12 @@ const styles = StyleSheet.create({
   },
   itemDetails: {
     flex: 1,
+  },
+  productDetail: {
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center',
+    gap: 5,
   },
   itemName: {
     fontSize: 16,

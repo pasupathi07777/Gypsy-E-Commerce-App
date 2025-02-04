@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, Text, View, FlatList, Image, Pressable} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   addAllToCart,
@@ -28,21 +21,30 @@ const Wishlist = ({navigation}) => {
       });
   };
 
+  const productOnclick = id => {
+    console.log(id);
+    navigation.navigate('Product', {id});
+  };
+
   const renderProduct = ({item}) => (
     <View style={styles.productContainer}>
-      <Image source={{uri: item.photo}} style={styles.productImage} />
+      <Pressable
+        style={styles.productDetail}
+        onPress={() => productOnclick(item.productId)}>
+        <Image source={{uri: item.photo}} style={styles.productImage} />
 
-      <View style={styles.productDetails}>
-        <Text style={styles.productName}>{item.name.slice(0, 15)}...</Text>
-        <Text style={styles.sellerName}>Seller: {item.category}</Text>
-        <Text style={styles.productPrice}>₹{item.price}</Text>
-      </View>
+        <View style={styles.productDetails}>
+          <Text style={styles.productName}>{item.name.slice(0, 15)}...</Text>
+          <Text style={styles.sellerName}>Seller: {item.category}</Text>
+          <Text style={styles.productPrice}>₹{item.price}</Text>
+        </View>
+      </Pressable>
 
-      <TouchableOpacity
+      <Pressable
         style={styles.deleteBtn}
         onPress={() => dispatch(removeWishlist(item.productId))}>
         <Icon name="delete" size={24} color="red" />
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   productList: {
-    paddingBottom: 80, 
+    paddingBottom: 80,
   },
   productContainer: {
     flexDirection: 'row',
@@ -104,6 +106,11 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 16,
     fontWeight: '500',
+  },
+  productDetail: {
+    flexDirection: 'row',
+    flex:1
+    
   },
   sellerName: {
     fontSize: 14,

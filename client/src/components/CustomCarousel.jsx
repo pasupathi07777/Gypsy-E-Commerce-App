@@ -13,7 +13,6 @@ const screenWidth = Dimensions.get('window').width;
 
 const CustomCarousel = () => {
   const arr = [banners, banners];
-  console.log(arr[0].bannerOne);
   const [activeSlide, setActiveSlide] = useState(0);
 
   const onCurrent = useRef(view => {
