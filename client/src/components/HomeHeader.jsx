@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image, Pressable} from 'react-native';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -14,11 +14,9 @@ const HomeHeader = ({navigation}) => {
       </View>
 
       {/* Search Icon */}
-      <TouchableOpacity
-        onPress={onSearchPress}
-        style={styles.searchIconContainer}>
+      <Pressable onPress={onSearchPress} style={styles.searchIconContainer}>
         <Ionicons name="search-outline" size={26} color="#878787" />
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };
@@ -34,12 +32,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     height: 60,
     zIndex: 100,
-    // Shadow for Elevation
     elevation: 1, // Android shadow
-    // shadowColor: '#000',
-    // shadowOffset: {width: 0, height: 2},
-    // shadowOpacity: 0.2,
-    // shadowRadius: 3,
   },
   logoContainer: {
     flexDirection: 'row',

@@ -11,7 +11,7 @@ const Header = ({navigation, topic}) => {
     if (path === 'back') {
       navigation.goBack();
     } else {
-      navigation.navigate(path);
+      navigation.navigate('Home', {screen: path});
     }
   };
 

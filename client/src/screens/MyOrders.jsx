@@ -11,13 +11,13 @@ import {
 } from 'react-native';
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {getOurOrder, orderStates, cancelOrder} from '../slices/orderSlice';
+import {getOurOrder, orderStates, cancelOrder, setCancelOrderIds} from '../slices/orderSlice';
 import Header from '../components/Header';
 import ButtonField from '../components/ButtonField';
 
 const MyOrders = ({navigation}) => {
   const dispatch = useDispatch();
-  const {userOrders, getUserOrderLoading, cancelOrderLoading} =
+  const {userOrders, getUserOrderLoading, cancelOrderLoading, cancelOrderIds} =
     useSelector(orderStates);
 
 const handleCancelOrder = orderId => {
@@ -35,7 +35,8 @@ const handleCancelOrder = orderId => {
         onPress: () => {
 
           console.log('Cancelling order:', orderId);
-          dispatch(cancelOrder(orderId));
+          dispatch(setCancelOrderIds(orderId));
+          dispatch(cancelOrder(orderId))
         },
       },
     ],
@@ -105,7 +106,7 @@ const handleCancelOrder = orderId => {
 
             {item.orderStatus === 'Pending' && (
               <ButtonField
-                loading={cancelOrderLoading}
+                loading={cancelOrderIds.includes(item._id) && cancelOrderLoading}
                 title={'Cancel Order'}
                 style={styles.cancelButton}
                 onPress={() => handleCancelOrder(item._id)}

@@ -1,161 +1,279 @@
-// import React from "react";
-// import { Table, Pagination } from "rsuite"; // Import rsuite components
+// import React, { useState } from "react";
 
-// const { Column, HeaderCell, Cell } = Table;
+// const CustomTable = ({
+//   data,
+//   columns,
+//   actions,
+//   loading,
+//   itemsPerPage = 10,
+// }) => {
+//   const [currentPage, setCurrentPage] = useState(1);
 
-// const CustomTable = ({ data, columns, actions, limit, page, setPage, setLimit }) => {
-//   // Handle pagination and limit changes
-//   const handleChangeLimit = (dataKey) => {
-//     setPage(1); // Reset to page 1 when limit changes
-//     setLimit(dataKey); // Set the new limit
-//   };
+//   const totalPages = Math.ceil(data.length / itemsPerPage);
 
+//   const paginatedData = data.slice(
+//     (currentPage - 1) * itemsPerPage,
+//     currentPage * itemsPerPage
+//   );
 
 //   return (
-//     <div>
-//       <Table height={window.innerHeight} data={data}>
-//         {columns.map((col, index) => (
-//           <Column key={index} width={col.width || 200}>
-//             <HeaderCell>{col.header}</HeaderCell>
-//             <Cell>
-//               {(row) => (col.render ? col.render(row) : row[col.field])}
-//             </Cell>
-//           </Column>
-//         ))}
-
-//         {actions && (
-//           <Column width={150}>
-//             <HeaderCell>Actions</HeaderCell>
-//             <Cell>
-//               {(row) => (
-//                 <div className="flex space-x-4">
-//                   {actions(row)} {/* Render actions (Edit/Delete) */}
+//     <div className="overflow-x-auto">
+//       <table className="min-w-full table-auto">
+//         <thead>
+//           <tr className="bg-gray-200 text-left h-[50px]">
+//             {columns.map((col, index) => (
+//               <th key={index} className="px-4">
+//                 {col.header}
+//               </th>
+//             ))}
+//             {actions && <th className="px-4">Actions</th>}
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {loading ? (
+//             <tr>
+//               <td
+//                 colSpan={columns.length + (actions ? 1 : 0)}
+//                 className="text-center py-6 text-gray-500"
+//               >
+//                 <div className="flex justify-center items-center space-x-2">
+//                   <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
 //                 </div>
-//               )}
-//             </Cell>
-//           </Column>
-//         )}
-//       </Table>
+//               </td>
+//             </tr>
+//           ) : paginatedData.length === 0 ? (
+//             <tr>
+//               <td
+//                 colSpan={columns.length + (actions ? 1 : 0)}
+//                 className="text-center py-4 text-gray-500"
+//               >
+//                 No data available
+//               </td>
+//             </tr>
+//           ) : (
+//             paginatedData.map((row, rowIndex) => (
+//               <tr key={row._id} className="border-b h-[50px]">
+//                 {columns.map((col, index) => (
+//                   <td key={index} className="px-4 gap-2">
+//                     {col.field === "index" ? (
+//                       <span>
+//                         {(currentPage - 1) * itemsPerPage + rowIndex + 1}
+//                       </span>
+//                     ) : col.field === "photos" ? (
+//                       <div className="flex space-x-2 min-w-40">
+//                         {row.photos.map((photo, idx) => (
+//                           <img
+//                             key={idx}
+//                             src={photo}
+//                             alt={`Product ${idx + 1}`}
+//                             className="w-[30px] h-[30px] object-contain"
+//                           />
+//                         ))}
+//                       </div>
+//                     ) : col.field === "image" ? (
+//                       <img
+//                         src={row.image}
+//                         alt="Category"
+//                         className="w-[30px] h-[30px] object-cover"
+//                       />
+//                     ) : col.field === "description" ? (
+//                       row.description.length > 25 ? (
+//                         `${row.description.slice(0, 25)}...`
+//                       ) : (
+//                         row.description
+//                       )
+//                     ) : col.field === "name" ? (
+//                       row.name.length > 10 ? (
+//                         `${row.name.slice(0, 10)}...`
+//                       ) : (
+//                         row.name
+//                       )
+//                     ) : col.render ? (
+//                       col.render(row)
+//                     ) : (
+//                       row[col.field]
+//                     )}
+//                   </td>
+//                 ))}
+//                 {actions && (
+//                   <td className="px-4">
+//                     <div className="flex space-x-4">{actions(row)}</div>
+//                   </td>
+//                 )}
+//               </tr>
+//             ))
+//           )}
+//         </tbody>
+//       </table>
 
-//       {/* Pagination */}
-//       <div style={{ padding: 20 }}>
-//         <Pagination
-//           prev
-//           next
-//           first
-//           last
-//           ellipsis
-//           boundaryLinks
-//           maxButtons={5}
-//           size="xs"
-//           layout={["total", "-", "limit", "|", "pager", "skip"]}
-//           total={data.length}
-//           limitOptions={[10, 30, 50]} // Limit options
-//           limit={limit}
-//           activePage={page}
-//           onChangePage={setPage} // Change page
-//           onChangeLimit={handleChangeLimit} // Change limit
-//         />
-//       </div>
+//       {/* Pagination Controls */}
+//       {totalPages > 1 && (
+//         <div className="flex justify-center items-center mt-4 space-x-2">
+//           <button
+//             className="px-3 py-1 border rounded bg-gray-200 hover:bg-gray-300"
+//             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+//             disabled={currentPage === 1}
+//           >
+//             Previous
+//           </button>
+//           <span className="px-4">
+//             {currentPage} / {totalPages}
+//           </span>
+//           <button
+//             className="px-3 py-1 border rounded bg-gray-200 hover:bg-gray-300"
+//             onClick={() =>
+//               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+//             }
+//             disabled={currentPage === totalPages}
+//           >
+//             Next
+//           </button>
+//         </div>
+//       )}
 //     </div>
 //   );
 // };
 
 // export default CustomTable;
-  
+import React, { useState } from "react";
 
+const CustomTable = ({
+  data,
+  columns,
+  actions,
+  loading,
+  itemsPerPage = 10,
+}) => {
+  const [currentPage, setCurrentPage] = useState(1);
 
+  // Calculate total pages
+  const totalPages = Math.ceil(data.length / itemsPerPage);
 
-import React from "react";
+  // Get current page data
+  const paginatedData = data.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
-const CustomTable = ({ data, columns, actions, loading }) => {
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full table-auto">
-        <thead>
-          <tr className="bg-gray-200 text-left h-[50px]">
-            {columns.map((col, index) => (
-              <th key={index} className="px-4">
-                {col.header}
-              </th>
-            ))}
-            {actions && <th className="px-4">Actions</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
-            <tr>
-              <td
-                colSpan={columns.length + (actions ? 1 : 0)}
-                className="text-center py-6 text-gray-500"
-              >
-                <div className="flex justify-center items-center space-x-2">
-                  <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                </div>
-              </td>
+    <div className="relative flex flex-col h-[600px] border rounded-lg ">
+      {/* Scrollable Table Container */}
+      <div className="overflow-x-auto overflow-y-auto flex-grow max-h-[600px] my-auto">
+        <table className="min-w-full table-auto">
+          <thead className="bg-gray-200 sticky top-0 z-10">
+            <tr className="text-left h-[50px]">
+              {columns.map((col, index) => (
+                <th key={index} className="px-4">
+                  {col.header}
+                </th>
+              ))}
+              {actions && <th className="px-4">Actions</th>}
             </tr>
-          ) : data.length === 0 ? (
-            <tr>
-              <td
-                colSpan={columns.length + (actions ? 1 : 0)}
-                className="text-center py-4 text-gray-500"
-              >
-                No data available
-              </td>
-            </tr>
-          ) : (
-            data.map((row, rowIndex) => (
-              <tr key={row._id} className="border-b h-[50px]">
-                {columns.map((col, index) => (
-                  <td key={index} className="px-4 gap-2">
-                    {col.field === "index" ? (
-                      <span>{rowIndex + 1}</span>
-                    ) : col.field === "photos" ? (
-                      <div className="flex space-x-2 min-w-40">
-                        {row.photos.map((photo, idx) => (
-                          <img
-                            key={idx}
-                            src={photo}
-                            alt={`Product Image ${idx + 1}`}
-                            className="w-[30px] h-[30px] object-cover"
-                          />
-                        ))}
-                      </div>
-                    ) : col.field === "image" ? (
-                      <img
-                        src={row.image}
-                        alt="Category Image"
-                        className="w-[30px] h-[30px] object-cover"
-                      />
-                    ) : col.field === "description" ? (
-                      row.description.length > 25 ? (
-                        `${row.description.slice(0, 25)}...`
-                      ) : (
-                        row.description
-                      )
-                    ) : col.field === "name" ? (
-                      row.name.length > 10 ? (
-                        `${row.name.slice(0, 10)}...`
-                      ) : (
-                        row.name
-                      )
-                    ) : col.render ? (
-                      col.render(row)
-                    ) : (
-                      row[col.field]
-                    )}
-                  </td>
-                ))}
-                {actions && (
-                  <td className="px-4">
-                    <div className="flex space-x-4">{actions(row)}</div>
-                  </td>
-                )}
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td
+                  colSpan={columns.length + (actions ? 1 : 0)}
+                  className="text-center py-6 text-gray-500"
+                >
+                  <div className="flex justify-center items-center space-x-2">
+                    <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : paginatedData.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columns.length + (actions ? 1 : 0)}
+                  className="text-center py-4 text-gray-500"
+                >
+                  No data available
+                </td>
+              </tr>
+            ) : (
+              paginatedData.map((row, rowIndex) => (
+                <tr key={row._id} className="border-b h-[50px]">
+                  {columns.map((col, index) => (
+                    <td key={index} className="px-4 gap-2">
+                      {col.field === "index" ? (
+                        <span>
+                          {(currentPage - 1) * itemsPerPage + rowIndex + 1}
+                        </span>
+                      ) : col.field === "photos" ? (
+                        <div className="flex space-x-2 min-w-40">
+                          {row.photos.map((photo, idx) => (
+                            <img
+                              key={idx}
+                              src={photo}
+                              alt={`Product ${idx + 1}`}
+                              className="w-[30px] h-[30px] object-contain"
+                            />
+                          ))}
+                        </div>
+                      ) : col.field === "image" ? (
+                        <img
+                          src={row.image}
+                          alt="Category"
+                          className="w-[30px] h-[30px] object-cover"
+                        />
+                      ) : col.field === "description" ? (
+                        row.description.length > 25 ? (
+                          `${row.description.slice(0, 25)}...`
+                        ) : (
+                          row.description
+                        )
+                      ) : col.field === "name" ? (
+                        row.name.length > 10 ? (
+                          `${row.name.slice(0, 10)}...`
+                        ) : (
+                          row.name
+                        )
+                      ) : col.render ? (
+                        col.render(row)
+                      ) : (
+                        row[col.field]
+                      )}
+                    </td>
+                  ))}
+                  {actions && (
+                    <td className="px-4">
+                      <div className="flex space-x-4">{actions(row)}</div>
+                    </td>
+                  )}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Fixed Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center space-x-4 p-4 bg-white shadow-md border-t sticky bottom-0">
+          <button
+            className="px-3 py-1 border rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+
+          <span className="text-gray-600 font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            className="px-3 py-1 border rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

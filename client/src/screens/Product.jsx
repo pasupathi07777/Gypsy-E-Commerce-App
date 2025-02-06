@@ -6,6 +6,7 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -19,7 +20,7 @@ import {
 } from '../slices/wishlistSlice';
 import Header from '../components/Header';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { setDirectOrder } from '../slices/orderSlice';
+import {setDirectOrder} from '../slices/orderSlice';
 
 const Product = ({navigation, route}) => {
   const {id} = route.params;
@@ -29,7 +30,8 @@ const Product = ({navigation, route}) => {
   const [mainImage, setMainImage] = useState(null);
   const dispatch = useDispatch();
   const {postCartLoading} = useSelector(cartStates);
-  const {postWishlistLoading, deleteWishlistLoading, wishlist} = useSelector(wishlistStates);
+  const {postWishlistLoading, deleteWishlistLoading, wishlist} =
+    useSelector(wishlistStates);
 
   useEffect(() => {
     const product = products.find(prod => prod._id === id);
@@ -59,7 +61,7 @@ const Product = ({navigation, route}) => {
 
   const handleBuyNow = productId => {
     dispatch(setDirectOrder(productId));
-    navigation.navigate("Order")
+    navigation.navigate('Direct-Order');
     console.log('Buying product with ID:', productId);
   };
 
@@ -73,7 +75,7 @@ const Product = ({navigation, route}) => {
           {mainImage && (
             <Image source={{uri: mainImage}} style={styles.mainProductImage} />
           )}
-          <TouchableOpacity
+          <Pressable
             style={styles.heartIcon}
             onPress={handleWishlistToggle}>
             <Icon
@@ -81,7 +83,7 @@ const Product = ({navigation, route}) => {
               size={24}
               color={isWishlisted ? 'red' : 'gray'}
             />
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         <FlatList

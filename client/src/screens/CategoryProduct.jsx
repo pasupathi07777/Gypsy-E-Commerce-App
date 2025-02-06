@@ -4,7 +4,7 @@ import {
   View,
   FlatList,
   Image,
-  TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -13,6 +13,7 @@ import {postWishlist, wishlistStates} from '../slices/wishlistSlice';
 import {useNavigation} from '@react-navigation/native';
 import Header from '../components/Header';
 import Icon from 'react-native-vector-icons/AntDesign'; 
+
 
 
 const CategoryProduct = ({route}) => {
@@ -60,11 +61,10 @@ const CategoryProduct = ({route}) => {
           const isWishlisted = wishlist.some(w => w.productId === item._id);
 
           return (
-            <TouchableOpacity
+            <Pressable
               onPress={() => navigateProduct(item._id)}
               style={styles.productContainer}>
-
-              <TouchableOpacity
+              <Pressable
                 onPress={() => handleHeartPress(item._id)}
                 style={styles.heartIcon}>
                 <Icon
@@ -72,7 +72,7 @@ const CategoryProduct = ({route}) => {
                   size={22}
                   color={isWishlisted ? 'red' : 'gray'}
                 />
-              </TouchableOpacity>
+              </Pressable>
 
               <Image
                 source={{uri: item.photos[0]}}
@@ -85,7 +85,7 @@ const CategoryProduct = ({route}) => {
                 </Text>
                 <Text style={styles.productPrice}>₹{item.price}</Text>
               </View>
-            </TouchableOpacity>
+            </Pressable>
           );
         }}
         contentContainerStyle={styles.productList}

@@ -1,9 +1,9 @@
 import {
   ActivityIndicator,
   Dimensions,
+  Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import React from 'react';
@@ -11,7 +11,7 @@ import React from 'react';
 const {width, height} = Dimensions.get('window');
 const ButtonField = ({title, onPress, loading, style}) => {
   return (
-    <TouchableOpacity
+    <Pressable
       style={[styles.button, style]}
       onPress={onPress}
       disabled={loading}>
@@ -26,7 +26,7 @@ const ButtonField = ({title, onPress, loading, style}) => {
           <Text style={styles.buttonText}>{title}</Text>
         )}
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

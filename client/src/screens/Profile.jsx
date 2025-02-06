@@ -4,13 +4,14 @@ import {
   Text,
   View,
   Image,
-  TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Pressable,
+  Alert,
 } from 'react-native';
 import RNFS from 'react-native-fs';
 import {useDispatch, useSelector} from 'react-redux';
-import {loginState} from '../slices/loginSlice';
+import {loginState, logout} from '../slices/loginSlice';
 import {addProfilePhoto, profileStates} from '../slices/profileSlice';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
@@ -56,7 +57,7 @@ const Profile = ({navigation}) => {
       id: '2',
       name: 'Wishlist',
       icon: '\u2764',
-      action: () => navigation.navigate('wishlist'),
+      action: () => navigation.navigate('Wishlist'),
     },
     {
       id: '3',
@@ -64,25 +65,44 @@ const Profile = ({navigation}) => {
       icon: '\u{1F4CD}',
       action: () => navigation.navigate('Address'),
     },
-    // {
-    //   id: '8',
-    //   name: 'About',
-    //   icon: '\u2139',
-    //   action: () => navigation.navigate('About'),
-    // },
   ];
 
   const renderOption = ({item}) => (
-    <TouchableOpacity style={styles.optionContainer} onPress={item.action}>
+    <Pressable style={styles.optionContainer} onPress={item.action}>
       <Text style={styles.icon}>{item.icon}</Text>
       <Text style={styles.optionText}>{item.name}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
+
+  
+const onLogout = () => {
+  Alert.alert(
+    'Logout',
+    'Are you sure you want to log out?',
+    [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Logout',
+        onPress: () => {
+          dispatch(logout())
+            .unwrap()
+            .then(() => {
+              navigation.navigate('Login');
+            });
+        },
+      },
+    ],
+    {cancelable: true},
+  );
+};
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={handleImageSelection}>
+        <Pressable onPress={handleImageSelection}>
           <View style={styles.profileIconContainer}>
             {updateProfileLoading ? (
               <ActivityIndicator size="small" color="#fff" />
@@ -106,7 +126,7 @@ const Profile = ({navigation}) => {
               </>
             )}
           </View>
-        </TouchableOpacity>
+        </Pressable>
 
         <View style={styles.userInfoContainer}>
           <Text style={styles.userName}>
@@ -123,11 +143,11 @@ const Profile = ({navigation}) => {
         keyExtractor={item => item.id}
         contentContainerStyle={styles.optionsList}
       />
-      <TouchableOpacity
+      <Pressable
         style={styles.logoutButton}
-        onPress={() => console.log('Log Out')}>
+        onPress={onLogout}>
         <Text style={styles.logoutText}>Log Out</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };
@@ -150,7 +170,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#878787',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -108,6 +108,7 @@ const initialState = {
   cancelOrderLoading: false,
   directOrder:null,
   directOrderLoding:false,
+  cancelOrderIds:[]
 };
 
 
@@ -115,9 +116,15 @@ export const orderSlice = createSlice({
   name: 'order',
   initialState,
   reducers: {
-    setDirectOrder:(state,action)=>{
-      state.directOrder=action.payload
-    }
+    setDirectOrder: (state, action) => {
+      state.directOrder = action.payload;
+    },
+    setCancelOrderIds: (state, action) => {
+      state.cancelOrderIds =[...state.cancelOrderIds,action.payload];
+    },
+    removeCancelOrderIds: (state, action) => {
+      state.cancelOrderIds =state.cancelOrderIds.filter((id)=>id!==action.payload)
+    },
   },
   extraReducers: builder => {
     builder
@@ -168,6 +175,9 @@ export const orderSlice = createSlice({
           }
           return order;
         });
+        state.cancelOrderIds = state.cancelOrderIds.filter(
+          id => id !== action.payload.cancelProduct._id,
+        );
         console.log('cancel order :', action.payload);
         Alert.alert('Success', 'Your order has been cancelled successfully!');
       })
@@ -178,8 +188,7 @@ export const orderSlice = createSlice({
           'Error',
           action.payload?.error?.message || 'Something went wrong',
         );
-      }) 
-
+      })
 
       // direcvt order
       .addCase(placeDirectOrder.pending, state => {
@@ -199,11 +208,10 @@ export const orderSlice = createSlice({
           action.payload?.error?.message || 'Something went wrong',
         );
       });
-
-
   },
 });
 
-export const {setDirectOrder} = orderSlice.actions;
+export const {setDirectOrder, setCancelOrderIds, removeCancelOrderIds} =
+  orderSlice.actions;
 export const orderStates = state => state.orderReducer;
 export default orderSlice.reducer;

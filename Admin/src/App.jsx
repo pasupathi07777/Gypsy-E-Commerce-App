@@ -15,30 +15,24 @@ import { getAllUsers } from "./Redux/Slices/user.Slice";
 import ConfirmationPopup from "./Components/ConfirmationPopup";
 import Category from "./Pages/Category";
 import { getAllCategory } from "./Redux/Slices/category.Slice";
-
-
-
-
+import { getAllOrders } from "./Redux/Slices/order.slice";
 
 const App = () => {
-
   const { loginStatus } = useSelector(authStates);
   const dispatch = useDispatch();
   const navigation = useNavigate();
 
-
   useEffect(() => {
-    dispatch(getUserAuth())
-        dispatch(getAllCategory());
+    dispatch(getUserAuth());
+    dispatch(getAllCategory());
   }, [dispatch, navigation]);
 
   useEffect(() => {
     if (loginStatus) {
-      dispatch(getAllUsers())
+      dispatch(getAllUsers());
+      dispatch(getAllOrders());
     }
   }, [dispatch, loginStatus]);
-
-
 
   return (
     <div className="bg-[#F4F4F5] whitespace-nowrap">
@@ -48,15 +42,27 @@ const App = () => {
           <Route path="/" element={<DashLayout />}>
             <Route index element={<Home navigation={navigation} />} />
             <Route path="orders" element={<Orders navigation={navigation} />} />
-            <Route path="all-users" element={<AllUsers navigation={navigation} />} />
-            <Route path="all-products" element={<Products navigation={navigation} />} />
-            <Route path="all-category" element={<Category navigation={navigation} />} />
+            <Route
+              path="all-users"
+              element={<AllUsers navigation={navigation} />}
+            />
+            <Route
+              path="all-products"
+              element={<Products navigation={navigation} />}
+            />
+            <Route
+              path="all-category"
+              element={<Category navigation={navigation} />}
+            />
           </Route>
         ) : (
           <Route path="/" element={<AuthLayout />}>
             <Route index element={<Navigate to="/login" />} />
             <Route path="login" element={<Login navigation={navigation} />} />
-            <Route path="verify-otp" element={<Otp navigation={navigation} />} />
+            <Route
+              path="verify-otp"
+              element={<Otp navigation={navigation} />}
+            />
           </Route>
         )}
         <Route

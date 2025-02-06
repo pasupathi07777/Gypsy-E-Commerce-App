@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 8,
     marginRight: 16,
+    resizeMode:"contain"
   },
   productDetails: {
     flex: 1,

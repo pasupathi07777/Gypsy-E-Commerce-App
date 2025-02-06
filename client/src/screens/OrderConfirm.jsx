@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, Animated, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Animated, Pressable} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const OrderConfirm = ({navigation}) => {
@@ -57,9 +57,9 @@ const OrderConfirm = ({navigation}) => {
         </Text>
       </Animated.View>
 
-      <TouchableOpacity style={styles.button} onPress={handleGoBack}>
+      <Pressable style={styles.button} onPress={handleGoBack}>
         <Text style={styles.buttonText}>Back to Order Page</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };

@@ -5,6 +5,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import React, {useState} from 'react';
 import {useSelector} from 'react-redux';
@@ -52,7 +53,7 @@ const Search = () => {
             numColumns={2}
             keyExtractor={item => item._id.toString()}
             renderItem={({item}) => (
-              <TouchableOpacity
+              <Pressable
                 onPress={() => navigateProduct(item._id)}
                 style={styles.productContainer}>
                 <Image
@@ -66,7 +67,7 @@ const Search = () => {
                   </Text>
                   <Text style={styles.productPrice}>₹{item.price}</Text>
                 </View>
-              </TouchableOpacity>
+              </Pressable>
             )}
             contentContainerStyle={styles.productList}
             columnWrapperStyle={styles.columnWrapper}

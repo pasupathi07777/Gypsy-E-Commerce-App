@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaUser, FaBox, FaShoppingCart } from "react-icons/fa";
-
+import { getAllCounts } from "../Redux/Slices/count.slice";
+import { useDispatch, useSelector } from "react-redux";
 const Home = () => {
   // Dummy data
   const userCount = 120;
   const productCount = 45;
   const orderCount = 230;
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllCounts());
+  }, []);
 
   return (
     <div className="p-6">

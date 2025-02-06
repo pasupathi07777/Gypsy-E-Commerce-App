@@ -11,12 +11,12 @@ import wishlistRoute from "./routes/wishlist.route.js";
 import profileRoutes from "./routes/profileRoute.js";   
 import addressRoutes from "./routes/address.Routes.js";   
 import orderRoutes from "./routes/order.route.js";   
+import countRoutes from "./routes/count.route.js";   
 
 dotenv.config({ path: "../.env" });
 
 
 const app = express();
-
 
 app.use(express.json({ limit: "1000mb" }));
 app.use(express.urlencoded({ limit: "1000mb", extended: true }));
@@ -30,6 +30,8 @@ app.use("/api/wishlist", wishlistRoute);
 app.use("/api/profile", profileRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/order", orderRoutes);
+app.use("/api/count", countRoutes)
+
 
 
 app.listen(5000,'0.0.0.0', () => {
