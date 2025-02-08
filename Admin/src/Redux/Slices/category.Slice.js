@@ -10,6 +10,7 @@ const initialState = {
   updateCategoryLoading: false,
   deleteCategoryLoading: false,
   categories: [],
+  deleteCategoryLoadingIds: [],
 };
 
 export const getAllCategory = createAsyncThunk(
@@ -102,7 +103,14 @@ export const deleteCategory = createAsyncThunk(
 export const categorySlice = createSlice({
   name: "users",
   initialState,
-  reducers: {},
+  reducers: {
+    setDeleteCategoryLoadingIds: (state, action) => {
+      state.deleteCategoryLoadingIds = [
+        ...state.deleteCategoryLoadingIds,
+        action.payload,
+      ];
+    },
+  },
   extraReducers: (builder) => {
     builder
       // get
@@ -112,7 +120,7 @@ export const categorySlice = createSlice({
       .addCase(getAllCategory.fulfilled, (state, action) => {
         state.getCategoryLoading = false;
         state.categories = action.payload.categories;
-        console.log(action.payload.categories);
+        // console.log(action.payload.categories);
       })
       .addCase(getAllCategory.rejected, (state, action) => {
         state.getCategoryLoading = false;
@@ -132,7 +140,7 @@ export const categorySlice = createSlice({
       .addCase(addCategory.rejected, (state, action) => {
         state.postCategoryLoading = false;
         console.log(action.payload);
-        toast.error(action.payload.error.message || "Something went wrong")
+        toast.error(action.payload.error.message || "Something went wrong");
       })
 
       // updata
@@ -152,7 +160,7 @@ export const categorySlice = createSlice({
       .addCase(editCategory.rejected, (state, action) => {
         state.updateCategoryLoading = false;
         console.log(action.payload);
-        toast.error(action.payload.error.message || "Something went wrong")
+        toast.error(action.payload.error.message || "Something went wrong");
       })
 
       // delete
@@ -164,7 +172,10 @@ export const categorySlice = createSlice({
         state.categories = state.categories.filter(
           (category) => category._id !== action.payload.category._id
         );
-        toast.success("User deleted successfully");
+        state.deleteCategoryLoadingIds = state.deleteCategoryLoadingIds.filter(
+          (id) => id !== action.payload.category._id
+        );
+        toast.success("category deleted successfully");
       })
       .addCase(deleteCategory.rejected, (state, action) => {
         state.deleteCategoryLoading = false;
@@ -173,6 +184,6 @@ export const categorySlice = createSlice({
   },
 });
 
-export const {} = categorySlice.actions;
+export const { setDeleteCategoryLoadingIds } = categorySlice.actions;
 export const categoryStates = (state) => state.categoryReducer;
 export default categorySlice.reducer;

@@ -9,7 +9,9 @@ const initialState = {
   getProductLoading: false,
   postProductLoading: false,
   updateProductLoading: false,
-  deleteProductLoading: false
+  deleteProductLoading: false,
+  updateStockLoading:false,
+  deleteProductLoadingIds:[]
 };
 
 export const getProduct = createAsyncThunk(
@@ -28,7 +30,6 @@ export const getProduct = createAsyncThunk(
     }
   }
 );
-
 
 export const addProduct = createAsyncThunk(
   "add/addProduct",
@@ -55,8 +56,6 @@ export const addProduct = createAsyncThunk(
   }
 );
 
-
-
 export const updateProduct = createAsyncThunk(
   "update/Product",
   async (data, { rejectWithValue }) => {
@@ -70,9 +69,13 @@ export const updateProduct = createAsyncThunk(
       }
 
       const token = await getToken();
-      const response = await axiosInstance.put(`/product/update/${ data._id }`, data, {
-        params: { token},
-      });
+      const response = await axiosInstance.put(
+        `/product/update/${data._id}`,
+        data,
+        {
+          params: { token },
+        }
+      );
       return response.data;
     } catch (err) {
       const error = err.response?.data ||
@@ -81,18 +84,19 @@ export const updateProduct = createAsyncThunk(
     }
   }
 );
-
-
 
 export const deleteProduct = createAsyncThunk(
   "delete/product",
-  async (productId, { rejectWithValue }) => {
+  async (productId, { rejectWithValue,getState}) => {
+    
     try {
-
       const token = await getToken();
-      const response = await axiosInstance.delete(`/product/delete/${productId}`, {
-        params: { token },
-      });
+      const response = await axiosInstance.delete(
+        `/product/delete/${productId}`,
+        {
+          params: { token },
+        }
+      );
       return response.data;
     } catch (err) {
       const error = err.response?.data ||
@@ -102,12 +106,35 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
-
+export const updateStock = createAsyncThunk(
+  "update/stock",
+  async (data, { rejectWithValue }) => {
+    try {
+      const token = await getToken();
+      const response = await axiosInstance.patch(
+        `/product/update-stock/${data.id}`,
+        { stock: data.stock },
+        {
+          params: { token },
+        }
+      );
+      return response.data;
+    } catch (err) {
+      const error = err.response?.data ||
+        err.response || { message: "Something went wrong" };
+      return rejectWithValue(error);
+    }
+  }
+);
 
 export const productsSlice = createSlice({
   name: "product",
   initialState,
-  reducers: {},
+  reducers: {
+    setDeleteProductLoadingIds:(state,action)=>{
+      state.deleteProductLoadingIds=[...state.deleteProductLoadingIds,action.payload]
+    }
+  },
   extraReducers: (builder) => {
     builder
 
@@ -118,7 +145,7 @@ export const productsSlice = createSlice({
       .addCase(getProduct.fulfilled, (state, action) => {
         state.getProductLoading = false;
         state.products = action.payload.products;
-
+        console.log(action.payload);
       })
       .addCase(getProduct.rejected, (state, action) => {
         state.getProductLoading = false;
@@ -172,6 +199,9 @@ export const productsSlice = createSlice({
         state.products = state.products.filter(
           (product) => product._id !== action.payload.product._id
         );
+        state.deleteProductLoadingIds = state.deleteProductLoadingIds.filter(
+          (id)=> id !== action.payload.product._id
+        );
         console.log(action.payload);
         toast.success("Delete Product Successfullty");
       })
@@ -179,9 +209,29 @@ export const productsSlice = createSlice({
         state.deleteProductLoading = false;
         console.log(action.payload);
         toast.error(action.payload?.error?.message || "Something went wrong");
+      })
+
+      // update stock
+      .addCase(updateStock.pending, (state) => {
+        state.updateStockLoading = true;
+      })
+      .addCase(updateStock.fulfilled, (state, action) => {
+        state.updateStockLoading = false;
+        console.log(action.payload);
+        state.products = state.products.map((product) =>
+          product._id === action.payload.product._id
+            ? action.payload.product
+            : product
+        );
+        toast.success("Update Stock Successfullty");
+      })
+      .addCase(updateStock.rejected, (state, action) => {
+        state.updateStockLoading = false;
+        console.log(action.payload);
+        toast.error(action.payload?.error?.message || "Something went wrong");
       });
   },
 });
-
+export const { setDeleteProductLoadingIds } = productsSlice.actions;
 export const productStates = (state) => state.productsReducer;
 export default productsSlice.reducer;

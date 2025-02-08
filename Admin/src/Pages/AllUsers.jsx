@@ -154,15 +154,15 @@ const AllUsers = () => {
         <h1 className="text-3xl font-bold">All Users</h1>
 
         <div className="flex gap-2 items-center justify-center">
+          <CustomSearchInput
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Search by username or email"
+          />
+          
           <CustomDateRangePicker
             selectedRange={selectedRange}
             onChange={handleDateRangeChange}
-          />
-
-          <CustomSearchInput
-            value={searchQuery}
-            onChange={handleSearchChange} // Update search query directly here
-            placeholder="Search by username or email"
           />
         </div>
       </div>

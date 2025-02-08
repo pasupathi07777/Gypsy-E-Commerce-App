@@ -2,7 +2,7 @@ export const getToken = async () => {
   try {
     const token = await localStorage.getItem("Token");
     if (token) {
-      console.log("Retrieved Token:", token);
+      // console.log("Retrieved Token:", token);
       return token;
     } else {
       console.log("No token found");

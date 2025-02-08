@@ -230,3 +230,48 @@ export const deleteProduct = async (req, res) => {
     });
   }
 };
+
+
+
+export const updateStock = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { stock } = req.body;
+
+    console.log(
+      `Updating stock for Product ID: ${productId}, New Stock: ${stock}`
+    );
+
+    // Find and update the product
+    const updatedProduct = await product.findByIdAndUpdate(
+      productId,
+      { stock },
+      { new: true } // Return updated product
+    );
+
+    if (!updatedProduct) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          field: "product",
+          message: "Product Not Found",
+        },
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      product: updatedProduct,
+      message: "Stock updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating stock:", error);
+    res.status(500).json({
+      success: false,
+      error: {
+        field: "other",
+        message: "Internal Server Error",
+      },
+    });
+  }
+};

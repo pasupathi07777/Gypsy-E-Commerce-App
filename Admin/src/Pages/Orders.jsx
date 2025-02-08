@@ -1,21 +1,40 @@
-
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import CustomTable from "../Components/CustomTable";
 import CustomBtn from "../Components/CustomBtn";
+import CustomSearchInput from "../Components/CustomSearchInput";
 import { orderStates } from "../Redux/Slices/order.slice";
+import CustomDateRangePicker from "../Components/CustomDateRangePicker";
 
 const Orders = () => {
   const { allOrders } = useSelector(orderStates);
-  const [filterDate, setFilterDate] = useState("");
 
+  const [searchQuery, setSearchQuery] = useState(""); // Search filter
+  const [dateRange, setDateRange] = useState([null, null]); // Date Range filter
 
-  const filteredOrders = allOrders?.filter((order) =>
-    order.createdAt.includes(filterDate)
-  );
+  // Function to check if the order date is within the selected date range
+  const isWithinDateRange = (orderDate) => {
+    if (!dateRange || !dateRange[0] || !dateRange[1]) return true;
 
+    const orderTimestamp = new Date(orderDate).getTime();
+    const startTimestamp = new Date(dateRange[0]).getTime();
+    const endTimestamp = new Date(dateRange[1]).getTime();
 
+    return orderTimestamp >= startTimestamp && orderTimestamp <= endTimestamp;
+  };
+
+  // Filter orders based on search and date range
+  const filteredOrders = allOrders?.filter((order) => {
+    const matchesSearch =
+      order.productId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order._id.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesSearch && isWithinDateRange(order.createdAt);
+  });
+
+  // Handle Edit
   const handleEdit = (id) => {
     alert(`Editing order with ID: ${id}`);
   };
@@ -25,23 +44,25 @@ const Orders = () => {
     alert(`Deleting order with ID: ${id}`);
   };
 
+  // Table columns
   const columns = [
     { header: "No", field: "index" },
     { header: "Order ID", field: "_id" },
-    { header: "product ID", field: "productId" },
+    { header: "Product ID", field: "productId" },
     { header: "Product", field: "name" },
-    { header: "price", field: "price" },
-    { header: "photos", field: "photos" },
-    { header: "Date", field: "createdAt" },
+    { header: "Price", field: "price" },
+    { header: "Photos", field: "photos" },
+    { header: "Order Date", field: "createdAt" },
     { header: "Status", field: "orderStatus" },
     { header: "Total Amount", field: "totalAmount" },
-    { header: "quantity", field: "quantity" },
-    { header: "deliveryType", field: "deliveryType" },
-    { header: "paymentMethod", field: "paymentMethod" },
-    { header: "paymentStatus", field: "paymentStatus" },
+    { header: "Quantity", field: "quantity" },
+    { header: "Delivery Type", field: "deliveryType" },
+    { header: "Payment Method", field: "paymentMethod" },
+    { header: "Payment Status", field: "paymentStatus" },
+
   ];
 
-
+  // Actions column
   const actions = (row) => (
     <div className="flex space-x-4">
       <button
@@ -61,29 +82,28 @@ const Orders = () => {
 
   return (
     <div className="p-6">
+      {/* Page Header */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Orders Management</h1>
-        <CustomBtn
-          label="Add Order"
-          className="bg-blue-600 hover:bg-blue-700"
-        />
+        {/* Search and Date Filter */}
+        <div className=" flex gap-4 items-center">
+          {/* Search Input */}
+          <CustomSearchInput
+            placeholder="Search by Order ID, Product ID, or Name"
+            value={searchQuery}
+            onChange={setSearchQuery}
+          />
+
+          {/* Date Range Filter */}
+          <CustomDateRangePicker
+            selectedRange={dateRange}
+            onChange={setDateRange}
+          />
+        </div>
       </div>
 
-      <div className="mb-6">
-        <label className="text-sm font-medium">Filter by Date:</label>
-        <input
-          type="date"
-          value={filterDate}
-          onChange={(e) => setFilterDate(e.target.value)}
-          className="ml-2 p-2 border rounded-md"
-        />
-      </div>
-
-      <CustomTable
-        data={filteredOrders}
-        columns={columns}
-        actions={(row) => actions(row)}
-      />
+      {/* Orders Table */}
+      <CustomTable data={filteredOrders} columns={columns} actions={actions} />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import {
   categoryStates,
   editCategory,
   deleteCategory,
+  setDeleteCategoryLoadingIds,
 } from "../Redux/Slices/category.Slice";
 import { useDispatch, useSelector } from "react-redux";
 import { showPopup } from "../Redux/Slices/confirmationSlice";
@@ -21,6 +22,7 @@ const Category = () => {
     postCategoryLoading,
     updateCategoryLoading,
     deleteCategoryLoading,
+    deleteCategoryLoadingIds,
   } = useSelector(categoryStates);
 
   const [showModal, setShowModal] = useState(false);
@@ -105,6 +107,7 @@ const Category = () => {
       showPopup({
         message: "Are you sure you want to delete this category?",
         onConfirm: () => {
+          dispatch(setDeleteCategoryLoadingIds(id));
           dispatch(deleteCategory(id));
         },
       })
@@ -133,7 +136,7 @@ const Category = () => {
         label={icons.delete}
         onClick={() => onDelete(row._id)}
         className="text-red-500 hover:text-red-700 transition ml-2 bg-"
-        loading={deleteCategoryLoading}
+        loading={deleteCategoryLoadingIds.includes(row._id)}
         color={"#FF0000"}
       />
     </>
@@ -165,7 +168,7 @@ const Category = () => {
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg max-w-md w-full relative">
+          <div className="bg-white p-6 shadow-lg max-w-md w-full relative">
             {" "}
             {/* Add relative positioning */}
             <form onSubmit={handleSubmit}>
@@ -181,12 +184,12 @@ const Category = () => {
                     name: value,
                   })
                 }
+                className="mt-1 p-2 border  w-full"
                 placeholder="Enter category name"
               />
 
-
               <div className="mt-4">
-                <label className="block  mb-1">Upload Image</label>
+                <label className="block  mb-2">Upload Image</label>
                 <input
                   type="file"
                   accept="image/*"

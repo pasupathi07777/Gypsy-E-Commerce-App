@@ -7,6 +7,7 @@ import {
   deleteProduct,
   getProduct,
   productStates,
+  setDeleteProductLoadingIds,
   updateProduct,
 } from "../Redux/Slices/product.Slice";
 import imageCompression from "browser-image-compression";
@@ -23,6 +24,7 @@ const Products = () => {
     postProductLoading,
     updateProductLoading,
     deleteProductLoading,
+    deleteProductLoadingIds,
   } = useSelector(productStates);
      const { categories } = useSelector(categoryStates);
      console.log(categories);
@@ -51,6 +53,7 @@ const Products = () => {
       showPopup({
         message: "Are you sure you want to delete this user?",
         onConfirm: () => {
+          dispatch(setDeleteProductLoadingIds(id));
           dispatch(deleteProduct(id));
         },
       })
@@ -187,7 +190,7 @@ const Products = () => {
         label={icons.delete}
         onClick={() => handleDelete(row._id)}
         className="text-red-500 hover:text-red-700 transition ml-2"
-        loading={deleteProductLoading}
+        loading={deleteProductLoadingIds.includes(row._id)}
         color={"#FF0000"}
       />
     </>
@@ -217,7 +220,7 @@ const Products = () => {
             setShowPopupProduct(true);
             setEditingProduct(null);
           }}
-          className="mb-6 p-3 bg-green-500 text-white rounded-md"
+          className="mb-6 p-2 bg-green-500 text-white "
         >
           Add Product
         </button>

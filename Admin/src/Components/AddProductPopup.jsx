@@ -18,7 +18,7 @@ const AddProductPopup = ({
 }) => {
   return (
     <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50 p-3">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-full w-full md:w-[80%]  h-[80%] md:h-fit overflow-auto  ">
+      <div className="bg-white p-6  shadow-lg max-w-full w-full md:w-[80%]  h-[80%] md:h-fit overflow-auto  ">
         <h2 className="text-2xl font-semibold mb-4">
           {editingProduct ? "Edit Product" : "Add New Product"}
         </h2>
@@ -30,7 +30,7 @@ const AddProductPopup = ({
               name="name"
               value={newProduct.name}
               onChange={onChange}
-              className="mt-1 p-2 border rounded-md w-full"
+              className="mt-1 p-2 border w-full"
             />
           </div>
 
@@ -41,7 +41,7 @@ const AddProductPopup = ({
               name="seller"
               value={newProduct.seller}
               onChange={onChange}
-              className="mt-1 p-2 border rounded-md w-full"
+              className="mt-1 p-2 border  w-full"
             />
           </div>
 
@@ -52,7 +52,7 @@ const AddProductPopup = ({
               name="price"
               value={newProduct.price}
               onChange={onChange}
-              className="mt-1 p-2 border rounded-md w-full"
+              className="mt-1 p-2 border w-full"
             />
           </div>
 
@@ -63,7 +63,7 @@ const AddProductPopup = ({
               name="stock"
               value={newProduct.stock}
               onChange={onChange}
-              className="mt-1 p-2 border rounded-md w-full"
+              className="mt-1 p-2 border  w-full"
             />
           </div>
 
@@ -73,7 +73,7 @@ const AddProductPopup = ({
               name="description"
               value={newProduct.description}
               onChange={onChange}
-              className="mt-1 p-2 border rounded-md w-full"
+              className="mt-1 p-2 border  w-full"
             />
           </div>
 
@@ -155,7 +155,7 @@ const AddProductPopup = ({
         <div className="flex justify-end gap-2  ">
           <CustomBtn
             onClick={handleAddOrUpdateProduct}
-            className="p-3 bg-green-500 hover:bg-green-600 text-white rounded-md"
+            className="p-3 bg-green-500 hover:bg-green-600 text-white "
             label={editingProduct ? "Update Product" : "Add Product"}
             loading={loading}
           />

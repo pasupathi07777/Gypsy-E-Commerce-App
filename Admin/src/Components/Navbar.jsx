@@ -32,7 +32,7 @@ const Navbar = () => {
           <li key={index}>
             <Link
               to={item.href}
-              className="flex items-center gap-4 px-6 py-3 text-sm rounded-lg w-[70%] font-semibold mx-auto focus:bg-white transition shadow-lg hover:shadow-xl hover:bg-gray-100"
+              className="flex items-center gap-4 px-6 py-3 text-sm  w-[70%] font-semibold mx-auto focus:bg-white transition shadow-lg hover:shadow-xl hover:bg-gray-100"
             >
               {item.icon}
               {item.name}

@@ -7,5 +7,5 @@ const icons = {
   save: <FaSave size={20} />,
 };
 
-console.log(icons);
+
 export default icons;

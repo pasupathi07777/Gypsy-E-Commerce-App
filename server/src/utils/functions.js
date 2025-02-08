@@ -54,7 +54,7 @@ export function validateFields(inputData) {
         break;
 
       case "price":
-      case "stock":
+      // case "stock":
         if (isNaN(value) || value <= 0) {
           return {
             field,

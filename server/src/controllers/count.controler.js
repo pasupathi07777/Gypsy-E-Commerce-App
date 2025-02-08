@@ -6,13 +6,12 @@ import Category from "../models/category.model.js";
 
 export const getEcomDashboardStats = async (req, res) => {
   try {
-    // Basic Counts
+console.log("count Status");
+
     const totalUsers = await User.countDocuments();
     const totalOrders = await Order.countDocuments();
     const totalProducts = await Product.countDocuments();
     const totalCategories = await Category.countDocuments();
-
-    // Order Status Counts
     const pendingOrders = await Order.countDocuments({
       orderStatus: "Pending",
     });
@@ -29,7 +28,6 @@ export const getEcomDashboardStats = async (req, res) => {
       orderStatus: "Cancelled",
     });
 
-    // Payment Status Counts
     const pendingPayments = await Order.countDocuments({
       paymentStatus: "Pending",
     });
@@ -40,20 +38,17 @@ export const getEcomDashboardStats = async (req, res) => {
       paymentStatus: "Failed",
     });
 
-    // Total Revenue (sum of all paid orders)
     const totalRevenue = await Order.aggregate([
       { $match: { paymentStatus: "Paid" } },
       { $group: { _id: null, total: { $sum: "$totalPrice" } } },
     ]);
     const totalEarnings = totalRevenue.length > 0 ? totalRevenue[0].total : 0;
 
-    // Total Stock Available
     const totalStock = await Product.aggregate([
       { $group: { _id: null, total: { $sum: "$stock" } } },
     ]);
     const availableStock = totalStock.length > 0 ? totalStock[0].total : 0;
 
-    // Out of Stock Products
     const outOfStockCount = await Product.countDocuments({
       stock: { $lte: 0 },
     });

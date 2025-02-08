@@ -48,7 +48,7 @@ const CustomDropdown = ({ title, items, name, onChange, value }) => {
         name={name}
         value={value || ""}
         onChange={(e) => onChange(name, e.target.value)}
-        className="w-full p-2 border rounded-md"
+        className="w-full p-2 border "
       >
         <option value="" disabled>
           Select {title}

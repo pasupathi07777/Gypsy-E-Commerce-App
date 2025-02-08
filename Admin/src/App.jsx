@@ -16,7 +16,9 @@ import ConfirmationPopup from "./Components/ConfirmationPopup";
 import Category from "./Pages/Category";
 import { getAllCategory } from "./Redux/Slices/category.Slice";
 import { getAllOrders } from "./Redux/Slices/order.slice";
-
+import './index.css'
+import DynamicPage from "./Pages/DynamicPage";
+import Stocks from "./Pages/Stocks";
 const App = () => {
   const { loginStatus } = useSelector(authStates);
   const dispatch = useDispatch();
@@ -53,6 +55,14 @@ const App = () => {
             <Route
               path="all-category"
               element={<Category navigation={navigation} />}
+            />
+            <Route
+              path="Dynamic/:type"
+              element={<DynamicPage navigation={navigation} />}
+            />
+            <Route
+              path="Stocks/:name"
+              element={<Stocks navigation={navigation} />}
             />
           </Route>
         ) : (

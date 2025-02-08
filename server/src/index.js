@@ -30,7 +30,7 @@ app.use("/api/wishlist", wishlistRoute);
 app.use("/api/profile", profileRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/order", orderRoutes);
-app.use("/api/count", countRoutes)
+app.use("/api/admin", countRoutes)
 
 
 

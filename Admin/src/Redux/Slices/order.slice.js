@@ -12,7 +12,7 @@ export const getAllOrders = createAsyncThunk(
     if (error) {
       return rejectWithValue({ error });
     }
-    console.log("Sending credentials:", credentials);
+    // console.log("Sending credentials:", credentials);
     try {
       const token = await getToken();
       const response = await axiosInstance.get("/order/user-order", {
