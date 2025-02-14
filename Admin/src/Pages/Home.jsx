@@ -85,19 +85,19 @@ const Home = () => {
           icon={<FaShoppingCart size={30} className="text-blue-600" />}
           title="Pending Orders"
           value={count?.orderStatus?.pendingOrders || 0}
-          path={"Dynamic/Pending-Orders"}
+          path={"orders-status/Pending-Orders"}
         />
         <Card
           icon={<FaShoppingCart size={30} className="text-yellow-600" />}
           title="Cancelled Orders"
           value={count?.orderStatus?.cancelledOrders || 0}
-          path={"Dynamic/Cancelled-Orders"}
+          path={"orders-status/Cancelled-Orders"}
         />
         <Card
           icon={<FaShoppingCart size={30} className="text-green-600" />}
           title="Delivered Orders"
           value={count?.orderStatus?.deliveredOrders || 0}
-          path={"Dynamic/Delivered Orders"}
+          path={"orders-status/Delivered Orders"}
         />
 
         {/* Payment Status */}

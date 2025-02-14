@@ -6,22 +6,25 @@ import Categories from '../components/Categories';
 import {getProduct, productStates} from '../slices/productsSlice';
 import CustomCarousel from '../components/CustomCarousel';
 import ProductList from '../components/Products';
-import { getCartItems } from '../slices/cartSlice';
-import { getwishlist } from '../slices/wishlistSlice';
-import { getAddress } from '../slices/addressSlice';
-import { getOurOrder } from '../slices/orderSlice';
+import {getCartItems} from '../slices/cartSlice';
+import {getwishlist} from '../slices/wishlistSlice';
+import {getAddress} from '../slices/addressSlice';
+import {getOurOrder} from '../slices/orderSlice';
+
 
 
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const {products} = useSelector(productStates);
 
+
+  
   useEffect(() => {
     dispatch(getProduct());
     dispatch(getCartItems());
     dispatch(getwishlist());
-        dispatch(getAddress());
-          dispatch(getOurOrder());
+    dispatch(getAddress());
+    dispatch(getOurOrder());
   }, [dispatch]);
 
 
@@ -34,11 +37,16 @@ const Home = ({navigation}) => {
   });
   const categories = Object.keys(categorizedProducts);
 
+
   return (
     <View style={styles.container}>
+
       <HomeHeader navigation={navigation} />
+
       <ScrollView vertical showsVerticalScrollIndicator={false}>
+
         <Categories />
+
         <CustomCarousel />
 
         {categories.map(category => (
@@ -49,8 +57,8 @@ const Home = ({navigation}) => {
           />
         ))}
 
-        
       </ScrollView>
+
     </View>
   );
 };

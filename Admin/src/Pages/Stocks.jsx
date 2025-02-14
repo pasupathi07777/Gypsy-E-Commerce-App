@@ -16,12 +16,9 @@ const Stocks = () => {
   const [showModal, setShowModal] = useState(false);
   const [currentStock, setCurrentStock] = useState({ id: "", stock: 0 });
 
-
   const filteredProducts = products.filter((product) =>
     name === "Available-Stock" ? product.stock > 0 : product.stock === 0
   );
-  console.log(products);
-  console.log(filteredProducts);
 
   // Table Columns
   const columns = [
@@ -76,11 +73,11 @@ const Stocks = () => {
       {/* Add Stock Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
+          <div className="bg-white p-6 shadow-lg max-w-md w-full">
             <h3 className="text-xl font-bold mb-4">Update Stock</h3>
             <form onSubmit={handleStockSubmit}>
               <CustomInput
-                // label="Stock Quantity"
+                // label="Stock Quantity" 
                 type="number"
                 value={currentStock.stock}
                 onChange={(value) =>

@@ -19,22 +19,28 @@ import { getAllOrders } from "./Redux/Slices/order.slice";
 import './index.css'
 import DynamicPage from "./Pages/DynamicPage";
 import Stocks from "./Pages/Stocks";
+import OrderStatus from "./Pages/OrderStatus";
+
+
 const App = () => {
   const { loginStatus } = useSelector(authStates);
   const dispatch = useDispatch();
   const navigation = useNavigate();
+
 
   useEffect(() => {
     dispatch(getUserAuth());
     dispatch(getAllCategory());
   }, [dispatch, navigation]);
 
+  
   useEffect(() => {
     if (loginStatus) {
       dispatch(getAllUsers());
       dispatch(getAllOrders());
     }
   }, [dispatch, loginStatus]);
+
 
   return (
     <div className="bg-[#F4F4F5] whitespace-nowrap">
@@ -63,6 +69,10 @@ const App = () => {
             <Route
               path="Stocks/:name"
               element={<Stocks navigation={navigation} />}
+            />
+            <Route
+              path="orders-status/:name"
+              element={<OrderStatus navigation={navigation} />}
             />
           </Route>
         ) : (

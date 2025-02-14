@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Animated,
   ImageBackground,
+  Image,
 } from 'react-native';
 import {useDispatch} from 'react-redux';
 import {getUserAuth} from '../slices/loginSlice';
@@ -23,28 +24,31 @@ const FirstPageLoader = ({navigation}) => {
     }).start();
 
     dispatch(getUserAuth())
-      .unwrap()
-      .then(() => {
-        navigation.navigate('Home');
-      })
-      .catch(() => {
-        navigation.navigate('Login');
-      });
+      // .unwrap()
+      // .then(() => {
+      //   navigation.navigate('Home');
+      // })
+      // .catch(() => {
+      //   navigation.navigate('Login');
+      // });
   }, [dispatch, fadeAnim, navigation]);
 
 
 
   return (
     <ImageBackground
-      source={require('../assets/loder-screen/food-delivery-loder-screen.webp')} 
+      source={require('../assets/loder-screen/delivery.png')}
       style={styles.background}
       resizeMode="cover">
       <View style={styles.container}>
         <Animated.View style={[styles.logoContainer, {opacity: fadeAnim}]}>
-          <Text style={styles.appName}>Feathrly</Text>
-          <Text style={styles.tagline}>Soaring to new heights</Text>
+          {/* <Text style={styles.appName}>Feathrly</Text> */}
+          <Image
+            style={styles.tinyLogo}
+            source={require('../assets/gypy.png')}
+          />
         </Animated.View>
-        <ActivityIndicator size="large" color="#1E90FF" style={styles.loader} />
+        <ActivityIndicator size="large" color="#f03922" style={styles.loader} />
       </View>
     </ImageBackground>
   );
@@ -62,7 +66,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
   },
   logoContainer: {
     alignItems: 'center',
@@ -71,16 +75,22 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 40,
     fontWeight: 'bold',
-    color: '#1E90FF', 
+    color: '#1E90FF',
     textTransform: 'uppercase',
     letterSpacing: 2,
   },
   tagline: {
     fontSize: 18,
-    color: '#4682B4', 
+    color: '#f03922',
     marginTop: 10,
   },
   loader: {
-    marginTop: 20,
+    // marginTop: 20,
+  },
+  tinyLogo: {
+    height: 55, // Adjust this value to scale the logo properly
+    width: 100, // Adjust this value as needed
+    resizeMode: 'contain', // Ensures the logo maintains its aspect ratio
+    // backgroundColor: 'gray',
   },
 });
