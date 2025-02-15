@@ -24,13 +24,13 @@ const FirstPageLoader = ({navigation}) => {
     }).start();
 
     dispatch(getUserAuth())
-      // .unwrap()
-      // .then(() => {
-      //   navigation.navigate('Home');
-      // })
-      // .catch(() => {
-      //   navigation.navigate('Login');
-      // });
+      .unwrap()
+      .then(() => {
+        navigation.navigate('Home');
+      })
+      .catch(() => {
+        navigation.navigate('Login');
+      });
   }, [dispatch, fadeAnim, navigation]);
 
 

@@ -1,16 +1,18 @@
 import User from "../models/user.model.js";
 import { validateFields } from "../utils/functions.js";
 
-
 // signup
 
 export const getAllUsers = async (req, res) => {
   try {
-    console.log(req.user,"user pasu");
-    
-    const users = await User.find({
-      _id: { $ne: req.user._id },
-    });
+    console.log(req.user, "user pasu");
+
+    const users = await User
+      .find
+      //   {
+      //   _id: { $ne: req.user._id },
+      // }
+      ();
     if (!users) {
       res.status(400).json({
         success: false,
@@ -41,7 +43,6 @@ export const editUserRole = async (req, res) => {
     const { role } = req.body;
     const { userId } = req.params;
     console.log(role);
-    
 
     // Use findOne to retrieve a single user based on _id
     const user = await User.findOne({ _id: userId });
@@ -77,12 +78,11 @@ export const editUserRole = async (req, res) => {
   }
 };
 
-
 export const deleteUser = async (req, res) => {
   try {
-    const {userId}=req.params
+    const { userId } = req.params;
     console.log(userId);
-    
+
     const user = await User.findByIdAndDelete({
       _id: userId,
     });
@@ -98,10 +98,9 @@ export const deleteUser = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      userId:user._id,
-      message:"User Successfull Deleted"
+      userId: user._id,
+      message: "User Successfull Deleted",
     });
-
   } catch (error) {
     console.error("Error signing up:", error);
     return res.status(500).json({

@@ -25,16 +25,23 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    items: orderItemSchema, 
+    items: orderItemSchema,
     totalPrice: {
       type: Number,
       required: true,
-      min: 0, 
+      min: 0,
     },
     orderStatus: {
       type: String,
-      enum: ["Pending", "Processing","Placed", "Shipped", "Delivered", "Cancelled"],
-      default: "Pending", 
+      enum: [
+        "Pending",
+        "Processing",
+        "Placed",
+        "Shipped",
+        "Delivered",
+        "Cancelled",
+      ],
+      default: "Placed",
     },
     paymentStatus: {
       type: String,
@@ -56,7 +63,7 @@ const orderSchema = new mongoose.Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-      immutable: true, 
+      immutable: true,
     },
     updatedAt: {
       type: Date,

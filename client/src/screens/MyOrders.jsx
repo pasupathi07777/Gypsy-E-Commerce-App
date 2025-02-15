@@ -3,7 +3,6 @@ import {
   Text,
   View,
   FlatList,
-  TouchableOpacity,
   Image,
   ActivityIndicator,
   Pressable,
@@ -104,7 +103,7 @@ const handleCancelOrder = orderId => {
               />
             </View>
 
-            {item.orderStatus === 'Pending' && (
+            {item.orderStatus === 'Placed' && (
               <ButtonField
                 loading={cancelOrderIds.includes(item._id) && cancelOrderLoading}
                 title={'Cancel Order'}
@@ -188,5 +187,7 @@ const styles = StyleSheet.create({
   },
   orders: {
     padding: 15,
+    // paddingVertical:30
+    // marginBottom:30
   },
 });

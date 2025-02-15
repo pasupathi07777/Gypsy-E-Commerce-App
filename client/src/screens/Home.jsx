@@ -11,12 +11,9 @@ import {getwishlist} from '../slices/wishlistSlice';
 import {getAddress} from '../slices/addressSlice';
 import {getOurOrder} from '../slices/orderSlice';
 
-
-
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const {products} = useSelector(productStates);
-
 
   
   useEffect(() => {
@@ -37,14 +34,11 @@ const Home = ({navigation}) => {
   });
   const categories = Object.keys(categorizedProducts);
 
-
   return (
     <View style={styles.container}>
-
       <HomeHeader navigation={navigation} />
 
       <ScrollView vertical showsVerticalScrollIndicator={false}>
-
         <Categories />
 
         <CustomCarousel />
@@ -56,9 +50,7 @@ const Home = ({navigation}) => {
             products={categorizedProducts[category]}
           />
         ))}
-
       </ScrollView>
-
     </View>
   );
 };

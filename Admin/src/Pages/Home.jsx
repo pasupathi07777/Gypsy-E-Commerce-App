@@ -83,9 +83,9 @@ const Home = () => {
         {/* Order Status */}
         <Card
           icon={<FaShoppingCart size={30} className="text-blue-600" />}
-          title="Pending Orders"
-          value={count?.orderStatus?.pendingOrders || 0}
-          path={"orders-status/Pending-Orders"}
+          title="Placed Orders"
+          value={count?.orderStatus?.placedOrders || 0}
+          path={"orders-status/Placed-Orders"}
         />
         <Card
           icon={<FaShoppingCart size={30} className="text-yellow-600" />}
@@ -105,13 +105,13 @@ const Home = () => {
           icon={<FaDollarSign size={30} className="text-yellow-600" />}
           title="Pending Payments"
           value={count?.paymentStatus?.pendingPayments || 0}
-          path={"Dynamic/Pending-Payments"}
+          path={"payment-status/Pending-Payments"}
         />
         <Card
           icon={<FaDollarSign size={30} className="text-green-600" />}
           title="Successful Payments"
           value={count?.paymentStatus?.successfulPayments || 0}
-          path={"Dynamic/Successful-Payments"}
+          path={"payment-status/Successful-Payments"}
         />
       </div>
     </div>

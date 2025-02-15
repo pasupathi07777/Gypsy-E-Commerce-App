@@ -12,8 +12,8 @@ console.log("count Status");
     const totalOrders = await Order.countDocuments();
     const totalProducts = await Product.countDocuments();
     const totalCategories = await Category.countDocuments();
-    const pendingOrders = await Order.countDocuments({
-      orderStatus: "Pending",
+    const placedOrders = await Order.countDocuments({
+      orderStatus: "Placed",
     });
     const processingOrders = await Order.countDocuments({
       orderStatus: "Processing",
@@ -64,7 +64,7 @@ console.log("count Status");
         totalProducts,
         totalCategories,
         orderStatus: {
-          pendingOrders,
+          placedOrders,
           processingOrders,
           shippedOrders,
           deliveredOrders,

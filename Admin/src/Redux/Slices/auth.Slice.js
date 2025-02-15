@@ -21,6 +21,7 @@ const initialState = {
   deleteUserLoading: false,
 };
 
+
 export const loginUser = createAsyncThunk(
   "auth/login",
   async (email, { rejectWithValue }) => {

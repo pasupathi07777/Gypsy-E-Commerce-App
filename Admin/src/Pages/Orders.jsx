@@ -6,6 +6,7 @@ import CustomBtn from "../Components/CustomBtn";
 import CustomSearchInput from "../Components/CustomSearchInput";
 import { orderStates } from "../Redux/Slices/order.slice";
 import CustomDateRangePicker from "../Components/CustomDateRangePicker";
+import { formatDate, formatTime } from "../utils/Date.Time";
 
 const Orders = () => {
   const { allOrders } = useSelector(orderStates);
@@ -52,14 +53,20 @@ const Orders = () => {
     { header: "Product", field: "name" },
     { header: "Price", field: "price" },
     { header: "Photos", field: "photos" },
-    { header: "Order Date", field: "createdAt" },
+    {
+      header: "Order Date",
+      render: (order) => <span>{formatDate(order.createdAt)}</span>,
+    },
+    {
+      header: "Order Time",
+      render: (user) => <span>{formatTime(user.createdAt)}</span>,
+    },
     { header: "Status", field: "orderStatus" },
     { header: "Total Amount", field: "totalAmount" },
     { header: "Quantity", field: "quantity" },
     { header: "Delivery Type", field: "deliveryType" },
     { header: "Payment Method", field: "paymentMethod" },
     { header: "Payment Status", field: "paymentStatus" },
-
   ];
 
   // Actions column

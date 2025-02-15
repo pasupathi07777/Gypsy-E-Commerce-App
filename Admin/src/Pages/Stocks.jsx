@@ -27,7 +27,7 @@ const Stocks = () => {
     { header: "Category", field: "category" },
     { header: "Price", field: "price" },
     { header: "Stock", field: "stock" },
-    { header: "Seller", field: "seller" },
+    // { header: "Seller", field: "seller" },
   ];
 
   // Handle "Add Stock" action

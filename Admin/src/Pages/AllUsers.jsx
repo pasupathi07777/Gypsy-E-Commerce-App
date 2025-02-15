@@ -8,19 +8,23 @@ import { formatDate, formatTime } from "../utils/Date.Time";
 import { showPopup } from "../Redux/Slices/confirmationSlice";
 import CustomSearchInput from "../Components/CustomSearchInput";
 import CustomDateRangePicker from "../Components/CustomDateRangePicker";
+import { authStates } from "../Redux/Slices/auth.Slice";
 
 
 
 const AllUsers = () => {
+
+  
   const dispatch = useDispatch();
   const { allUsers, getUsersLoading, updateUserLoading, deleteUserLoading } = useSelector(usersStates);
+  const { currentUser } = useSelector(authStates);
   const [editingUserId, setEditingUserId] = useState(null);
   const [editedRole, setEditedRole] = useState("");
   const [selectedRange, setSelectedRange] = useState(null);  
   const [searchQuery, setSearchQuery] = useState("");  
   const [filteredUsers, setFilteredUsers] = useState(allUsers);
 
-  // Handle role edit functionality
+  
   const handleEdit = (userId, currentRole) => {
     setEditingUserId(userId);
     setEditedRole(currentRole);
@@ -47,21 +51,20 @@ const AllUsers = () => {
     );
   };
 
-  // Handle DateRange change
+  
   const handleDateRangeChange = (value) => {
-    setSelectedRange(value);  // Set range or null if cleared
+    setSelectedRange(value);  
   };
 
-  // Handle Search query change
+
   const handleSearchChange = (value) => {
-    setSearchQuery(value); // Update the search query
+    setSearchQuery(value); 
   };
 
-  // Filter users based on selected date range and search query
+
   useEffect(() => {
     let filtered = allUsers;
 
-    // Filter by date range
     if (selectedRange && selectedRange.length === 2) {
       filtered = filtered.filter(
         (user) =>
@@ -69,7 +72,6 @@ const AllUsers = () => {
       );
     }
 
-    // Filter by search query
     if (searchQuery) {
       filtered = filtered.filter(
         (user) =>
@@ -106,7 +108,7 @@ const AllUsers = () => {
             <option value="admin">Admin</option>
           </select>
         ) : (
-          <span className="text-gray-700">{user.role}</span>
+          <span className="text-gray-700 capitalize">{user.role}</span>
         ),
     },
     {
@@ -119,12 +121,16 @@ const AllUsers = () => {
     },
   ];
 
-  const actions = (user) => (
+
+const actions = (user) => {
+  if (currentUser._id === user._id) return "You"; // Hide actions for the current user
+
+  return (
     <>
       {editingUserId === user._id ? (
         <CustomButton
           onClick={() => handleSave(user._id)}
-          className={`text-green-500 hover:text-green-700 m-0`}
+          className="text-green-500 hover:text-green-700 m-0"
           disabled={updateUserLoading}
         >
           <FaSave size={20} />
@@ -147,6 +153,7 @@ const AllUsers = () => {
       </CustomButton>
     </>
   );
+};
 
   return (
     <div className="p-6">
@@ -154,17 +161,23 @@ const AllUsers = () => {
         <h1 className="text-3xl font-bold">All Users</h1>
 
         <div className="flex gap-2 items-center justify-center">
+
+
+          <CustomDateRangePicker
+            selectedRange={selectedRange}
+            onChange={handleDateRangeChange}
+          />
+
+
           <CustomSearchInput
             value={searchQuery}
             onChange={handleSearchChange}
             placeholder="Search by username or email"
           />
-          
-          <CustomDateRangePicker
-            selectedRange={selectedRange}
-            onChange={handleDateRangeChange}
-          />
+
+
         </div>
+
       </div>
 
       <CustomTable data={filteredUsers} columns={columns} actions={actions} />

@@ -17,18 +17,18 @@ import { categoryStates } from "../Redux/Slices/category.Slice";
 import icons from "../assets/icons";
 import CustomIconButton from "../Components/CustomIconButton";
 
-const Products = () => {
+
+const Products = ({navigation}) => {
   const dispatch = useDispatch();
   const {
     products,
     postProductLoading,
     updateProductLoading,
-    deleteProductLoading,
     deleteProductLoadingIds,
   } = useSelector(productStates);
-     const { categories } = useSelector(categoryStates);
-     console.log(categories);
-     
+  const { categories } = useSelector(categoryStates);
+  console.log(categories);
+
   const [editingProduct, setEditingProduct] = useState(null);
   const [showPopupProduct, setShowPopupProduct] = useState(false);
   const [newProduct, setNewProduct] = useState({
@@ -163,17 +163,17 @@ const Products = () => {
     });
   };
 
-
   const columns = [
     { field: "index", header: "No", width: 60 },
+    { field: "_id", header: "Product Id", width: 60 },
     { field: "name", header: "Name", width: 200 },
-    { field: "price", header: "Price ($)", width: 100 },
+    { field: "price", header: "Price(Rs)", width: 100 },
     { field: "stock", header: "Stock", width: 80 },
     { field: "category", header: "Category", width: 150 },
     { field: "seller", header: "seller", width: 150 },
     { field: "returnPolicy", header: "returnPolicy", width: 150 },
-    { field: "deliveryTime", header: "deliveryTime", width: 150 },
-    { field: "warranty", header: "warranty", width: 150 },
+    { field: "deliveryTime", header: "deliveryTime(days)", width: 150 },
+    { field: "warranty", header: "warranty(years)", width: 150 },
     { field: "deliveryOption", header: "deliveryOption", width: 150 },
     { field: "photos", header: "photos", width: 500 },
     { field: "description", header: "Description", width: 300 },
@@ -198,8 +198,6 @@ const Products = () => {
 
   const paginatedData = products.slice((page - 1) * limit, page * limit);
 
-
-
   const handleRemoveImage = (index) => {
     setNewProduct((prevProduct) => ({
       ...prevProduct,
@@ -210,6 +208,11 @@ const Products = () => {
   useEffect(() => {
     dispatch(getProduct());
   }, []);
+
+  const onClickRow = (id) => {
+    navigation(`product/${id}`);
+    console.log(id);
+  };
 
   return (
     <div className="p-6">
@@ -234,6 +237,7 @@ const Products = () => {
         page={page}
         setPage={setPage}
         setLimit={setLimit}
+        onClickRow={onClickRow}
       />
 
       {showPopupProduct && (

@@ -20,6 +20,8 @@ import './index.css'
 import DynamicPage from "./Pages/DynamicPage";
 import Stocks from "./Pages/Stocks";
 import OrderStatus from "./Pages/OrderStatus";
+import PaymentsStatus from "./Pages/PaymentsStatus";
+import Product from "./Pages/Product";
 
 
 const App = () => {
@@ -73,6 +75,14 @@ const App = () => {
             <Route
               path="orders-status/:name"
               element={<OrderStatus navigation={navigation} />}
+            />
+            <Route
+              path="payment-status/:name"
+              element={<PaymentsStatus navigation={navigation} />}
+            />
+            <Route
+              path="product/:id"
+              element={<Product navigation={navigation} />}
             />
           </Route>
         ) : (
