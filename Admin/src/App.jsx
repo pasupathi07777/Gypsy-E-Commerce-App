@@ -22,6 +22,7 @@ import Stocks from "./Pages/Stocks";
 import OrderStatus from "./Pages/OrderStatus";
 import PaymentsStatus from "./Pages/PaymentsStatus";
 import Product from "./Pages/Product";
+import Banners from "./Pages/Banners";
 
 
 const App = () => {
@@ -83,6 +84,10 @@ const App = () => {
             <Route
               path="product/:id"
               element={<Product navigation={navigation} />}
+            />
+            <Route
+              path="banner"
+              element={<Banners navigation={navigation} />}
             />
           </Route>
         ) : (

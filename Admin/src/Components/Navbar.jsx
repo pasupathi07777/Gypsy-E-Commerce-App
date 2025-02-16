@@ -20,6 +20,11 @@ const Navbar = () => {
       href: "/all-category",
       icon: <MdLocalShipping size={20} />,
     },
+    {
+      name: "Banner",
+      href: "/banner",
+      icon: <MdLocalShipping size={20} />,
+    },
   ];
 
   return (
