@@ -1,98 +1,48 @@
 // import React, { useState } from "react";
 // import { AiOutlinePlus } from "react-icons/ai";
 // import BannerPopup from "../Components/BannerPopup";
+// import imageCompression from "browser-image-compression";
 
 // const Banners = () => {
-//     const [showPopup, setShowPopup] = useState(false);
-//     const [productId, setProductId] = useState("");
-//     const [description, setDescription] = useState("");
-//     const [bannerImg, setBannerImg] = useState(null);
-//     const [banners, setBanners] = useState([]);
+//   const [showPopup, setShowPopup] = useState(false);
+//   const [productId, setProductId] = useState("");
+//   const [description, setDescription] = useState("");
+//   const [bannerImg, setBannerImg] = useState(null);
+//   const [banners, setBanners] = useState([]);
 
-//     const openPopup = () => setShowPopup(true);
+//   const openPopup = () => setShowPopup(true);
 
-//     const closePopup = () => {
-//         setShowPopup(false);
-//         setProductId("");
-//         setDescription("");
-//         setBannerImg(null);
-//     };
-
-//     const handleFileChange = (e) => {
-//         if (e.target.files && e.target.files[0]) {
-//             setBannerImg(e.target.files[0]);
-//         }
-//     };
-
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-//         const imgUrl = bannerImg ? URL.createObjectURL(bannerImg) : "";
-//         setBanners([...banners, { productId, description, imgUrl }]);
-//         closePopup();
-//     };
-
-//     return (
-//         <div className="relative p-5  min-h-screen text-white">
-//             <h2 className="text-3xl font-semibold text-black mb-10">Banners</h2>
-
-//             <button
-//                 onClick={openPopup}
-//                 className="absolute top-5 right-5 bg-blue-600 hover:bg-blue-700 transition text-white p-3 rounded-full shadow-lg"
-//             >
-//                 <AiOutlinePlus size={24} />
-//             </button>
-
-//             {showPopup && 
-
-//                 <BannerPopup
-//                     closePopup={closePopup}
-//                     productId={productId}
-//                     setProductId={setProductId}
-//                     description={description}
-//                     setDescription={setDescription}
-//                     handleFileChange={handleFileChange}
-//                     handleSubmit={handleSubmit}
-//                 />
-//             }
-
-//             {/* Display Added Banners */}
-//             <div className="mt-10 grid grid-cols-2 gap-4 space-y-4">
-//                 {banners.map((banner, index) => (
-//                     <div key={index} className="bg-gray-700 rounded p-4">
-//                         {banner.imgUrl && (
-//                             <img
-//                                 src={banner.imgUrl}
-//                                 alt="Banner"
-//                                 className="w-full h-48 object-cover rounded mb-4"
-//                             />
-//                         )}
-//                         <p>
-//                             <strong>ID:</strong> {banner.productId}
-//                         </p>
-//                         <p>
-//                             <strong>Description:</strong> {banner.description}
-//                         </p>
-//                     </div>
-//                 ))}
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Banners;
+//   const closePopup = () => {
+//     setShowPopup(false);
+//     setProductId("");
 
 
-import React, { useState } from "react";
-import { AiOutlinePlus } from "react-icons/ai";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AiOutlinePlus, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import BannerPopup from "../Components/BannerPopup";
-import imageCompression from "browser-image-compression";
+import {
+  fetchBanners,
+  addBanner,
+  updateBanner,
+  deleteBanner,
+  bannerStates,
+} from "../redux/slices/banner.Slice";
 
 const Banners = () => {
+  const dispatch = useDispatch();
+  const { banners, loading } = useSelector(bannerStates);
+
   const [showPopup, setShowPopup] = useState(false);
   const [productId, setProductId] = useState("");
   const [description, setDescription] = useState("");
   const [bannerImg, setBannerImg] = useState(null);
-  const [banners, setBanners] = useState([]);
+  const [editMode, setEditMode] = useState(false);
+  const [currentBannerId, setCurrentBannerId] = useState(null);
+
+  useEffect(() => {
+    dispatch(fetchBanners());
+  }, [dispatch]);
 
   const openPopup = () => setShowPopup(true);
 
@@ -101,6 +51,29 @@ const Banners = () => {
     setProductId("");
     setDescription("");
     setBannerImg(null);
+    setEditMode(false);
+    setCurrentBannerId(null);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(bannerImg);
+    const bannerData = { productId, description, image: bannerImg };
+    if (editMode) {
+      dispatch(updateBanner({ id: currentBannerId, updatedData: bannerData }));
+    } else {
+      dispatch(addBanner(bannerData));
+    }
+    closePopup();
+  };
+
+  const handleEdit = (banner) => {
+    setProductId(banner.productId);
+    setDescription(banner.description);
+    setBannerImg(banner.imgUrl);
+    setEditMode(true);
+    setCurrentBannerId(banner.id);
+    setShowPopup(true);
   };
 
   // Updated file change handler with compression
@@ -131,11 +104,8 @@ const Banners = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // bannerImg here is already a data URL
-    setBanners([...banners, { productId, description, imgUrl: bannerImg }]);
-    closePopup();
+  const handleDelete = (id) => {
+    dispatch(deleteBanner(id));
   };
 
   return (
@@ -156,31 +126,51 @@ const Banners = () => {
           setProductId={setProductId}
           description={description}
           setDescription={setDescription}
-          handleFileChange={handleImageUpload}
+          bannerImg={bannerImg}
+          setBannerImg={setBannerImg}
           handleSubmit={handleSubmit}
+          editMode={editMode}
+          handleFileChange={handleImageUpload}
         />
       )}
 
-      {/* Display Added Banners */}
-      <div className="mt-10 grid grid-cols-2 gap-4 space-y-4">
-        {banners.map((banner, index) => (
-          <div key={index} className="bg-gray-700 rounded p-4">
-            {banner.imgUrl && (
-              <img
-                src={banner.imgUrl}
-                alt="Banner"
-                className="w-full h-48 object-cover rounded mb-4"
-              />
-            )}
-            <p>
-              <strong>ID:</strong> {banner.productId}
-            </p>
-            <p>
-              <strong>Description:</strong> {banner.description}
-            </p>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <p className="text-black">Loading...</p>
+      ) : (
+        <div className="mt-10 grid grid-cols-2 gap-4 space-y-4">
+          {banners.map((banner) => (
+            <div key={banner.id} className="bg-gray-700 rounded p-4 relative">
+              {banner.imgUrl && (
+                <img
+                  src={banner.imgUrl}
+                  alt="Banner"
+                  className="w-full h-48 object-cover rounded mb-4"
+                />
+              )}
+              <p>
+                <strong>ID:</strong> {banner.productId}
+              </p>
+              <p>
+                <strong>Description:</strong> {banner.description}
+              </p>
+              <div className="flex gap-2 mt-2">
+                <button
+                  className="bg-yellow-500 p-2 rounded"
+                  onClick={() => handleEdit(banner)}
+                >
+                  <AiOutlineEdit size={20} />
+                </button>
+                <button
+                  className="bg-red-600 p-2 rounded"
+                  onClick={() => handleDelete(banner.id)}
+                >
+                  <AiOutlineDelete size={20} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

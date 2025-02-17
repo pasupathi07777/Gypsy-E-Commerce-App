@@ -12,6 +12,7 @@ import profileRoutes from "./routes/profileRoute.js";
 import addressRoutes from "./routes/address.Routes.js";   
 import orderRoutes from "./routes/order.route.js";   
 import countRoutes from "./routes/count.route.js";   
+import bannerRoutes from "./routes/banner.Route.js";   
 
 dotenv.config({ path: "../.env" });
 
@@ -31,6 +32,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/admin", countRoutes)
+app.use("/api/banner", bannerRoutes);
 
 
 
