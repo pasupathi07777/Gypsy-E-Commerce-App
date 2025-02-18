@@ -10,6 +10,7 @@ import wishlistSlice from '../slices/wishlistSlice';
 import profileSlice from '../slices/profileSlice';
 import addressSlice from '../slices/addressSlice';
 import orderSlice from '../slices/orderSlice';
+import bannerReducer from '../slices/bannerSlice';
 
  
 
@@ -28,5 +29,6 @@ export const store = configureStore({
     profileReducer: profileSlice,
     addressReducer: addressSlice,
     orderReducer: orderSlice,
+    bannerReducer,
   },
 });

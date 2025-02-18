@@ -1,22 +1,20 @@
 import Banner from "../models/banner.model.js";
 import cloudinary from "../utils/cloudinary.js";
 
-
 // Create Banner
 export const createBanner = async (req, res) => {
   try {
     const { productId, description, image } = req.body;
 
-    
-
     if (!image) {
-      return res.status(400).json({ message: "Image is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Image is required" });
     }
 
     const uploadedImage = await cloudinary.uploader.upload(image, {
       folder: "banners",
     });
-
 
     const newBanner = new Banner({
       productId,
@@ -26,12 +24,13 @@ export const createBanner = async (req, res) => {
 
     await newBanner.save();
 
-    console.log(req.body);
-    res
-      .status(201)
-      .json({ message: "Banner created successfully", banner: newBanner });
+    res.status(201).json({
+      success: true,
+      message: "Banner created successfully",
+      banner: newBanner,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
+    res.status(500).json({ success: false, message: "Server Error", error });
   }
 };
 
@@ -64,11 +63,12 @@ export const updateBanner = async (req, res) => {
     const updatedBanner = await Banner.findByIdAndUpdate(id, updatedData, {
       new: true,
     });
+    console.log(updatedBanner);
 
     if (!updatedBanner) {
       return res.status(404).json({ message: "Banner not found" });
     }
-
+    
     res
       .status(200)
       .json({ message: "Banner updated successfully", banner: updatedBanner });
@@ -76,7 +76,6 @@ export const updateBanner = async (req, res) => {
     res.status(500).json({ message: "Server Error", error });
   }
 };
-
 
 // Delete Banner
 export const deleteBanner = async (req, res) => {
@@ -97,4 +96,3 @@ export const deleteBanner = async (req, res) => {
     res.status(500).json({ message: "Server Error", error });
   }
 };
-

@@ -1,22 +1,3 @@
-// import React, { useState } from "react";
-// import { AiOutlinePlus } from "react-icons/ai";
-// import BannerPopup from "../Components/BannerPopup";
-// import imageCompression from "browser-image-compression";
-
-// const Banners = () => {
-//   const [showPopup, setShowPopup] = useState(false);
-//   const [productId, setProductId] = useState("");
-//   const [description, setDescription] = useState("");
-//   const [bannerImg, setBannerImg] = useState(null);
-//   const [banners, setBanners] = useState([]);
-
-//   const openPopup = () => setShowPopup(true);
-
-//   const closePopup = () => {
-//     setShowPopup(false);
-//     setProductId("");
-
-
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AiOutlinePlus, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
@@ -27,18 +8,21 @@ import {
   updateBanner,
   deleteBanner,
   bannerStates,
-} from "../redux/slices/banner.Slice";
+} from "../redux/slices/banner.Slice.js";
+import CustomIconButton from "../Components/CustomIconButton.jsx";
 
 const Banners = () => {
-  const dispatch = useDispatch();
-  const { banners, loading } = useSelector(bannerStates);
 
+  const dispatch = useDispatch();
+  const { banners, loading, editBannerIds, deleteBannerIds } =
+    useSelector(bannerStates);
   const [showPopup, setShowPopup] = useState(false);
   const [productId, setProductId] = useState("");
   const [description, setDescription] = useState("");
   const [bannerImg, setBannerImg] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [currentBannerId, setCurrentBannerId] = useState(null);
+
 
   useEffect(() => {
     dispatch(fetchBanners());
@@ -70,9 +54,9 @@ const Banners = () => {
   const handleEdit = (banner) => {
     setProductId(banner.productId);
     setDescription(banner.description);
-    setBannerImg(banner.imgUrl);
+    setBannerImg(banner.image);
     setEditMode(true);
-    setCurrentBannerId(banner.id);
+    setCurrentBannerId(banner._id);
     setShowPopup(true);
   };
 
@@ -109,7 +93,7 @@ const Banners = () => {
   };
 
   return (
-    <div className="relative p-5 min-h-screen text-white bg-gray-100">
+    <div className="relative p-5 min-h-screen text-white bg-[#F4F4F5]">
       <h2 className="text-3xl font-semibold text-black mb-10">Banners</h2>
 
       <button
@@ -137,14 +121,14 @@ const Banners = () => {
       {loading ? (
         <p className="text-black">Loading...</p>
       ) : (
-        <div className="mt-10 grid grid-cols-2 gap-4 space-y-4">
+        <div className="mt-10 grid grid-cols-2 gap-4 space-y-4 ">
           {banners.map((banner) => (
-            <div key={banner.id} className="bg-gray-700 rounded p-4 relative">
-              {banner.imgUrl && (
+            <div key={banner.id} className="  p-4 relative bg-white text-black">
+              {banner.image && (
                 <img
-                  src={banner.imgUrl}
+                  src={banner.image}
                   alt="Banner"
-                  className="w-full h-48 object-cover rounded mb-4"
+                  className="w-full h-48 object-contain mb-4"
                 />
               )}
               <p>
@@ -154,18 +138,16 @@ const Banners = () => {
                 <strong>Description:</strong> {banner.description}
               </p>
               <div className="flex gap-2 mt-2">
-                <button
-                  className="bg-yellow-500 p-2 rounded"
+                <CustomIconButton
+                  label={<AiOutlineEdit size={20} color="blue" />}
                   onClick={() => handleEdit(banner)}
-                >
-                  <AiOutlineEdit size={20} />
-                </button>
-                <button
-                  className="bg-red-600 p-2 rounded"
-                  onClick={() => handleDelete(banner.id)}
-                >
-                  <AiOutlineDelete size={20} />
-                </button>
+                  loading={editBannerIds.includes(banner._id)}
+                />
+                <CustomIconButton
+                  label={<AiOutlineDelete size={20} color="red" />}
+                  onClick={() => handleDelete(banner._id)}
+                  loading={deleteBannerIds.includes(banner._id)}
+                />
               </div>
             </div>
           ))}

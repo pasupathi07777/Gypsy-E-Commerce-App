@@ -11,9 +11,9 @@ const initialState = {
   updataBannerLoading: false,
   deleteBannerLoading: false,
   error: null,
+  editBannerIds: [],
+  deleteBannerIds: [],
 };
-
-
 
 // Fetch all banners
 export const fetchBanners = createAsyncThunk(
@@ -31,7 +31,6 @@ export const fetchBanners = createAsyncThunk(
   }
 );
 
-
 // Add a new banner
 export const addBanner = createAsyncThunk(
   "banner/addBanner",
@@ -42,7 +41,7 @@ export const addBanner = createAsyncThunk(
         params: { token },
       });
       toast.success("Banner added successfully");
-      return response.data
+      return response.data;
     } catch (err) {
       toast.error("Failed to add banner");
       return rejectWithValue(err.response?.data || "Something went wrong");
@@ -50,12 +49,14 @@ export const addBanner = createAsyncThunk(
   }
 );
 
-
 // Update a banner
 export const updateBanner = createAsyncThunk(
   "banner/updateBanner",
-  async ({ id, updatedData }, { rejectWithValue }) => {
+  async ({ id, updatedData }, { rejectWithValue, dispatch }) => {
+    console.log(id, updatedData);
+
     try {
+ dispatch(addEditBannerId(id));
       const token = await getToken();
       const response = await axiosInstance.put(
         `/banner/update/${id}`,
@@ -73,12 +74,12 @@ export const updateBanner = createAsyncThunk(
   }
 );
 
-
 // Delete a banner
 export const deleteBanner = createAsyncThunk(
   "banner/deleteBanner",
-  async (id, { rejectWithValue }) => {
+  async (id, { rejectWithValue, dispatch }) => {
     try {
+      dispatch(addDeleteBannerId(id));
       const token = await getToken();
       await axiosInstance.delete(`/banner/delete/${id}`, {
         params: { token },
@@ -92,11 +93,17 @@ export const deleteBanner = createAsyncThunk(
   }
 );
 
-
 const bannerSlice = createSlice({
   name: "banner",
   initialState,
-  reducers: {},
+  reducers: {
+    addEditBannerId: (state, action) => {
+      state.editBannerIds.push(action.payload);
+    },
+    addDeleteBannerId: (state, action) => {
+      state.deleteBannerIds.push(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       // get
@@ -118,9 +125,11 @@ const bannerSlice = createSlice({
       })
       .addCase(addBanner.fulfilled, (state, action) => {
         state.banners.push(action.payload.banner);
+        state.loading = false;
       })
       .addCase(addBanner.rejected, (state, action) => {
         state.banners.push(action.payload.banner);
+        state.loading = false;
       })
 
       // updata
@@ -129,11 +138,14 @@ const bannerSlice = createSlice({
       })
       .addCase(updateBanner.fulfilled, (state, action) => {
         state.banners = state.banners.map((banner) =>
-          banner.id === action.payload.banner.id
+          banner._id === action.payload.banner._id
             ? action.payload.banner
             : banner
         );
         state.updataBannerLoading = false;
+        state.editBannerIds = state.editBannerIds.filter(
+          (id) => id !== action.payload.banner._id
+        );
       })
       .addCase(updateBanner.rejected, (state, action) => {
         state.updataBannerLoading = false;
@@ -144,19 +156,18 @@ const bannerSlice = createSlice({
         state.deleteBannerLoading = false;
       })
       .addCase(deleteBanner.fulfilled, (state, action) => {
+        console.log(action.payload);
         state.banners = state.banners.filter(
-          (banner) => banner.id !== action.payload
+          (banner) => banner._id !== action.payload
         );
         state.deleteBannerLoading = false;
       })
       .addCase(deleteBanner.rejected, (state, action) => {
-        state.banners = state.banners.filter(
-          (banner) => banner.id !== action.payload
-        );
         state.deleteBannerLoading = false;
       });
   },
 });
 
 export const bannerStates = (state) => state.bannerReducer;
+export const { addEditBannerId, addDeleteBannerId } = bannerSlice.actions;
 export default bannerSlice.reducer;

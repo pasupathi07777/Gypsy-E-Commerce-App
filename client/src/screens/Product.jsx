@@ -136,7 +136,6 @@ const Product = ({navigation, route}) => {
             {currentProduct.description}
           </Text>
 
-          {/* Cart and Wishlist Buttons */}
         </View>
       </ScrollView>
       <View style={styles.btnGroup}>

@@ -10,6 +10,7 @@ import {getCartItems} from '../slices/cartSlice';
 import {getwishlist} from '../slices/wishlistSlice';
 import {getAddress} from '../slices/addressSlice';
 import {getOurOrder} from '../slices/orderSlice';
+import { fetchBanners } from '../slices/bannerSlice';
 
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const Home = ({navigation}) => {
     dispatch(getwishlist());
     dispatch(getAddress());
     dispatch(getOurOrder());
+    dispatch(fetchBanners());
   }, [dispatch]);
 
 
