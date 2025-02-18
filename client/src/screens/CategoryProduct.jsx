@@ -24,8 +24,9 @@ const CategoryProduct = ({route}) => {
   const navigation = useNavigation();
 
   const filteredProducts = products.filter(
-    product => product.category === category,
+    product => product.category.toLowerCase() === category.toLowerCase()
   );
+  
 
   const navigateProduct = id => {
     navigation.navigate('Product', {id});
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   productContainer: {
-    flex: 1,
+    // flex: 1,
     marginBottom: 10,
     marginHorizontal: 5,
     backgroundColor: '#fff',
@@ -132,6 +133,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+    width: '48%',
+    paddingHorizontal: 5,
+    
   },
   heartIcon: {
     position: 'absolute',

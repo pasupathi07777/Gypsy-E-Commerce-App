@@ -1,6 +1,7 @@
 import {StyleSheet, Text, View, TouchableOpacity, Image, Pressable} from 'react-native';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const HomeHeader = ({navigation}) => {
   const onSearchPress = () => {
@@ -15,7 +16,7 @@ const HomeHeader = ({navigation}) => {
 
       {/* Search Icon */}
       <Pressable onPress={onSearchPress} style={styles.searchIconContainer}>
-        <Ionicons name="search-outline" size={26} color="#878787" />
+        <FontAwesome5 name="search" size={20} color="#000" />
       </Pressable>
     </View>
   );
@@ -28,11 +29,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 15,
+    // paddingHorizontal: 10,
     backgroundColor: '#fff',
     height: 60,
     zIndex: 100,
-    elevation: 1, // Android shadow
+    elevation: 0.3, 
   },
   logoContainer: {
     flexDirection: 'row',
