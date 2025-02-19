@@ -18,6 +18,8 @@ import {
 } from '../slices/orderSlice';
 import RNPickerSelect from 'react-native-picker-select';
 import QuantitySelector from '../components/QuantitySelector';
+import Header from '../components/Header';
+
 
 const DirectOrder = ({navigation}) => {
   const {userAddress} = useSelector(addressStates);
@@ -63,6 +65,7 @@ const DirectOrder = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+        <Header btnVisibility={false} topic={'Order Summary'} navigation={navigation} />
       <FlatList
         data={directOrder ? [directOrder] : []}
         keyExtractor={item => item._id}
@@ -100,7 +103,7 @@ const DirectOrder = ({navigation}) => {
               </View>
             </View>
 
-            <Text style={styles.sectionTitle}>🛒 Order Summary</Text>
+            {/* <Text style={styles.sectionTitle}>🛒 Order Summary</Text> */}
           </View>
         }
         renderItem={({item}) => (

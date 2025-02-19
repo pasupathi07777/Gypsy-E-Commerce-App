@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet, Text, View, FlatList, Image, Pressable} from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
+import { StyleSheet, Text, View, FlatList, Image, Pressable } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   addAllToCart,
   removeWishlist,
@@ -8,10 +8,11 @@ import {
 } from '../slices/wishlistSlice';
 import ButtonField from '../components/ButtonField';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const Wishlist = ({navigation}) => {
+const Wishlist = ({ navigation }) => {
   const dispatch = useDispatch();
-  const {wishlist, addAllToCartLoading} = useSelector(wishlistStates);
+  const { wishlist, addAllToCartLoading } = useSelector(wishlistStates);
 
   const handleAddAllToCart = () => {
     dispatch(addAllToCart())
@@ -23,21 +24,38 @@ const Wishlist = ({navigation}) => {
 
   const productOnclick = id => {
     console.log(id);
-    navigation.navigate('Product', {id});
+    navigation.navigate('Product', { id });
   };
 
-  const renderProduct = ({item}) => (
+  const handleAddToCart = productId => {
+    // dispatch(addToCart(productId));
+  };
+
+  const renderProduct = ({ item }) => (
     <View style={styles.productContainer}>
       <Pressable
         style={styles.productDetail}
         onPress={() => productOnclick(item.productId)}>
-        <Image source={{uri: item.photo}} style={styles.productImage} />
+        <Image source={{ uri: item.photo }} style={styles.productImage} />
 
         <View style={styles.productDetails}>
-          <Text style={styles.productName}>{item.name.slice(0, 15)}...</Text>
-          <Text style={styles.sellerName}>Seller: {item.category}</Text>
-          <Text style={styles.productPrice}>₹{item.price}</Text>
+          <Text style={styles.productName}>{item.name.slice(0, 20)}{item.name.length > 20 && "..."}</Text>
+
+          <View style={{flexDirection: 'row',gap: 10}}>
+            <Text style={styles.productPrice}>₹{item.price}</Text>
+            <Text style={item.stock > 0 ? styles.inStock : styles.outStock}>
+              {item.stock > 0 ? 'In Stock' : 'Out of Stock'}
+            </Text>
+          </View>
         </View>
+      </Pressable>
+
+
+
+      <Pressable
+        style={styles.iconButton}
+        onPress={() => handleAddToCart(item.productId)}>
+        <MaterialIcons name="add-shopping-cart" size={24} color="green" />
       </Pressable>
 
       <Pressable
@@ -87,31 +105,39 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   productContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
     padding: 12,
     backgroundColor: '#f9f9f9',
     justifyContent: 'space-between',
+    gap: 5,
   },
   productImage: {
     width: 60,
     height: 60,
     borderRadius: 8,
     marginRight: 16,
-    resizeMode:"contain"
+    resizeMode: "contain"
   },
   productDetails: {
     flex: 1,
+    justifyContent: 'center', 
   },
+  
   productName: {
     fontSize: 16,
     fontWeight: '500',
+    textTransform: 'capitalize',
   },
   productDetail: {
     flexDirection: 'row',
-    flex:1
-    
+    // alignItems: 'center',
+    flex: 1,
+    justifyContent: 'space-between',
+    // backgroundColor: "red"
+
   },
   sellerName: {
     fontSize: 14,
@@ -154,6 +180,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
     fontWeight: 'bold',
+  },
+  inStock: {
+    fontSize: 14,
+    color: 'green',
+  },
+  outStock: {
+    fontSize: 14,
+    color: 'red',
   },
 });
 

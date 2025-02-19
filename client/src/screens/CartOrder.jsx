@@ -6,6 +6,8 @@ import {cartStates} from '../slices/cartSlice';
 import ButtonField from '../components/ButtonField';
 import {orderStates, placeCartProductOrder} from '../slices/orderSlice';
 import RNPickerSelect from 'react-native-picker-select';
+import Header from '../components/Header';
+
 
 const CartOrder = ({navigation}) => {
   const {userAddress} = useSelector(addressStates);
@@ -43,6 +45,7 @@ const CartOrder = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+        <Header btnVisibility={false} topic={'Order Summary'} navigation={navigation} />
       <FlatList
         data={cartItems}
         keyExtractor={item => item.productId.toString()}
@@ -80,7 +83,7 @@ const CartOrder = ({navigation}) => {
               </View>
             </View>
 
-            <Text style={styles.sectionTitle}>🛒 Order Summary</Text>
+            {/* <Text style={styles.sectionTitle}>🛒 Order Summary</Text> */}
           </View>
         }
         renderItem={({item}) => (

@@ -36,7 +36,7 @@ const Cart = ({navigation}) => {
         <Image source={{uri: item.photo}} style={styles.image} />
 
         <View style={styles.itemDetails}>
-          <Text style={styles.itemName}>{item.name.slice(0, 10)}...</Text>
+          <Text style={styles.itemName}>{item.name.slice(0, 10)}{item.name.length > 20 && "..."}</Text>
           <Text style={styles.itemPrice}>₹{item.price.toFixed(2)}</Text>
           <Text style={item.stock > 0 ? styles.inStock : styles.outStock}>
             {item.stock > 0 ? 'In Stock' : 'Out of Stock'}
@@ -166,11 +166,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     alignItems: 'center',
-    gap: 10,
+    gap: 15,
   },
   itemName: {
     fontSize: 16,
     fontWeight: '500',
+    textTransform: 'capitalize',
   },
   itemPrice: {
     fontSize: 14,
