@@ -38,7 +38,7 @@ const bannerSlice = createSlice({
       .addCase(fetchBanners.fulfilled, (state, action) => {
         state.getBannerLoading = false;
         state.banners = action.payload.banners;
-        console.log(state.banners);
+        // console.log(state.banners);
       })
       .addCase(fetchBanners.rejected, (state, action) => {
         state.getBannerLoading = false;

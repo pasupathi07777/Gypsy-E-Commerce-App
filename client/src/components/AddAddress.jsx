@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  Pressable,
 } from 'react-native';
 import Header from './Header';
 import InputFeild from './InputFeild'; 
@@ -153,30 +154,16 @@ const AddAddress = ({navigation}) => {
               right: 12,
             },
           }}
-          // useNativeAndroidPickerStyle={false}
+       
         />
 
-        {/* <RNPickerSelect
-          onValueChange={value => handleInputChange('state', value)}
-          items={states}
-          placeholder={{label: 'Select State', value: null}}
-          value={address.state}
-          style={{
-            inputAndroid: styles.inputField,
-            inputIOS: styles.inputField,
-            iconContainer: {
-              top: 15,
-              right: 12,
-            },
-          }}
-          useNativeAndroidPickerStyle={false} // Ensures styling works on Android
-        /> */}
 
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+
+        <Pressable style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>
             {currentStatus ? 'Update Address' : 'Save Address'}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </ScrollView>
     </View>
   );
@@ -197,7 +184,6 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: '#007bff',
     padding: 15,
-    borderRadius: 8,
     alignItems: 'center',
     width: '100%',
   },

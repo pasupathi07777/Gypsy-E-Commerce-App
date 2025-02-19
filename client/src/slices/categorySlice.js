@@ -42,7 +42,7 @@ export const categorySlice = createSlice({
       })
       .addCase(getCategory.rejected, (state, action) => {
         state.getCategoryLoading = false;
-        console.log(action.payload);
+        // console.log(action.payload);
       });
 
 

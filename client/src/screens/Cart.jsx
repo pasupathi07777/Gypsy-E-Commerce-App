@@ -13,11 +13,14 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import {cartStates, removeCart, updateCartQuantity} from '../slices/cartSlice';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {addressStates} from '../slices/addressSlice';
 
 const Cart = ({navigation}) => {
   const {userAddress} = useSelector(addressStates);
   const {cartItems, totalCartPrice} = useSelector(cartStates);
+  console.log(cartItems);
+
   const dispatch = useDispatch();
 
   const productOnclick = id => {
@@ -35,6 +38,9 @@ const Cart = ({navigation}) => {
         <View style={styles.itemDetails}>
           <Text style={styles.itemName}>{item.name.slice(0, 10)}...</Text>
           <Text style={styles.itemPrice}>₹{item.price.toFixed(2)}</Text>
+          <Text style={item.stock > 0 ? styles.inStock : styles.outStock}>
+            {item.stock > 0 ? 'In Stock' : 'Out of Stock'}
+          </Text>
         </View>
       </Pressable>
 
@@ -70,19 +76,28 @@ const Cart = ({navigation}) => {
       <TouchableOpacity
         style={styles.deleteBtn}
         onPress={() => dispatch(removeCart(item.productId))}>
-        <Icon name="delete" size={24} color="red" />
+        <FontAwesome name="remove" size={24} color="red" />
       </TouchableOpacity>
     </View>
   );
 
-  const onCheckOut = () => {
-    if (!userAddress) {
-      Alert.alert('', 'Add Address');
-      navigation.navigate('Add-Address');
-    } else {
-      navigation.navigate('Order');
-    }
-  };
+ const onCheckOut = () => {
+   const outOfStock = cartItems.some(item => item.stock <= 0);
+
+   if (outOfStock) {
+     Alert.alert('', 'Remove out of stock product to checkout');
+     return; // Stops execution
+   }
+
+   if (!userAddress) {
+     Alert.alert('', 'Add Address');
+     navigation.navigate('Add-Address');
+     return;
+   }
+
+   navigation.navigate('Order');
+ };
+
 
   return (
     <View style={styles.container}>
@@ -135,12 +150,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
     justifyContent: 'space-between',
+    gap:20
   },
   image: {
-    width: 80,
-    height: 80,
+    maxWidth: 60,
+    height: 70,
     borderRadius: 8,
     resizeMode: 'contain',
+    flex:1
   },
   itemDetails: {
     flex: 1,
@@ -149,7 +166,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     alignItems: 'center',
-    gap: 5,
+    gap: 10,
   },
   itemName: {
     fontSize: 16,
@@ -158,6 +175,14 @@ const styles = StyleSheet.create({
   itemPrice: {
     fontSize: 14,
     color: '#555',
+  },
+  inStock: {
+    fontSize: 14,
+    color: 'green',
+  },
+  outStock: {
+    fontSize: 14,
+    color: 'red',
   },
   quantityContainer: {
     flexDirection: 'row',

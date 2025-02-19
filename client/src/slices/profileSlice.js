@@ -43,11 +43,11 @@ export const profileSlice = createSlice({
         state.updateProfileLoading = true;
       })
       .addCase(addProfilePhoto.fulfilled, (state, action) => {
-        console.log(action.payload);
+        // console.log(action.payload);
         state.updateProfileLoading = false;
       })
       .addCase(addProfilePhoto.rejected, (state, action) => {
-        console.log(action.payload);
+        // console.log(action.payload);
         state.updateProfileLoading = false;
       });
   },

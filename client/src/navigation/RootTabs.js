@@ -38,7 +38,7 @@ const RootTabs = () => {
             <MaterialIcons
               name={'home'}
               size={24}
-              color={focused ? '#f03922' : '#878787'}
+              color={focused ? '#f03922' : '#000'}
             />
           ),
         }}
@@ -53,7 +53,7 @@ const RootTabs = () => {
             <MaterialIcons
               name={'shopping-cart'}
               size={22}
-              color={focused ? '#f03922' : '#878787'}
+              color={focused ? '#f03922' : '#000'}
             />
           ),
         }}
@@ -68,7 +68,7 @@ const RootTabs = () => {
             <AntDesign
               name={'heart'}
               size={20}
-              color={focused ? '#f03922' : '#878787'}
+              color={focused ? '#f03922' : '#000'}
             />
           ),
         }}
@@ -83,7 +83,7 @@ const RootTabs = () => {
             <FontAwesome
               name={'user'}
               size={22}
-              color={focused ? '#f03922' : '#878787'}
+              color={focused ? '#f03922' : '#000'}
             />
           ),
         }}

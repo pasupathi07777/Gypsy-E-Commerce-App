@@ -154,7 +154,7 @@ const loginSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loginLoading = false;
         state.currentEmail=action.payload
-        console.log(action.payload, 'logi');
+        // console.log(action.payload, 'logi');
         Alert.alert('', 'Login successful.');
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -172,7 +172,7 @@ const loginSlice = createSlice({
       })
       .addCase(getUserAuth.rejected, (state, action) => {
         state.loginLoading = false;
-        console.log(action.payload, 'action.payload');
+        // console.log(action.payload, 'action.payload');
       })
 
       .addCase(logout.fulfilled, state => {
@@ -192,7 +192,7 @@ const loginSlice = createSlice({
         state.allStudent = action.payload.users.filter(
           user => user.role === 'student',
         );
-        console.log(state.allUser, 'state allusr');
+        // console.log(state.allUser, 'state allusr');
       })
       .addCase(getAllUser.rejected, (state, action) => {
         state.getAllUserLoading = false;
@@ -230,7 +230,7 @@ const loginSlice = createSlice({
       })
       .addCase(editUserByTeacher.rejected, (state, action) => {
         state.editUserLoading = false;
-        console.log(action.payload, 'action.payload');
+        // console.log(action.payload, 'action.payload');
         Alert.alert('', action.payload.error.message || 'Something went wrong');
       })
 
@@ -251,12 +251,12 @@ const loginSlice = createSlice({
           );
         }
         Alert.alert('', action.payload.message || 'Successfully Deleted');
-        console.log(action.payload);
+        // console.log(action.payload);
       })
       .addCase(deleteUserByTeacher.rejected, (state, action) => {
         state.deleteUserLoading = false;
         Alert.alert('', action.payload.error.message || 'Something went wrong');
-        console.log(action.payload);
+        // console.log(action.payload);
       });
   },
 });

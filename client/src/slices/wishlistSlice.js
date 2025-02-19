@@ -124,7 +124,7 @@ export const wishlistSlice = createSlice({
       })
       .addCase(getwishlist.rejected, (state, action) => {
         state.getWishlistLoading = false;
-        console.log(action.payload);
+        // console.log(action.payload);
       })
 
       // post wishlist
@@ -137,7 +137,7 @@ export const wishlistSlice = createSlice({
       })
       .addCase(postWishlist.rejected, (state, action) => {
         state.postWishlistLoading = false;
-        console.log(action.payload);
+        // console.log(action.payload);
       })
 
       // delete wishlist
@@ -146,12 +146,12 @@ export const wishlistSlice = createSlice({
       })
       .addCase(removeWishlist.fulfilled, (state, action) => {
         state.deleteWishlistLoading = false;
-        console.log(action.payload);
+        // console.log(action.payload);
         state.wishlist = action.payload.wishlist;
       })
       .addCase(removeWishlist.rejected, (state, action) => {
         state.deleteWishlistLoading = false;
-        console.log(action.payload);
+        // console.log(action.payload);
       })
 
       //  wishlist all add to cart
@@ -160,12 +160,12 @@ export const wishlistSlice = createSlice({
       })
       .addCase(addAllToCart.fulfilled, (state, action) => {
         state.addAllToCartLoading = false;
-        console.log(action.payload);
+        // console.log(action.payload);
         state.wishlist = [];
       })
       .addCase(addAllToCart.rejected, (state, action) => {
         state.addAllToCartLoading = false;
-        console.log(action.payload);
+        // console.log(action.payload);
       });
   },
 });

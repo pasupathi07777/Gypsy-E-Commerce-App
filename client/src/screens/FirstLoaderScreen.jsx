@@ -26,7 +26,8 @@ const FirstPageLoader = ({navigation}) => {
     dispatch(getUserAuth())
       .unwrap()
       .then(() => {
-        navigation.navigate('Home');
+        // navigation.navigate('Home');
+         navigation.navigate('Home', {screen: path});
       })
       .catch(() => {
         navigation.navigate('Login');
@@ -36,21 +37,28 @@ const FirstPageLoader = ({navigation}) => {
 
 
   return (
+    
     <ImageBackground
       source={require('../assets/loder-screen/delivery.png')}
       style={styles.background}
       resizeMode="cover">
+
       <View style={styles.container}>
+
         <Animated.View style={[styles.logoContainer, {opacity: fadeAnim}]}>
-          {/* <Text style={styles.appName}>Feathrly</Text> */}
+
           <Image
             style={styles.tinyLogo}
             source={require('../assets/gypy.png')}
           />
         </Animated.View>
+
         <ActivityIndicator size="large" color="#f03922" style={styles.loader} />
+
       </View>
+
     </ImageBackground>
+
   );
 };
 

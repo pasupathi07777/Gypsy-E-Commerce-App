@@ -136,7 +136,7 @@ export const addressSlice = createSlice({
       .addCase(updateAddress.rejected, (state, action) => {
         state.addressLoading = false;
         state.addressError = action.payload;
-        console.log(action.payload);
+        // console.log(action.payload);
       })
       .addCase(deleteUserAddress.pending, state => {
         state.deleteLoading = true;
@@ -144,11 +144,11 @@ export const addressSlice = createSlice({
       .addCase(deleteUserAddress.fulfilled, (state, action) => {
         state.deleteLoading = false;
         state.userAddress = null;
-        console.log(action.payload);
+        // console.log(action.payload);
       })
       .addCase(deleteUserAddress.rejected, (state, action) => {
         state.deleteLoading = false;
-        console.log(action.payload);
+        // console.log(action.payload);
       });
   },
 });

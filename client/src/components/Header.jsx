@@ -3,6 +3,7 @@ import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 const Header = ({navigation, topic}) => {
 
@@ -17,29 +18,23 @@ const Header = ({navigation, topic}) => {
 
   return (
     <View style={styles.headerContainer}>
-
       <View style={styles.leftContainer}>
-
         <Pressable onPress={() => onClickIcon('back')}>
-          <Ionicons name="arrow-back" color="#878787" size={24} />
+          <FontAwesome6 name="arrow-left-long" color="#000" size={24} />
         </Pressable>
 
         <Text style={styles.headerText}>{topic}</Text>
-
       </View>
 
       <View style={styles.iconGroup}>
-
         <Pressable onPress={() => onClickIcon('Cart')}>
-          <MaterialIcons name={'shopping-cart'} size={24} color={'#878787'} />
+          <MaterialIcons name={'shopping-cart'} size={24} color={'#000'} />
         </Pressable>
 
         <Pressable onPress={() => onClickIcon('Profile')}>
-          <FontAwesome name={'user'} size={24} color={'#878787'} />
+          <FontAwesome name={'user'} size={24} color={'#000'} />
         </Pressable>
-
       </View>
-
     </View>
   );
 };
@@ -73,7 +68,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginLeft: 10,
     textTransform: 'capitalize',
-    color: '#878787',
+    color: '#000',
   },
 
   icon: {

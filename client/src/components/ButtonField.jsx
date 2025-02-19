@@ -9,21 +9,29 @@ import {
 import React from 'react';
 
 const {width, height} = Dimensions.get('window');
-const ButtonField = ({title, onPress, loading, style}) => {
+const ButtonField = ({
+  title,
+  onPress,
+  loading,
+  style,
+  disabled,
+  buttonTextStyle,
+  loderStyle,
+}) => {
   return (
     <Pressable
       style={[styles.button, style]}
       onPress={onPress}
-      disabled={loading}>
+      disabled={loading || disabled}>
       <View style={styles.content}>
         {loading ? (
           <ActivityIndicator
             size="small"
-            color="#FFFFFF"
+            color={loderStyle ? loderStyle : '#FFFFFF'}
             style={styles.loader}
           />
         ) : (
-          <Text style={styles.buttonText}>{title}</Text>
+          <Text style={[styles.buttonText, buttonTextStyle]}>{title}</Text>
         )}
       </View>
     </Pressable>

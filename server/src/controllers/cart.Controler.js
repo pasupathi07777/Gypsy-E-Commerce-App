@@ -6,7 +6,7 @@ export const getCart = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate({
       path: "cart.productId",
-      select: "name price photos",
+      select: "name price photos stock",
     });
 
     if (!user) {
@@ -19,7 +19,6 @@ export const getCart = async (req, res) => {
       });
     }
 
-    // Calculate total cart price
     const totalCartPrice = user.cart.reduce((sum, item) => {
       return sum + item.quantity * item.productId.price;
     }, 0);
@@ -34,8 +33,9 @@ export const getCart = async (req, res) => {
         photo: item.productId.photos[0],
         quantity: item.quantity,
         total: item.quantity * item.productId.price,
+        stock: item.productId.stock,
       })),
-      totalCartPrice: totalCartPrice.toFixed(2), // Add total cart price
+      totalCartPrice: totalCartPrice.toFixed(2),
     });
   } catch (error) {
     console.error("Error retrieving cart:", error);
@@ -105,7 +105,7 @@ export const addToCart = async (req, res) => {
     // Populate the cart with product details
     const populatedUser = await User.findById(req.user._id).populate({
       path: "cart.productId",
-      select: "name price photos",
+      select: "name price photos stock",
     });
 
     // Calculate total cart price
@@ -123,6 +123,7 @@ export const addToCart = async (req, res) => {
         photo: item.productId.photos[0],
         quantity: item.quantity,
         total: item.quantity * item.productId.price,
+        stock: item.productId.stock,
       })),
       totalCartPrice: totalCartPrice.toFixed(2), // Add total cart price
     });
@@ -188,7 +189,7 @@ export const removeFromCart = async (req, res) => {
     // Populate the cart with product details
     const populatedUser = await User.findById(req.user._id).populate({
       path: "cart.productId",
-      select: "name price photos",
+      select: "name price photos stock",
     });
 
     // Calculate total cart price
@@ -206,6 +207,7 @@ export const removeFromCart = async (req, res) => {
         photo: item.productId.photos[0],
         quantity: item.quantity,
         total: item.quantity * item.productId.price,
+        stock: item.productId.stock,
       })),
       totalCartPrice: totalCartPrice.toFixed(2), // Add total cart price
     });
@@ -288,7 +290,7 @@ export const updateCartQuantity = async (req, res) => {
     // Populate the cart with product details
     const populatedUser = await User.findById(req.user._id).populate({
       path: "cart.productId",
-      select: "name price photos",
+      select: "name price photos stock",
     });
 
     // Calculate total cart price
@@ -306,6 +308,7 @@ export const updateCartQuantity = async (req, res) => {
         photo: item.productId.photos[0],
         quantity: item.quantity,
         total: item.quantity * item.productId.price,
+        stock: item.productId.stock,
       })),
       totalCartPrice: totalCartPrice.toFixed(2), // Add total cart price
     });

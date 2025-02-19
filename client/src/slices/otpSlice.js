@@ -54,12 +54,12 @@ export const otpSlice = createSlice({
       })
       .addCase(verifyOtp.fulfilled, (state, action) => {
         state.otpLoading = false;
-        console.log('otp :', action.payload);
+        // console.log('otp :', action.payload);
         Alert.alert('', 'Otp Verify successful.');
       })
       .addCase(verifyOtp.rejected, (state, action) => {
         state.otpLoading = false;
-        console.error('Otp Rejected:', action.payload);
+        // console.error('Otp Rejected:', action.payload);
         Alert.alert(
           'Error',
           action.payload?.error?.message || 'Something went wrong',

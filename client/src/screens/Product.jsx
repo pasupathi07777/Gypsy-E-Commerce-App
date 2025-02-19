@@ -70,14 +70,11 @@ const Product = ({navigation, route}) => {
       <Header navigation={navigation} />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Product Image Section */}
         <View style={styles.mainImageContainer}>
           {mainImage && (
             <Image source={{uri: mainImage}} style={styles.mainProductImage} />
           )}
-          <Pressable
-            style={styles.heartIcon}
-            onPress={handleWishlistToggle}>
+          <Pressable style={styles.heartIcon} onPress={handleWishlistToggle}>
             <Icon
               name="heart"
               size={24}
@@ -104,40 +101,70 @@ const Product = ({navigation, route}) => {
         <View style={styles.productDetails}>
           <Text style={styles.productName}>{currentProduct.name}</Text>
           <Text style={styles.productPrice}>₹{currentProduct.price}</Text>
-          <Text style={styles.stockText}>In Stock: {currentProduct.stock}</Text>
 
-          <View style={styles.detailContainer}>
-            <Text style={styles.detailLabel}>Category: </Text>
-            <Text style={styles.additionalText}>{currentProduct.category}</Text>
-          </View>
-          <View style={styles.detailContainer}>
-            <Text style={styles.detailLabel}>Seller: </Text>
-            <Text style={styles.additionalText}>{currentProduct.seller}</Text>
-          </View>
-          <View style={styles.detailContainer}>
-            <Text style={styles.detailLabel}>Warranty: </Text>
-            <Text style={styles.additionalText}>
-              {currentProduct.warranty} year(s)
-            </Text>
-          </View>
-          <View style={styles.detailContainer}>
-            <Text style={styles.detailLabel}>Delivery Time: </Text>
-            <Text style={styles.additionalText}>
-              {currentProduct.deliveryTime} days
-            </Text>
-          </View>
-          <View style={styles.detailContainer}>
-            <Text style={styles.detailLabel}>Return Policy: </Text>
-            <Text style={styles.additionalText}>
-              {currentProduct.returnPolicy} days
-            </Text>
-          </View>
-          <Text style={styles.productDescription}>
-            {currentProduct.description}
+          <Text
+            style={[
+              styles.stockText,
+              {color: currentProduct.stock === 0 ? 'red' : '#4CAF50'},
+            ]}>
+            {currentProduct.stock === 0
+              ? 'Out of Stock'
+              : `In Stock: ${currentProduct.stock}`}
           </Text>
 
+          
+
+          {currentProduct.category && (
+            <View style={styles.detailContainer}>
+              <Text style={styles.detailLabel}>Category: </Text>
+              <Text style={styles.additionalText}>
+                {currentProduct.category}
+              </Text>
+            </View>
+          )}
+
+          {currentProduct.seller && (
+            <View style={styles.detailContainer}>
+              <Text style={styles.detailLabel}>Seller: </Text>
+              <Text style={styles.additionalText}>{currentProduct.seller}</Text>
+            </View>
+          )}
+
+          {/* {currentProduct.warranty && (
+            <View style={styles.detailContainer}>
+              <Text style={styles.detailLabel}>Warranty: </Text>
+              <Text style={styles.additionalText}>
+                {currentProduct.warranty ?? 0} year
+              </Text>
+            </View>
+          )} */}
+
+          {currentProduct.deliveryTime && (
+            <View style={styles.detailContainer}>
+              <Text style={styles.detailLabel}>Delivery Time: </Text>
+              <Text style={styles.additionalText}>
+                {currentProduct.deliveryTime} days
+              </Text>
+            </View>
+          )}
+
+          {currentProduct.returnPolicy && (
+            <View style={styles.detailContainer}>
+              <Text style={styles.detailLabel}>Return Policy: </Text>
+              <Text style={styles.additionalText}>
+                {currentProduct.returnPolicy} days
+              </Text>
+            </View>
+          )}
+
+          {currentProduct.description && (
+            <Text style={styles.productDescription}>
+              {currentProduct.description}
+            </Text>
+          )}
         </View>
       </ScrollView>
+
       <View style={styles.btnGroup}>
         {cartItems.find(item => item.productId === currentProduct._id) ? (
           <ButtonField
@@ -145,22 +172,33 @@ const Product = ({navigation, route}) => {
             loading={removeCartLoading}
             style={styles.removeToCartButton}
             onPress={() => dispatch(removeCart(currentProduct._id))}
+            buttonTextStyle={styles.btnText}
+            loderStyle={'#000'}
           />
         ) : (
           <ButtonField
             title={'Add to Cart'}
             loading={postCartLoading}
             style={styles.addToCartButton}
+            buttonTextStyle={styles.btnText}
             onPress={() =>
               dispatch(
                 addCartItem({productId: currentProduct._id, quantity: 1}),
               )
             }
+            loderStyle={'#000'}
           />
         )}
         <ButtonField
-          title={'Buy Now'}
-          style={styles.buyNowButton}
+          disabled={!currentProduct.stock > 0}
+          title={
+            !currentProduct.stock > 0 ? 'Unavailable' : 'Buy Now'
+          }
+          style={
+            !currentProduct.stock > 0
+              ? styles.outOfStockBtn
+              : styles.buyNowButton
+          }
           onPress={() => handleBuyNow(currentProduct)}
         />
       </View>
@@ -217,7 +255,7 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    // marginBottom: 10,
     color: '#333',
   },
   productDescription: {
@@ -229,12 +267,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#ff5722',
-    marginBottom: 10,
+    // marginBottom: 5,
   },
   stockText: {
     fontSize: 16,
     color: '#4CAF50',
-    marginBottom: 15,
+    marginBottom: 10,
   },
   detailContainer: {
     flexDirection: 'row',
@@ -247,12 +285,12 @@ const styles = StyleSheet.create({
     width: '40%',
   },
   addToCartButton: {
-    backgroundColor: '#FF5722',
+    backgroundColor: '#fff',
     paddingVertical: 15,
     flex: 1,
   },
   removeToCartButton: {
-    backgroundColor: '#000',
+    backgroundColor: '#fff',
     paddingVertical: 15,
 
     flex: 1,
@@ -266,5 +304,11 @@ const styles = StyleSheet.create({
   btnGroup: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  btnText: {color: '#000'},
+  outOfStockBtn: {
+    backgroundColor: 'red',
+    paddingVertical: 15,
+    flex: 1,
   },
 });

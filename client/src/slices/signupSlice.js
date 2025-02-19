@@ -50,13 +50,12 @@ export const signupSlice = createSlice({
       })
       .addCase(signupUser.fulfilled, (state, action) => {
         state.signupLoading = false;
-        console.log('Otp Sent Successful:', action.payload);
+        // console.log('Otp Sent Successful:', action.payload);
         Alert.alert('', 'Otp Sent Successful.');
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.signupLoading = false;
-        console.error('Signup Rejected:', action.payload);
-
+        // console.error('Signup Rejected:', action.payload);
         Alert.alert(
           'Error',
           action.payload?.error?.message || 'Something went wrong',

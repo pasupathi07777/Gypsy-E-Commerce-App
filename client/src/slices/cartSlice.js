@@ -113,12 +113,12 @@ export const cartSlice = createSlice({
         state.cartLoading = false;
         state.cartItems = action.payload.cart;
          state.totalCartPrice = action.payload.totalCartPrice;
-        // console.log(action.payload);
+        console.log(action.payload);
 
       })
       .addCase(getCartItems.rejected, (state, action) => {
         state.cartLoading = false;
-        console.log(action.payload);
+        // console.log(action.payload);
       })
       // add
       .addCase(addCartItem.pending, state => {
@@ -128,12 +128,12 @@ export const cartSlice = createSlice({
         state.postCartLoading = false;
         state.cartItems = action.payload.cart;
          state.totalCartPrice = action.payload.totalCartPrice;
-        console.log(action.payload);
-        console.log(state.cartItems);
+        // console.log(action.payload);
+        // console.log(state.cartItems);
       })
       .addCase(addCartItem.rejected, (state, action) => {
         state.postCartLoading = false;
-        console.log(action.payload);
+        // console.log(action.payload);
       })
 
       // remove
@@ -148,7 +148,7 @@ export const cartSlice = createSlice({
       })
       .addCase(removeCart.rejected, (state, action) => {
         state.removeCartLoading = false;
-        console.log(action.payload);
+        // console.log(action.payload);
       })
 
       // update quantity
@@ -158,12 +158,12 @@ export const cartSlice = createSlice({
       .addCase(updateCartQuantity.fulfilled, (state, action) => {
         state.updateCartQuantityLoading = false;
         state.cartItems = action.payload.cart;
-        console.log(action.payload);
+        // console.log(action.payload);
         state.totalCartPrice = action.payload.totalCartPrice;
       })
       .addCase(updateCartQuantity.rejected, (state, action) => {
         state.updateCartQuantityLoading = false;
-        console.log(action.payload);
+        // console.log(action.payload);
       });
 
   },

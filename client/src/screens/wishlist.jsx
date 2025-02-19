@@ -6,8 +6,8 @@ import {
   removeWishlist,
   wishlistStates,
 } from '../slices/wishlistSlice';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import ButtonField from '../components/ButtonField';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Wishlist = ({navigation}) => {
   const dispatch = useDispatch();
@@ -43,7 +43,7 @@ const Wishlist = ({navigation}) => {
       <Pressable
         style={styles.deleteBtn}
         onPress={() => dispatch(removeWishlist(item.productId))}>
-        <Icon name="delete" size={24} color="red" />
+        <FontAwesome name="remove" size={24} color="red" />
       </Pressable>
     </View>
   );

@@ -135,11 +135,11 @@ export const orderSlice = createSlice({
       .addCase(placeCartProductOrder.fulfilled, (state, action) => {
         state.placeCartProductOrderLoading = false;
         state.userOrders = action.payload.orders;
-        console.log('order :', action.payload);
+        // console.log('order :', action.payload);
       })
       .addCase(placeCartProductOrder.rejected, (state, action) => {
         state.placeCartProductOrderLoading = false;
-        console.error('Otp Rejected:', action.payload);
+        // console.error('Otp Rejected:', action.payload);
         Alert.alert(
           'Error',
           action.payload?.error?.message || 'Something went wrong',
@@ -152,11 +152,11 @@ export const orderSlice = createSlice({
       .addCase(getOurOrder.fulfilled, (state, action) => {
         state.getUserOrderLoading = false;
         state.userOrders = action.payload.orders;
-        console.log('order :', action.payload);
+        // console.log('order :', action.payload);
       })
       .addCase(getOurOrder.rejected, (state, action) => {
         state.getUserOrderLoading = false;
-        console.error('Otp Rejected:', action.payload);
+        // console.error('Otp Rejected:', action.payload);
         Alert.alert(
           'Error',
           action.payload?.error?.message || 'Something went wrong',
@@ -178,12 +178,12 @@ export const orderSlice = createSlice({
         state.cancelOrderIds = state.cancelOrderIds.filter(
           id => id !== action.payload.cancelProduct._id,
         );
-        console.log('cancel order :', action.payload);
+        // console.log('cancel order :', action.payload);
         Alert.alert('Success', 'Your order has been cancelled successfully!');
       })
       .addCase(cancelOrder.rejected, (state, action) => {
         state.cancelOrderLoading = false;
-        console.error('cancel order', action.payload);
+        // console.error('cancel order', action.payload);
         Alert.alert(
           'Error',
           action.payload?.error?.message || 'Something went wrong',
@@ -197,12 +197,12 @@ export const orderSlice = createSlice({
       .addCase(placeDirectOrder.fulfilled, (state, action) => {
         state.directOrderLoding = false;
         state.userOrders = [...state.userOrders, action.payload.order];
-        console.log('Placed order :', action.payload);
+        // console.log('Placed order :', action.payload);
         Alert.alert('Success', 'Your order has been Placed successfully!');
       })
       .addCase(placeDirectOrder.rejected, (state, action) => {
         state.directOrderLoding = false;
-        console.error('cancel order', action.payload);
+        // console.error('cancel order', action.payload);
         Alert.alert(
           'Error',
           action.payload?.error?.message || 'Something went wrong',
