@@ -226,7 +226,10 @@ const MyOrders = ({ navigation }) => {
           onPress: () => {
             console.log('Cancelling order:', orderId);
             dispatch(setCancelOrderIds(orderId));
-            dispatch(cancelOrder(orderId));
+            dispatch(cancelOrder(orderId)).then(() => {
+              // After cancellation, refresh the orders list
+              dispatch(getOurOrder());
+            });
           },
         },
       ],
@@ -243,33 +246,37 @@ const MyOrders = ({ navigation }) => {
     navigation.navigate('Product', { id });
   };
 
-  const OrderStatusIndicator = ({ status }) => {
+  const OrderStatusIndicator = ({ status, isCanceled }) => {
     const progress = new Animated.Value(0);
 
     useEffect(() => {
       let progressValue = 0;
-      switch (status) {
-        case 'Placed':
-          progressValue = 0.25;
-          break;
-        case 'Shipped':
-          progressValue = 0.5;
-          break;
-        case 'Out for Delivery':
-          progressValue = 0.75;
-          break;
-        case 'Delivered':
-          progressValue = 1;
-          break;
-        default:
-          progressValue = 0;
+      if (isCanceled) {
+        progressValue = 0.33; // Stop at "Canceled" stage (1/3 of the progress bar)
+      } else {
+        switch (status) {
+          case 'Placed':
+            progressValue = 0.25;
+            break;
+          case 'Shipped':
+            progressValue = 0.5;
+            break;
+          case 'Out for Delivery':
+            progressValue = 0.75;
+            break;
+          case 'Delivered':
+            progressValue = 1;
+            break;
+          default:
+            progressValue = 0;
+        }
       }
       Animated.timing(progress, {
         toValue: progressValue,
         duration: 1000,
         useNativeDriver: false,
       }).start();
-    }, [status]);
+    }, [status, isCanceled]);
 
     const widthInterpolation = progress.interpolate({
       inputRange: [0, 1],
@@ -280,7 +287,13 @@ const MyOrders = ({ navigation }) => {
       <View style={styles.progressBarContainer}>
         <View style={styles.progressBarBackground}>
           <Animated.View
-            style={[styles.progressBarFill, { width: widthInterpolation }]}
+            style={[
+              styles.progressBarFill,
+              {
+                width: widthInterpolation,
+                backgroundColor: isCanceled ? 'red' : 'green',
+              },
+            ]}
           />
         </View>
         <View style={styles.statusTextContainer}>
@@ -289,6 +302,9 @@ const MyOrders = ({ navigation }) => {
           <Text style={styles.statusText}>Out for Delivery</Text>
           <Text style={styles.statusText}>Delivered</Text>
         </View>
+        {isCanceled && (
+          <Text style={styles.canceledText}>Canceled</Text>
+        )}
       </View>
     );
   };
@@ -302,60 +318,68 @@ const MyOrders = ({ navigation }) => {
         data={userOrders}
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <View style={styles.orderCard}>
-            <Text style={styles.orderId}>Order ID: {item._id}</Text>
-            <Text>Order At: {new Date(item.createdAt).toLocaleString()}</Text>
-            <Text>Total Amount: ₹{item.totalAmount}</Text>
-            <Text>Order Status: {item.orderStatus}</Text>
-            <Text>Payment Status: {item.paymentStatus}</Text>
+        renderItem={({ item }) => {
+          const isCanceled = item.orderStatus === 'Canceled';
+          const paymentStatus = isCanceled && item.paymentStatus === 'Paid' ? 'Refunded' : item.paymentStatus;
 
-            <View style={styles.addressContainer}>
-              <Text style={styles.addressTitle}>Shipping Address</Text>
-              <Text>{item.address?.homeAddress}</Text>
-              <Text>
-                {item.address?.state} - {item.address?.pincode}
-              </Text>
-              <Text>{item.address?.mobile}</Text>
-            </View>
+          return (
+            <View style={styles.orderCard}>
+              <Text style={styles.orderId}>Order ID: {item._id}</Text>
+              <Text>Order At: {new Date(item.createdAt).toLocaleString()}</Text>
+              <Text>Total Amount: ₹{item.totalAmount}</Text>
+              <Text>Order Status: {item.orderStatus}</Text>
+              <Text>Payment Status: {paymentStatus}</Text>
 
-            <View style={styles.itemContainer}>
-              <Text style={styles.itemHeader}>Items:</Text>
-              <FlatList
-                data={[item]}
-                keyExtractor={(prod) => prod.productId}
-                showsVerticalScrollIndicator={false}
-                renderItem={({ item: prod }) => (
-                  <Pressable
-                    style={styles.itemRow}
-                    onPress={() => productOnclick(prod.productId)}>
-                    <Image
-                      source={{ uri: prod.photos?.[0] }}
-                      style={styles.itemImage}
-                    />
-                    <View style={styles.itemDetails}>
-                      <Text style={styles.itemText}>{prod.name}</Text>
-                      <Text>
-                        Qty: {prod.quantity} | ₹{prod.price}
-                      </Text>
-                    </View>
-                  </Pressable>
-                )}
+              <View style={styles.addressContainer}>
+                <Text style={styles.addressTitle}>Shipping Address</Text>
+                <Text>{item.address?.homeAddress}</Text>
+                <Text>
+                  {item.address?.state} - {item.address?.pincode}
+                </Text>
+                <Text>{item.address?.mobile}</Text>
+              </View>
+
+              <View style={styles.itemContainer}>
+                <Text style={styles.itemHeader}>Items:</Text>
+                <FlatList
+                  data={[item]}
+                  keyExtractor={(prod) => prod.productId}
+                  showsVerticalScrollIndicator={false}
+                  renderItem={({ item: prod }) => (
+                    <Pressable
+                      style={styles.itemRow}
+                      onPress={() => productOnclick(prod.productId)}>
+                      <Image
+                        source={{ uri: prod.photos?.[0] }}
+                        style={styles.itemImage}
+                      />
+                      <View style={styles.itemDetails}>
+                        <Text style={styles.itemText}>{prod.name}</Text>
+                        <Text>
+                          Qty: {prod.quantity} | ₹{prod.price}
+                        </Text>
+                      </View>
+                    </Pressable>
+                  )}
+                />
+              </View>
+
+              <OrderStatusIndicator
+                status={item.orderStatus}
+                isCanceled={isCanceled}
               />
+
+              {!isCanceled && item.orderStatus === 'Placed' && (
+                <ButtonField
+                  loading={cancelOrderIds.includes(item._id) && cancelOrderLoading}
+                  title={'Cancel Order'}
+                  style={styles.cancelButton}
+                  onPress={() => handleCancelOrder(item._id)}
+                />
+              )}
             </View>
-
-            <OrderStatusIndicator status={item.orderStatus} />
-
-            {item.orderStatus === 'Placed' && (
-              <ButtonField
-                loading={cancelOrderIds.includes(item._id) && cancelOrderLoading}
-                title={'Cancel Order'}
-                style={styles.cancelButton}
-                onPress={() => handleCancelOrder(item._id)}
-              />
-            )}
-          </View>
-        )}
+          );
+        }}
       />
     </View>
   );
@@ -448,7 +472,6 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: 'green',
     borderRadius: 5,
   },
   statusTextContainer: {
@@ -459,5 +482,11 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 12,
     color: '#666',
+  },
+  canceledText: {
+    color: 'red',
+    fontWeight: 'bold',
+    marginTop: 5,
+    textAlign: 'center',
   },
 });
