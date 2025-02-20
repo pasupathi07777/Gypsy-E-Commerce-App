@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 8,
     marginRight: 16,
-    resizeMode:"contain"
+    resizeMode: 'contain',
   },
   productDetails: {
     flex: 1,
@@ -110,8 +110,7 @@ const styles = StyleSheet.create({
   },
   productDetail: {
     flexDirection: 'row',
-    flex:1
-    
+    flex: 1,
   },
   sellerName: {
     fontSize: 14,
