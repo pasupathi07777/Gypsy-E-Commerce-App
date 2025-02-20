@@ -9,6 +9,7 @@ const initialState = {
   postWishlistLoading: false,
   deleteWishlistLoading: false,
   addAllToCartLoading: false,
+  addSingleToCartLoading:false
 };
 
 
@@ -104,6 +105,32 @@ export const addAllToCart = createAsyncThunk(
 );
 
 
+export const addSingleToCart = createAsyncThunk(
+  'add/addSingleToCart',
+  async (productId, {rejectWithValue, dispatch, getState}) => {
+    try {
+      const token = await getToken();
+      const response = await axiosInstance.post(
+        `/wishlist/wishlist-to-cart-single`,
+        {productId},
+        {
+          params: {token},
+        },
+      );
+
+      dispatch(updateCart(response.data.cart));
+      console.log(response.data);
+      
+      return response.data
+    } catch (err) {
+      const error = err.response?.data ||
+        err.response || {message: 'Something went wrong'};
+      return rejectWithValue(error);
+    }
+  },
+);
+
+
 
 
 export const wishlistSlice = createSlice({
@@ -166,7 +193,23 @@ export const wishlistSlice = createSlice({
       .addCase(addAllToCart.rejected, (state, action) => {
         state.addAllToCartLoading = false;
         // console.log(action.payload);
+      })
+
+      // single product add to cart
+      .addCase(addSingleToCart.pending, state => {
+        state.addSingleToCartLoading = true;
+      })
+      .addCase(addSingleToCart.fulfilled, (state, action) => {
+        state.addSingleToCartLoading = false;
+        console.log(action.payload);
+        state.wishlist = action.payload.wishlist;
+      })
+      .addCase(addSingleToCart.rejected, (state, action) => {
+        state.addSingleToCartLoading = false;
+        console.log(action.payload);
       });
+
+
   },
 });
 

@@ -1,14 +1,11 @@
 import User from "../models/user.model.js";
 
-
-
-
 // Get the user's wishlist
 export const getWishlist = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate({
       path: "wishlist.productId",
-      select: "name price photos", // Populate product details
+      select: "name price photos stock", // Populate product details
     });
 
     if (!user) {
@@ -25,8 +22,9 @@ export const getWishlist = async (req, res) => {
         productId: item.productId._id,
         name: item.productId.name,
         price: item.productId.price,
-        photo: item.productId.photos[0], 
-        addedAt: item.timestamp, 
+        photo: item.productId.photos[0],
+        addedAt: item.timestamp,
+        stock: item.productId.stock,
       })),
     });
   } catch (error) {
@@ -37,7 +35,6 @@ export const getWishlist = async (req, res) => {
     });
   }
 };
-
 
 // Add a product to the wishlist
 export const addToWishlist = async (req, res) => {
@@ -105,7 +102,6 @@ export const addToWishlist = async (req, res) => {
   }
 };
 
-
 // Remove a product from the wishlist
 export const removeFromWishlist = async (req, res) => {
   try {
@@ -127,7 +123,6 @@ export const removeFromWishlist = async (req, res) => {
       });
     }
 
-
     const updatedWishlist = user.wishlist.filter(
       (item) => item.productId.toString() !== productId
     );
@@ -142,7 +137,6 @@ export const removeFromWishlist = async (req, res) => {
     user.wishlist = updatedWishlist;
     await user.save();
 
-  
     const populatedUser = await User.findById(req.user._id).populate({
       path: "wishlist.productId",
       select: "name price photos description category stock",
@@ -171,11 +165,10 @@ export const removeFromWishlist = async (req, res) => {
   }
 };
 
-
 export const wishlistToCart = async (req, res) => {
   try {
     const { wishlistIds } = req.body;
-console.log(wishlistIds);
+    console.log(wishlistIds);
 
     if (!wishlistIds || wishlistIds.length === 0) {
       return res.status(400).json({
@@ -184,7 +177,7 @@ console.log(wishlistIds);
       });
     }
 
-    const user = await User.findById(req.user._id).populate("cart.productId"); 
+    const user = await User.findById(req.user._id).populate("cart.productId");
 
     if (!user) {
       return res.status(404).json({
@@ -199,7 +192,6 @@ console.log(wishlistIds);
         (item) => item.productId._id.toString() === wishlistId
       );
 
-
       if (!productInCart) {
         const wishlistProduct = user.wishlist.find(
           (item) => item.productId._id.toString() === wishlistId
@@ -208,15 +200,15 @@ console.log(wishlistIds);
         if (wishlistProduct) {
           user.cart.push({
             productId: wishlistProduct.productId,
-            quantity: 1, 
+            quantity: 1,
           });
           addedProducts.push(wishlistProduct.productId._id);
         }
       }
     }
-    user.wishlist=[]
+    user.wishlist = [];
 
-    await user.save(); 
+    await user.save();
 
     res.status(200).json({
       success: true,
@@ -231,6 +223,7 @@ console.log(wishlistIds);
         stock: item.productId.stock,
         quantity: item.quantity,
         addedAt: item.timestamp,
+        stock: item.productId.stock,
       })),
     });
   } catch (error) {
@@ -243,3 +236,91 @@ console.log(wishlistIds);
 };
 
 
+
+
+
+export const moveWishlistItemToCart = async (req, res) => {
+  try {
+    const { productId } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({
+        success: false,
+        message: "Product ID is required.",
+      });
+    }
+
+    const user = await User.findById(req.user._id).populate(
+      "cart.productId wishlist.productId"
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    // Find the product in the wishlist
+    const wishlistProductIndex = user.wishlist.findIndex(
+      (item) => item.productId._id.toString() === productId
+    );
+
+    if (wishlistProductIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found in wishlist.",
+      });
+    }
+
+    // Check if product is already in the cart
+    const productInCart = user.cart.find(
+      (item) => item.productId._id.toString() === productId
+    );
+
+    if (!productInCart) {
+      // Move product to cart
+      const wishlistProduct = user.wishlist[wishlistProductIndex];
+      user.cart.push({
+        productId: wishlistProduct.productId,
+        quantity: 1, // Default quantity
+      });
+    }
+
+    // Remove product from wishlist
+    user.wishlist.splice(wishlistProductIndex, 1);
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Product moved to cart.",
+      cart: user.cart.map((item) => ({
+        productId: item.productId._id,
+        name: item.productId.name,
+        price: item.productId.price,
+        photo: item.productId.photos?.[0] || "default-image-url",
+        description: item.productId.description,
+        category: item.productId.category,
+        stock: item.productId.stock,
+        quantity: item.quantity,
+        addedAt: item.timestamp,
+      })),
+      wishlist: user.wishlist.map((item) => ({
+        productId: item.productId._id,
+        name: item.productId.name,
+        price: item.productId.price,
+        photo: item.productId.photos?.[0] || "default-image-url",
+        description: item.productId.description,
+        category: item.productId.category,
+        stock: item.productId.stock,
+      })),
+    });
+  } catch (error) {
+    console.error("Error moving product from wishlist to cart:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error.",
+    });
+  }
+};
